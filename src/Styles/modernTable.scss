@@ -1,0 +1,98 @@
+/* ---------- TABLE CONTAINER ---------- */
+.modern-table-container {
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* ---------- TABLE ---------- */
+.modern-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+
+  tbody tr {
+    transition: background-color 0.25s ease;
+
+    &:hover {
+      background-color: #f7f9fc;
+    }
+  }
+
+  td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f3f5;
+    color: #374151; // modern gray
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- TABLE HEADER ---------- */
+.modern-table-header {
+  background: #f9fafb;
+
+  th {
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- ROW ---------- */
+.modern-table-row {
+  &:last-child td {
+    border-bottom: none;
+  }
+}
+
+/* ---------- PRODUCT IMAGE ---------- */
+.modern-table img {
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+/* ---------- CHIP ---------- */
+.MuiChip-root {
+  font-size: 12px;
+  height: 26px;
+  border-radius: 8px;
+  font-weight: 600;
+
+  svg {
+    font-size: 16px;
+  }
+}
+
+/* ---------- PAGINATION ---------- */
+.modern-table-container .MuiStack-root {
+  background: #fafafa;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ---------- EMPTY / LOADING ---------- */
+.modern-table-container .MuiCircularProgress-root,
+.modern-table-container .empty-data {
+  margin: 48px auto;
+  display: block;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .modern-table {
+    font-size: 13px;
+
+    td,
+    th {
+      padding: 10px 12px;
+    }
+  }
+}

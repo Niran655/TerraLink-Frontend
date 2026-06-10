@@ -1,0 +1,298 @@
+// @import 'react-image-crop/dist/ReactCrop.css';
+
+.uploadImage {
+  .uploadSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .uploadBox {
+    width: 220px;
+    height: 220px;
+    border: 2px dashed #d1d5db;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #f8fafc;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    &:hover {
+      border-color: #667eea;
+      background-color: #f1f5f9;
+    }
+  }
+
+  .uploadPlaceholder {
+    text-align: center;
+    color: #6b7280;
+    padding: 20px;
+  }
+
+  .uploadIcon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+
+  .uploadText {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .uploadSubtext {
+    margin: 0;
+    font-size: 14px;
+    color: #9ca3af;
+  }
+
+  .previewContainer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .previewOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .overlayContent {
+    text-align: center;
+    color: white;
+  }
+
+  .editText {
+    margin: 8px 0 0 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .fileInput {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .loadingOverlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+  }
+
+  .loadingText {
+    margin: 0;
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+  }
+
+  // Modal Styles
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1300; // MUI modal z-index is 1300
+    padding: 20px;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+
+  .modalTitle {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .modalContent {
+    padding: 0;
+    max-height: calc(90vh - 140px);
+    overflow: auto;
+  }
+
+  .editorContainer {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    min-height: 500px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr auto;
+    }
+  }
+
+  .cropContainer {
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+  }
+
+  .controlPanel {
+    padding: 24px;
+    border-left: 1px solid #e5e7eb;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+      border-left: none;
+      border-top: 1px solid #e5e7eb;
+    }
+  }
+
+  .controlGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .controlLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+  }
+
+  .buttonGroup {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .controlButton {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    flex: 1;
+    justify-content: center;
+
+    &:hover {
+      background: #e5e7eb;
+    }
+
+    &.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+  }
+
+  .modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+  }
+}
+
+// ReactCrop custom styles
+.ReactCrop__crop-selection {
+  border: 2px solid #667eea;
+  box-shadow: 0 0 0 9999em rgba(0, 0, 0, 0.5);
+}
+
+.ReactCrop__drag-handle::after {
+  background: #667eea;
+  border: 1px solid white;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

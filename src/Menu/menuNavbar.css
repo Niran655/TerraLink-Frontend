@@ -1,0 +1,120 @@
+.menu-container {
+  height: 100%;
+  /* let the parent (MUI Box / Drawer) control background so ThemeCustomizer colors apply */
+  background-color: transparent;
+}
+.menu-container .avatar-user {
+  margin-left: 15px;
+  width: 48px;
+  height: 48px;
+}
+.menu-container .avatar-user-mobile {
+  width: 48px;
+  height: 48px;
+}
+.menu-container .welcome {
+  color: #515353;
+  font-size: 12px;
+  font-family: "Poppins";
+}
+.menu-container .romdoul-img {
+  width: 20px;
+  height: 20px;
+}
+.menu-container .userName {
+  color: #515353;
+  font-size: 14px;
+  font-family: "Poppins";
+  font-weight: bold !important;
+}
+.menu-container .list-item-active {
+  width: 100%;
+  height: 50px;
+  /* subtle highlight that works on dark and colored sidebars */
+  background-color: rgba(255, 255, 255, 0.06);
+  box-shadow: rgba(0, 0, 0, 0.06) 0px 1px 2px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.menu-container .list-item-active .list-item-button {
+  width: 100%;
+  height: 50px;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  transition: all 0.5s ease;
+}
+.menu-container .list-item-active .list-item-button .front-box {
+  height: 50px;
+  width: 4px;
+  background-color: rgb(255, 99, 71);
+}
+.menu-container .list-item-active .list-item-button .list-item-icon {
+  justify-content: center;
+  color: #263238;
+  height: 100%;
+  min-width: 50px !important;
+}
+.menu-container .list-item-active .list-item-button .list-item-icon .icon {
+  width: 32px;
+  height: 32px;
+  color: rgb(255, 99, 71) !important;
+  border-radius: 5px;
+  /* remove white background so icon sits on themed sidebar */
+  background-color: transparent;
+  padding: 5px;
+}
+.menu-container .list-item-active .list-item-button .list-item-icon-mobile {
+  height: 100%;
+  width: 68px;
+  justify-content: center;
+  color: #263238;
+}
+.menu-container .list-item-active .list-item-button .list-item-icon-mobile .icon {
+  margin-top: 6px;
+  width: 24px;
+  height: 24px;
+  color: #263238;
+}
+.menu-container .list-item-active .list-item-button .list-item-text {
+  color: #263238;
+  font-size: 16px;
+  font-family: "Poppins";
+}
+.menu-container .list-item {
+  width: 100%;
+  height: 50px;
+}
+.menu-container .list-item .list-item-button {
+  width: 100%;
+  height: 50px;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  cursor: pointer;
+}
+.menu-container .list-item .list-item-button .front-box {
+  height: 50px;
+  width: 4px;
+}
+.menu-container .list-item .list-item-button .list-item-icon {
+  justify-content: center;
+  height: 100%;
+  min-width: 50px !important;
+}
+.menu-container .list-item .list-item-button .list-item-icon .icon {
+  width: 22px;
+  height: 22px;
+}
+.menu-container .list-item .list-item-button .list-item-icon-mobile {
+  height: 100%;
+  width: 68px;
+  justify-content: center;
+}
+.menu-container .list-item .list-item-button .list-item-icon-mobile .icon {
+  margin-top: 6px;
+  width: 24px;
+  height: 24px;
+}
+.menu-container .list-item .list-item-button .list-item-text {
+  font-size: 16px;
+  font-family: "Poppins";
+  color: #515353;
+}/*# sourceMappingURL=menuNavbar.css.map */

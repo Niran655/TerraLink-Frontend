@@ -1,0 +1,50 @@
+.dashboard-card {
+  height: -moz-fit-content !important;
+  height: fit-content !important;
+  border-radius: 5px;
+  background-color: none;
+}
+.dashboard-card .image-box {
+  padding: 5px;
+  height: 70px;
+  width: 70px;
+  border-radius: 5px;
+  background-color: aliceblue;
+}
+.dashboard-card .price {
+  font-size: 30px;
+  font-weight: 800;
+}
+.dashboard-card .number {
+  font-size: 17px;
+}
+.dashboard-card .num {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.second-section {
+  padding: 15px;
+  border-radius: 8px;
+}
+.second-section .title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.second-section .quick-links {
+  padding: 10px;
+}
+.second-section .quick-links .link-box {
+  height: 100px;
+  border-radius: 7px;
+  cursor: pointer;
+  text-align: center;
+  align-content: center;
+}
+.second-section .quick-links .link-box:hover {
+  transform: scale(1.05);
+  transition: all 0.5s ease;
+}
+.second-section .quick-links .link-box .text {
+  font-size: 14px;
+}/*# sourceMappingURL=Dashboard.css.map */

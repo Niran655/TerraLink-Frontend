@@ -1,0 +1,57 @@
+.topbar-container {
+  height: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid #d9d9d9;
+}
+.topbar-container .image-container {
+  margin-left: 15px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50% !important;
+}
+.topbar-container .image-container .logo {
+  width: 50px;
+  height: auto;
+}
+.topbar-container .image-container-mobile {
+  margin-left: 4px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50% !important;
+}
+.topbar-container .image-container-mobile .logo {
+  width: 50px;
+  height: auto;
+}
+.topbar-container .company-name {
+  color: #515353;
+  font-family: "Poppins";
+  font-weight: bold;
+}
+.topbar-container .icon-right {
+  width: 26px;
+  height: 26px;
+  color: gray;
+}
+.topbar-container .user-name {
+  color: gray;
+}
+.topbar-container .link-icon {
+  font-size: 26px;
+  color: #515353;
+}
+.topbar-container .btn-menu {
+  padding: 0px 10px 0px 0px;
+  height: 35px;
+}
+.topbar-container .btn-menu .avatar-user {
+  width: 35px;
+  height: 35px;
+}
+.topbar-container .btn-menu .icon-menu {
+  color: #515353;
+}
+.topbar-container .btn-menu .username-text {
+  color: #515353;
+  font-family: "Siemreap", sans-serif;
+}/*# sourceMappingURL=topnavbar.css.map */

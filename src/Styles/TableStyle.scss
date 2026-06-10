@@ -1,0 +1,118 @@
+// .table-container {
+//   border-radius: 12px;
+//   overflow: hidden;
+//   background: var(--table-bg);
+// }
+
+// .table {
+//   width: 100%;
+//   border-collapse: separate !important;
+//   // border-spacing: 0 10px !important;
+
+//   font-family: "Khmer OS Siemreap", sans-serif;
+
+//   .flex-center {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     gap: 8px;
+//   }
+
+//   .table-header {
+//     background-color: var(--table-header-bg) !important;
+//     font-weight: 700 !important;
+
+
+//     th {
+//       font-weight: 700 !important;
+//       font-size: 14px !important;
+//       color: var(--table-header-text) !important;
+//       border: none !important;
+//     }
+//   }
+
+//   .table-row {
+//     background: var(--table-row-bg);
+//     border-radius: 12px !important;
+//     transition: all 0.2s ease-in-out;
+
+//     &:hover {
+//       background: var(--table-row-hover-bg);
+//     }
+
+//     .flex-end {
+//       display: flex;
+//       justify-content: flex-end;
+//       align-items: center;
+//       gap: 8px;
+//     }
+
+//     td {
+//       // border: none !important;
+//       // padding: 12px 16px !important;
+//       // vertical-align: middle;
+//       // color: var(--table-text-primary);
+
+//       .MuiTypography-root {
+//         font-size: 14px;
+//         color: var(--table-text-primary);
+//       }
+
+//       .MuiChip-root {
+//         font-weight: 500;
+//         border-radius: 6px;
+
+//         &.MuiChip-colorSuccess {
+//           border-color: var(--chip-success-color) !important;
+//           color: var(--chip-success-color) !important;
+//           background-color: var(--chip-success-bg) !important;
+//         }
+
+//         &.MuiChip-colorError {
+//           border-color: var(--chip-error-color) !important;
+//           color: var(--chip-error-color) !important;
+//           background-color: var(--chip-error-bg) !important;
+//         }
+//       }
+
+//       &:last-child {
+//         justify-content: flex-end;
+//         align-items: center;
+//         gap: 8px;
+//       }
+//     }
+//   }
+// }
+
+.actions {
+  display: flex;
+  gap: 8px;
+
+  .edit-btn {
+    background: #f97316;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+      background: #ea580c;
+    }
+  }
+
+  .delete-btn {
+    background: #dc2626;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+      background: #b91c1c;
+    }
+  }
+}

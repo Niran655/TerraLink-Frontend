@@ -1,0 +1,26 @@
+.filter-box{
+    display: flex!important;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    border: none;
+    border-radius: 5px;
+    // background-color: white;
+    .text-content{
+        font-size: 20px;
+        font-weight: 600;
+    }
+    .grid-table-btn{
+        border: 1px solid #F3F4F6;
+        border-radius: 5px;
+        
+    }
+}
+
+.student-box{
+    padding: 10px!important;
+    .student-profilt{
+        display: flex;
+        padding: 5px;
+    }
+}

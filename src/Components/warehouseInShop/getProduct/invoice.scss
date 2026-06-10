@@ -1,0 +1,13 @@
+@media print {
+  body {
+    background: white;
+  }
+
+  button {
+    display: none !important;
+  }
+
+  .MuiDrawer-root {
+    display: none !important;
+  }
+}

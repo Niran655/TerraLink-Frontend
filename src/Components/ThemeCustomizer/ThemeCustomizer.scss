@@ -1,0 +1,72 @@
+.theme-customizer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .rotating-icon {
+    animation: rotate 3s linear infinite;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 12px;
+
+    .color-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+
+      &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      &.active {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 5px currentColor;
+        transform: scale(1.05);
+
+        &::after {
+          content: '✓';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+          font-weight: bold;
+          font-size: 20px;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+      }
+    }
+  }
+}
+
+.theme-customizer-trigger {
+  animation: pulse 2s ease-in-out infinite;
+
+  &:hover {
+    animation: none;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(25, 118, 210, 0);
+  }
+}
