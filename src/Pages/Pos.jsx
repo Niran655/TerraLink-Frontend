@@ -1178,6 +1178,52 @@ const POS = () => {
     );
   };
 
+  const handleAcceptCustomerOrderToCart = (order) => {
+    const cartItems = (order.items || []).map((item, index) => {
+      const productId = item.product?._id || item.product || item.productId || "";
+      const subProductId = item.subProductId || item.id || "";
+      const quantity = Number(item.quantity || 1);
+      const price = Number(item.price || 0);
+
+      return {
+        id: `web_order_${order._id}_${subProductId || index}`,
+        subProductId,
+        productId,
+        name: item.name || "Item",
+        nameEn: item.name || "Item",
+        nameKh: item.name || "Item",
+        price,
+        qty: quantity,
+        img: "",
+        variant: order.orderNumber || "Web Order",
+      };
+    });
+
+    if (!cartItems.length) {
+      setAlert(true, "warning", language === "kh" ? "មិនមានទំនិញក្នុងការបញ្ជាទិញ" : "Order has no items");
+      return;
+    }
+
+    setCart(cartItems);
+    setOrderType(order.orderType || "delivery");
+    setSelectedCustomer({
+      _id: `web_order_customer_${order._id}`,
+      nameEn: order.customerName || "Customer",
+      nameKh: order.customerName || "Customer",
+      phone: order.customerPhone || "",
+    });
+
+    if (order.orderType === "dine_in" && order.tableNumber) {
+      const tables = tablesData ? (Object.values(tablesData).find(Array.isArray) ?? []) : [];
+      const table = tables.find((item) => item.number === order.tableNumber);
+      setSelectedTable(table || { _id: `web_table_${order.tableNumber}`, number: order.tableNumber, name: order.tableNumber });
+    } else {
+      setSelectedTable(null);
+    }
+
+    setOpenPaymentDialog(true);
+  };
+
  
   const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
   const tax = subtotal * 0.1;
@@ -1209,7 +1255,7 @@ const POS = () => {
         shopId,
         orderType,
         customerName,
-        customerPhone: "",
+        customerPhone: selectedCustomer?.phone || selectedCustomer?.phoneNumber || "",
         tableNumber,
         items: cart.map((item) => ({
           product:      item.productId,
@@ -1479,7 +1525,7 @@ const POS = () => {
               setSelectedOrderType={setSelectedOrderType}
               t={t}
             />
-            <CustomerOrderNotifications shopId={shopId} />
+            <CustomerOrderNotifications shopId={shopId} onAcceptToCart={handleAcceptCustomerOrderToCart} />
             <ProductList
               t={t}
               language={language}

@@ -14,6 +14,102 @@ query AiBusinessChat($input: AIBusinessChatInput!) {
 }
 `;
 
+export const GET_FACEBOOK_PAGE_CONNECTIONS = gql`
+query GetFacebookPageConnections($shopId: ID, $active: Boolean) {
+  getFacebookPageConnections(shopId: $shopId, active: $active) {
+    _id
+    pageId
+    pageName
+    active
+    createdAt
+    updatedAt
+    shopId {
+      _id
+      nameEn
+      nameKh
+    }
+  }
+}
+`;
+
+export const GET_CMS_POSTS = gql`
+query GetCmsPosts($shopId: ID, $status: CmsPostStatus, $keyword: String, $limit: Int) {
+  getCmsPosts(shopId: $shopId, status: $status, keyword: $keyword, limit: $limit) {
+    _id
+    title
+    content
+    images
+    status
+    publishAt
+    facebookPageId
+    facebookPostId
+    publishedAt
+    failedAt
+    failureReason
+    createdAt
+    updatedAt
+    shopId {
+      _id
+      nameEn
+      nameKh
+    }
+    facebookPageConnection {
+      _id
+      pageId
+      pageName
+      active
+    }
+  }
+}
+`;
+
+export const GET_BUSINESS_MODULE_RECORDS = gql`
+query GetBusinessModuleRecords(
+  $area: BusinessModuleArea
+  $moduleKey: String
+  $itemType: String
+  $shopId: ID
+  $status: String
+  $keyword: String
+  $active: Boolean
+  $limit: Int
+) {
+  getBusinessModuleRecords(
+    area: $area
+    moduleKey: $moduleKey
+    itemType: $itemType
+    shopId: $shopId
+    status: $status
+    keyword: $keyword
+    active: $active
+    limit: $limit
+  ) {
+    _id
+    area
+    moduleKey
+    itemType
+    title
+    description
+    status
+    channel
+    url
+    customerName
+    contact
+    notes
+    tags
+    dueDate
+    active
+    createdAt
+    updatedAt
+    shopId {
+      _id
+      nameEn
+      nameKh
+    }
+  }
+}
+`;
+
 export const GET_UNIT_WHITH_PAGINATION = gql`
 query GetUnitWithPagination($page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $active: Boolean) {
   getUnitWithPagination(page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, active: $active) {
@@ -592,6 +688,9 @@ query GetCustomerOrders($shopId: ID, $status: CustomerOrderStatus, $limit: Int) 
       callOnArrival
     }
     items {
+      product {
+        _id
+      }
       subProductId
       name
       price

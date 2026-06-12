@@ -45,6 +45,7 @@ import "./menuNavbar.scss";
 import { useAuth } from "../Context/AuthContext";
 import { translateLauguage } from "../function/translate";
 import { filterTenantMenuSections } from "../utils/tenantAccess";
+import { businessMenuSections } from "./businessMenuData";
 
 function getContrastText(hexColor) {
   if (!hexColor || !hexColor.startsWith("#")) return "#ffffff";
@@ -250,6 +251,24 @@ export default function MenuNavbar() {
         },
       ],
     },
+    ...businessMenuSections.map((section) => {
+      const SectionIcon = section.icon;
+
+      return {
+        sectionKey: section.key,
+        pageTitle: t(section.label),
+        pageIcon: <SectionIcon className="icon" />,
+        children: section.modules.map((module) => {
+          const ModuleIcon = module.icon;
+
+          return {
+            pageTitle: t(module.label),
+            routeTo: module.path,
+            pageIcon: <ModuleIcon className="icon" />,
+          };
+        }),
+      };
+    }),
   ];
   const visibleMenuData = filterTenantMenuSections(menuData, user);
   const flatMenuData = visibleMenuData.flatMap((section) => section.children);

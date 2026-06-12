@@ -254,6 +254,154 @@ mutation CreateCategory($input: CategoryInput) {
   }
 }
 `
+
+export const CREATE_FACEBOOK_PAGE_CONNECTION = gql`
+mutation CreateFacebookPageConnection($input: FacebookPageConnectionInput!) {
+  createFacebookPageConnection(input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const CREATE_FACEBOOK_OAUTH_URL = gql`
+mutation CreateFacebookOAuthUrl($shopId: ID!) {
+  createFacebookOAuthUrl(shopId: $shopId) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+    data {
+      url
+    }
+  }
+}
+`;
+
+export const UPDATE_FACEBOOK_PAGE_CONNECTION = gql`
+mutation UpdateFacebookPageConnection($id: ID!, $input: FacebookPageConnectionUpdateInput!) {
+  updateFacebookPageConnection(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const DELETE_FACEBOOK_PAGE_CONNECTION = gql`
+mutation DeleteFacebookPageConnection($id: ID!) {
+  deleteFacebookPageConnection(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const CREATE_CMS_POST = gql`
+mutation CreateCmsPost($input: CmsPostInput!) {
+  createCmsPost(input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+    data {
+      postId
+    }
+  }
+}
+`;
+
+export const UPDATE_CMS_POST = gql`
+mutation UpdateCmsPost($id: ID!, $input: CmsPostUpdateInput!) {
+  updateCmsPost(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const DELETE_CMS_POST = gql`
+mutation DeleteCmsPost($id: ID!) {
+  deleteCmsPost(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const PUBLISH_POST_TO_FACEBOOK = gql`
+mutation PublishPostToFacebook($postId: ID!) {
+  publishPostToFacebook(postId: $postId) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+    data {
+      postId
+      facebookPostId
+    }
+  }
+}
+`;
+
+export const CREATE_BUSINESS_MODULE_RECORD = gql`
+mutation CreateBusinessModuleRecord($input: BusinessModuleRecordInput!) {
+  createBusinessModuleRecord(input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+    data {
+      recordId
+    }
+  }
+}
+`;
+
+export const UPDATE_BUSINESS_MODULE_RECORD = gql`
+mutation UpdateBusinessModuleRecord($id: ID!, $input: BusinessModuleRecordUpdateInput!) {
+  updateBusinessModuleRecord(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+    data {
+      recordId
+    }
+  }
+}
+`;
+
+export const DELETE_BUSINESS_MODULE_RECORD = gql`
+mutation DeleteBusinessModuleRecord($id: ID!) {
+  deleteBusinessModuleRecord(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
 export const UPDATE_CATEGORY = gql`
 mutation UpdateCategory($id: ID!, $input: CategoryInput) {
   updateCategory(_id: $id, input: $input) {

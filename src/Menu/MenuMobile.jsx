@@ -25,17 +25,24 @@ import { useState } from "react";
 import { useThemeContext } from "../Context/ThemeContext";
 import { useAuth } from "../Context/AuthContext";
 import { filterTenantMenuSections } from "../utils/tenantAccess";
+import { translateLauguage } from "../function/translate";
 import Logo from "../assets/Image/logo.png"
 import "./menuNavbar.scss";
+import { businessMenuSections } from "./businessMenuData";
 
 export default function MenuMobile({ onNavigate, showLabels }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { sidebarColor, layoutMode } = useThemeContext();
-  const { user } = useAuth();
+  const { user, language } = useAuth();
+  const { t } = translateLauguage(language);
   const [settingsOpen, setSettingsOpen] = useState(
     location.pathname.startsWith("/setting")
   );
+  const [businessOpen, setBusinessOpen] = useState({
+    cms: location.pathname.startsWith("/cms") || location.pathname === "/social-cms",
+    crm: location.pathname.startsWith("/crm"),
+  });
 
  
   const labelsVisible =
@@ -116,6 +123,19 @@ export default function MenuMobile({ onNavigate, showLabels }) {
   ];
   const visibleSettingGroups = filterTenantMenuSections(settingGroups, user);
   const visibleMenuData = filterTenantMenuSections([{ items: menuData }], user)[0]?.items || [];
+  const visibleBusinessSections = filterTenantMenuSections(
+    businessMenuSections.map((section) => ({
+      title: t(section.label),
+      key: section.key,
+      icon: section.icon,
+      items: section.modules.map((module) => ({
+        pageTitle: t(module.label),
+        routeTo: module.path,
+        path: module.path,
+      })),
+    })),
+    user
+  );
 
   const isActive = (menu) => {
     const paths = menu.matchPaths || [menu.routeTo];
@@ -202,6 +222,130 @@ export default function MenuMobile({ onNavigate, showLabels }) {
                     )}
                   </ListItemButton>
                 </ListItem>
+              );
+            })}
+          </List>
+
+          <List sx={{ width: "100%", px: 0 }}>
+            {visibleBusinessSections.map((section) => {
+              const SectionIcon = section.icon;
+              const sectionActive = section.items.some(
+                (item) => location.pathname === item.routeTo
+              );
+              const isOpen = businessOpen[section.key];
+
+              return (
+                <Box key={section.key}>
+                  <ListItem
+                    disablePadding
+                    onClick={() => {
+                      if (labelsVisible) {
+                        setBusinessOpen((prev) => ({
+                          ...prev,
+                          [section.key]: !prev[section.key],
+                        }));
+                      } else if (section.items[0]) {
+                        navigate(section.items[0].routeTo);
+                        if (typeof onNavigate === "function") onNavigate();
+                      }
+                    }}
+                    sx={{
+                      backgroundColor: sectionActive
+                        ? "rgba(255, 255, 255, 0.15)"
+                        : "transparent",
+                      transition: "background-color 0.3s ease",
+                      "&:hover": {
+                        backgroundColor: sectionActive
+                          ? "rgba(255, 255, 255, 0.15)"
+                          : "rgba(255, 255, 255, 0.1)",
+                      },
+                    }}
+                  >
+                    <ListItemButton
+                      sx={{
+                        color: "white",
+                        justifyContent: labelsVisible ? "flex-start" : "center",
+                        px: labelsVisible ? 2 : 0,
+                        py: 1,
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          display: "flex",
+                          justifyContent: "center",
+                          mr: labelsVisible ? 2 : 0,
+                          color: "inherit",
+                        }}
+                      >
+                        <SectionIcon className="icon" />
+                      </ListItemIcon>
+                      {labelsVisible && (
+                        <>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontWeight: 500, flexGrow: 1 }}
+                          >
+                            {section.title}
+                          </Typography>
+                          {isOpen ? <ExpandLess /> : <ExpandMore />}
+                        </>
+                      )}
+                    </ListItemButton>
+                  </ListItem>
+
+                  {labelsVisible && (
+                    <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {section.items.map((child) => {
+                          const active = location.pathname === child.routeTo;
+
+                          return (
+                            <ListItem
+                              key={child.routeTo}
+                              disablePadding
+                              onClick={() => {
+                                navigate(child.routeTo);
+                                if (typeof onNavigate === "function") onNavigate();
+                              }}
+                              sx={{
+                                backgroundColor: active
+                                  ? "rgba(255, 255, 255, 0.15)"
+                                  : "transparent",
+                                "&:hover": {
+                                  backgroundColor: active
+                                    ? "rgba(255, 255, 255, 0.15)"
+                                    : "rgba(255, 255, 255, 0.1)",
+                                },
+                              }}
+                            >
+                              <ListItemButton sx={{ color: "white", pl: 3, py: 0.75 }}>
+                                <Box
+                                  sx={{
+                                    width: 4,
+                                    height: 4,
+                                    borderRadius: "50%",
+                                    bgcolor: active
+                                      ? "white"
+                                      : "rgba(255,255,255,0.45)",
+                                    mr: 1.5,
+                                    flexShrink: 0,
+                                  }}
+                                />
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: active ? 700 : 400 }}
+                                >
+                                  {child.pageTitle}
+                                </Typography>
+                              </ListItemButton>
+                            </ListItem>
+                          );
+                        })}
+                      </List>
+                    </Collapse>
+                  )}
+                </Box>
               );
             })}
           </List>

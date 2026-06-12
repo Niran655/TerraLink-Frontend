@@ -12,6 +12,13 @@ const modelOptions = [
   { value: "sales_forecast", label: { en: "Sales Forecast", kh: "ការព្យាករណ៍លក់" } },
   { value: "inventory_optimization", label: { en: "Inventory Health", kh: "សុខភាពស្តុក" } },
   { value: "all", label: { en: "Full Business Report", kh: "របាយការណ៍អាជីវកម្ម" } },
+  { value: "customer_behavior", label: { en: "Customer Behavior", kh: "Customer Behavior" } },
+  { value: "marketing_performance", label: { en: "Marketing Performance", kh: "Marketing Performance" } },
+  { value: "profitability_analysis", label: { en: "Profitability Analysis", kh: "Profitability Analysis" } },
+  { value: "risk_analysis", label: { en: "Risk Analysis", kh: "Risk Analysis" } },
+  { value: "growth_opportunities", label: { en: "Growth Opportunities", kh: "Growth Opportunities" } },
+  { value: "operations_advisor", label: { en: "Operations Advisor", kh: "Operations Advisor" } },
+  { value: "product_performance", label: { en: "Product Performance", kh: "Product Performance" } },
 ];
 
 const quickQuestions = [
@@ -50,6 +57,51 @@ const quickQuestions = [
       kh: "ប្រើការវិភាគអាជីវកម្មទាំងអស់ ហើយសង្ខេបសុខភាពអាជីវកម្ម និងសកម្មភាពបន្ទាប់។",
     },
     model: "all",
+  },
+  {
+    label: { en: "Campaign ROI", kh: "Campaign ROI" },
+    icon: <Target size={16} />,
+    prompt: {
+      en: "Compare marketing campaign performance, ROI, conversion rate, customer acquisition, and the best channel to invest in next.",
+      kh: "Compare marketing campaign performance, ROI, conversion rate, customer acquisition, and the best channel to invest in next.",
+    },
+    model: "marketing_performance",
+  },
+  {
+    label: { en: "Profit focus", kh: "Profit focus" },
+    icon: <TrendingUp size={16} />,
+    prompt: {
+      en: "Analyze profit, cost pressure, margin risks, and the highest-return action to improve profit.",
+      kh: "Analyze profit, cost pressure, margin risks, and the highest-return action to improve profit.",
+    },
+    model: "profitability_analysis",
+  },
+  {
+    label: { en: "Biggest risks", kh: "Biggest risks" },
+    icon: <AlertTriangle size={16} />,
+    prompt: {
+      en: "Identify the biggest business risks this month, explain the money impact, and rank urgent actions.",
+      kh: "Identify the biggest business risks this month, explain the money impact, and rank urgent actions.",
+    },
+    model: "risk_analysis",
+  },
+  {
+    label: { en: "Growth plan", kh: "Growth plan" },
+    icon: <Lightbulb size={16} />,
+    prompt: {
+      en: "Find growth opportunities across sales, products, customers, marketing, and operations, then recommend the best next move.",
+      kh: "Find growth opportunities across sales, products, customers, marketing, and operations, then recommend the best next move.",
+    },
+    model: "growth_opportunities",
+  },
+  {
+    label: { en: "Products to push", kh: "Products to push" },
+    icon: <ClipboardList size={16} />,
+    prompt: {
+      en: "Analyze product performance, top sellers, slow movers, reorder needs, and which products I should promote.",
+      kh: "Analyze product performance, top sellers, slow movers, reorder needs, and which products I should promote.",
+    },
+    model: "product_performance",
   },
 ];
 
@@ -123,6 +175,7 @@ const prettyJson = (value) => {
 };
 
 const businessAreaLabels = {
+  chat: { en: "Chat", kh: "Chat" },
   customer_churn: { en: "Customer Retention", kh: "ការរក្សាអតិថិជន" },
   customerChurn: { en: "Customer Retention", kh: "ការរក្សាអតិថិជន" },
   employee_performance: { en: "Employee Performance", kh: "ប្រសិទ្ធភាពបុគ្គលិក" },
@@ -132,6 +185,13 @@ const businessAreaLabels = {
   sales_forecast: { en: "Sales Forecast", kh: "ការព្យាករណ៍លក់" },
   salesForecast: { en: "Sales Forecast", kh: "ការព្យាករណ៍លក់" },
   all: { en: "Full Business Report", kh: "របាយការណ៍អាជីវកម្ម" },
+  customer_behavior: { en: "Customer Behavior", kh: "Customer Behavior" },
+  marketing_performance: { en: "Marketing Performance", kh: "Marketing Performance" },
+  profitability_analysis: { en: "Profitability Analysis", kh: "Profitability Analysis" },
+  risk_analysis: { en: "Risk Analysis", kh: "Risk Analysis" },
+  growth_opportunities: { en: "Growth Opportunities", kh: "Growth Opportunities" },
+  operations_advisor: { en: "Operations Advisor", kh: "Operations Advisor" },
+  product_performance: { en: "Product Performance", kh: "Product Performance" },
 };
 
 const getLabel = (label, language = "en") => {
@@ -158,6 +218,8 @@ const sectionNames = [
   "AI Advisor Recommendation",
   "Risk Level",
   "Next Actions",
+  "Clarifying Questions",
+  "Follow-up Questions",
 ];
 
 const parseStructuredAnswer = (content = "") => {
@@ -194,6 +256,8 @@ const isListSection = (title) =>
     "Recommendations",
     "Next Actions",
     "Data Needed",
+    "Clarifying Questions",
+    "Follow-up Questions",
   ].includes(title);
 
 const isTableSection = (title) => title === "Business Analysis Table";
@@ -238,6 +302,8 @@ const sectionMeta = {
   Opportunities: { icon: Lightbulb, color: "success.main", tone: "success" },
   "Recommended Actions": { icon: Target, color: "success.main", tone: "success" },
   "AI Advisor Recommendation": { icon: CheckCircle2, color: "success.main", tone: "success" },
+  "Clarifying Questions": { icon: Info, color: "info.main", tone: "info" },
+  "Follow-up Questions": { icon: Info, color: "info.main", tone: "info" },
 };
 
 const sectionTitleLabels = {
@@ -254,6 +320,8 @@ const sectionTitleLabels = {
   "AI Advisor Recommendation": { en: "AI Advisor Recommendation", kh: "អនុសាសន៍ពីទីប្រឹក្សា" },
   "Risk Level": { en: "Risk Level", kh: "កម្រិតហានិភ័យ" },
   "Next Actions": { en: "Next Actions", kh: "សកម្មភាពបន្ទាប់" },
+  "Clarifying Questions": { en: "Clarifying Questions", kh: "Clarifying Questions" },
+  "Follow-up Questions": { en: "Follow-up Questions", kh: "Follow-up Questions" },
 };
 
 const displaySectionTitle = (title, language = "en") => getLabel(sectionTitleLabels[title], language) || title;
@@ -664,13 +732,17 @@ export default function ChatBot() {
         {
           role: "assistant",
           content: result.answer,
-          meta: {
-            model: result.model,
-            status: result.businessAIStatus,
-            route: result.businessAIRoute,
-            error: result.error,
-            businessAIResult: parseBusinessAIResult(result.businessAIResult),
-          },
+          plain: result.businessAIStatus === "chat",
+          meta:
+            result.businessAIStatus === "chat"
+              ? null
+              : {
+                  model: result.model,
+                  status: result.businessAIStatus,
+                  route: result.businessAIRoute,
+                  error: result.error,
+                  businessAIResult: parseBusinessAIResult(result.businessAIResult),
+                },
         },
       ]);
     } catch (error) {
@@ -815,7 +887,7 @@ export default function ChatBot() {
                       textAlign: "start",
                     }}
                   >
-                    {message.role === "assistant" ? (
+                    {message.role === "assistant" && !message.plain ? (
                       <StructuredAnswer content={message.content} language={language} />
                     ) : (
                       <Typography variant="body2">{message.content}</Typography>

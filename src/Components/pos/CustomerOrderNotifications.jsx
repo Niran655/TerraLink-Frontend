@@ -5,15 +5,11 @@ import { Bell, CheckCircle, XCircle } from "lucide-react";
 import { ACCEPT_CUSTOMER_ORDER, REJECT_CUSTOMER_ORDER } from "../../../graphql/mutation";
 import { GET_CUSTOMER_ORDERS } from "../../../graphql/queries";
 import { useAuth } from "../../Context/AuthContext";
+import { translateLauguage } from "../../function/translate";
 
-const orderTypeLabel = {
-  dine_in: "Dine-in",
-  take_away: "Takeaway",
-  delivery: "Delivery",
-};
-
-const CustomerOrderNotifications = ({ shopId }) => {
-  const { setAlert } = useAuth();
+const CustomerOrderNotifications = ({ shopId, onAcceptToCart }) => {
+  const { setAlert, language } = useAuth();
+  const { t } = translateLauguage(language);
   const { data, refetch } = useQuery(GET_CUSTOMER_ORDERS, {
     variables: { shopId, status: "pending", limit: 10 },
     skip: !shopId,
@@ -21,15 +17,13 @@ const CustomerOrderNotifications = ({ shopId }) => {
     fetchPolicy: "cache-and-network",
   });
 
+  const orderTypeLabel = {
+    dine_in: t("dine_in"),
+    take_away: t("take_away"),
+    delivery: t("delivery"),
+  };
+
   const [acceptOrder, { loading: accepting }] = useMutation(ACCEPT_CUSTOMER_ORDER, {
-    onCompleted: ({ acceptCustomerOrder }) => {
-      if (acceptCustomerOrder?.isSuccess) {
-        setAlert(true, "success", acceptCustomerOrder.message);
-        refetch();
-      } else {
-        setAlert(true, "error", acceptCustomerOrder?.message);
-      }
-    },
     onError: (error) => setAlert(true, "error", { messageEn: error.message, messageKh: error.message }),
   });
 
@@ -48,11 +42,24 @@ const CustomerOrderNotifications = ({ shopId }) => {
   const orders = data?.getCustomerOrders || [];
   if (!orders.length) return null;
 
+  const handleAccept = async (order) => {
+    const result = await acceptOrder({ variables: { id: order._id } });
+    const response = result?.data?.acceptCustomerOrder;
+
+    if (response?.isSuccess) {
+      setAlert(true, "success", response.message);
+      onAcceptToCart?.(order);
+      refetch();
+    } else {
+      setAlert(true, "error", response?.message);
+    }
+  };
+
   return (
     <Box mb={3}>
       <Stack direction="row" alignItems="center" spacing={1.25} mb={1.5}>
         <Bell size={18} />
-        <Typography fontWeight={800}>Customer web orders</Typography>
+        <Typography fontWeight={800}>{t("recent_orders")}</Typography>
         <Chip size="small" color="primary" label={orders.length} />
       </Stack>
       <Grid container spacing={2}>
@@ -77,14 +84,14 @@ const CustomerOrderNotifications = ({ shopId }) => {
                 ))}
                 {(order.items || []).length > 3 && (
                   <Typography variant="caption" color="text.secondary">
-                    +{order.items.length - 3} more items
+                    +{order.items.length - 3} {t("items")}
                   </Typography>
                 )}
               </Box>
 
               {order.specialInstructions && (
                 <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1 }}>
-                  Note: {order.specialInstructions}
+                  {t("remark")}: {order.specialInstructions}
                 </Typography>
               )}
 
@@ -99,16 +106,16 @@ const CustomerOrderNotifications = ({ shopId }) => {
                     disabled={rejecting || accepting}
                     onClick={() => rejectOrder({ variables: { id: order._id, reason: "Rejected by shop" } })}
                   >
-                    Reject
+                    {t("reject")}
                   </Button>
                   <Button
                     size="small"
                     variant="contained"
                     startIcon={<CheckCircle size={16} />}
                     disabled={accepting || rejecting}
-                    onClick={() => acceptOrder({ variables: { id: order._id } })}
+                    onClick={() => handleAccept(order)}
                   >
-                    Accept
+                    {t("accept")}
                   </Button>
                 </Stack>
               </Stack>

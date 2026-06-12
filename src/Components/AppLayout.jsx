@@ -68,6 +68,7 @@ import {
   canAccessShop,
   filterTenantMenuSections,
 } from "../utils/tenantAccess";
+import { businessMenuSections } from "../Menu/businessMenuData";
 
 export default function AppLayout() {
   const {
@@ -263,6 +264,16 @@ export default function AppLayout() {
         { label: t("table"), path: "/setting/table", icon: RestaurantOutlined },
       ],
     },
+    ...businessMenuSections.map((section) => ({
+      key: section.key,
+      label: t(section.label),
+      icon: section.icon,
+      items: section.modules.map((module) => ({
+        label: t(module.label),
+        path: module.path,
+        icon: module.icon,
+      })),
+    })),
   ];
 
   const tabs = [

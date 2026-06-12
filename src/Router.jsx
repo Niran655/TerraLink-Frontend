@@ -16,6 +16,8 @@ import { canManageSettings, canManageTenant, canManageUsers } from './utils/tena
 import Department from './Pages/Department';
 import Permission from './Pages/Permission';
 import SaleReturn from './Pages/SaleReturn';
+import SocialCms from './Pages/SocialCms';
+import CmsCrmMenu from './Pages/CmsCrmMenu';
 import Dashboard from './Pages/Dashboard';
 import Warehouse from './Pages/Warehouse';
 import Category from './Pages/Category';
@@ -64,6 +66,9 @@ export default function Router() {
         { path: '/', element: <Navigate to="/dashboard" /> },
         { path: 'dashboard', element: <Dashboard /> },
         { path: 'chat', element: <ChatBot /> },
+        { path: 'social-cms', element: <Guard allow={canManageTenant(user)}><SocialCms/></Guard> },
+        { path: 'cms/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="cms" /></Guard> },
+        { path: 'crm/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="crm" /></Guard> },
         { path: 'setting', element: <Guard allow={canManageTenant(user)}><Settings/></Guard> },
         { path: '/setting/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
         { path: '/setting/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
