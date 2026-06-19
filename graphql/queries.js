@@ -2420,3 +2420,146 @@ export const GET_ORDER_CATEGORY_STATS = gql`
     }
   }
 `;
+
+
+
+
+// ===============================MOBILE APP CONTROLL QUERIES=======================  
+export const GET_CUISINES_TYPES_WITH_PAGINATION = gql`
+query GetCuisineTypesWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getCuisineTypesWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
+    data {
+      _id
+      nameKh
+      nameEn
+      status
+      createdAt
+      updatedAt
+    }
+    paginator {
+      slNo
+      prev
+      next
+      perPage
+      totalPosts
+      totalPages
+      currentPage
+      hasPrevPage
+      hasNextPage
+      totalDocs
+    }
+  }
+}`
+
+export const GET_CUISINES_ORIGINS_WITH_PAGINATION = gql`
+query GetCuisineOriginsWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getCuisineOriginsWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
+    data {
+      _id
+      nameKh
+      nameEn
+      status
+      createdAt
+      updatedAt
+    }
+    paginator {
+      slNo
+      prev
+      next
+      perPage
+      totalPosts
+      totalPages
+      currentPage
+      hasPrevPage
+      hasNextPage
+      totalDocs
+    }
+  }
+}`
+
+export const GET_MEAL_TYPES_PAGINATION = gql` 
+query GetMealTypesWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getMealTypesWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
+    data {
+      _id
+      name
+      status
+      shopId
+      createdAt
+      updatedAt
+    }
+    paginator {
+      slNo
+      prev
+      next
+      perPage
+      totalPosts
+      totalPages
+      currentPage
+      hasPrevPage
+      hasNextPage
+      totalDocs
+    }
+  }
+}`
+
+export const GET_SHOP_PROMOTION_WITH_PAGINATION = gql`
+query GetShopPromotionsWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getShopPromotionsWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
+    data {
+      _id
+     
+      type
+      title
+      description
+      discount
+      image
+      startDate
+      endDate
+      status
+      createdAt
+      updatedAt
+    }
+    paginator {
+      slNo
+      prev
+      next
+      perPage
+      totalPosts
+      totalPages
+      currentPage
+      hasPrevPage
+      hasNextPage
+      totalDocs
+    }
+  }
+}`
+
+
+export const GET_SHOP_EVENT_WITH_PAGINATION = gql`
+query GetShopEventsWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getShopEventsWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
+    data {
+      _id
+      title
+      description
+      date
+      status
+      createdAt
+      updatedAt
+    }
+    paginator {
+      slNo
+      prev
+      next
+      perPage
+      totalPosts
+      totalPages
+      currentPage
+      hasPrevPage
+      hasNextPage
+      totalDocs
+    }
+  }
+}
+`

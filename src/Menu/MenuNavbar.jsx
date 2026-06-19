@@ -1,51 +1,17 @@
-import {
-  BusinessOutlined,
-  CategoryOutlined,
-  EventAvailableOutlined,
-  GroupOutlined,
-  Inventory2Outlined,
-  LocalShippingOutlined,
-  PeopleAltOutlined,
-  RestaurantOutlined,
-  SecurityOutlined,
-  StraightenOutlined,
-} from "@mui/icons-material";
+import { BusinessOutlined, CategoryOutlined, EventAvailableOutlined, GroupOutlined, Inventory2Outlined, LocalShippingOutlined, PeopleAltOutlined, RestaurantOutlined, SecurityOutlined, StraightenOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Avatar,
-  Box,
-  Collapse,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import {
-  BadgePercent,
-  BotMessageSquare,
-  ChartNoAxesColumn,
-  ChevronDown,
-  Currency,
-  FileText,
-  LayoutDashboard,
-  RotateCcw,
-  ShoppingCart,
-  TrendingDown,
-  TrendingUp,
-  Warehouse,
-} from "lucide-react";
+import { Avatar, Box, Collapse, List, ListItem, ListItemButton, ListItemIcon, Stack, Tooltip, Typography } from "@mui/material";
+import { BadgePercent, BotMessageSquare, ChartNoAxesColumn, ChevronDown, Currency, FileText, LayoutDashboard, RotateCcw, ShoppingCart, TrendingDown, TrendingUp, Warehouse } from "lucide-react";
+import { Bell, Gift, Image, QrCode, Settings, Smartphone } from "lucide-react";
 import { useState } from "react";
 
 import logo from "../assets/Image/small-logo.png";
 import { useThemeContext } from "../Context/ThemeContext";
-import "./menuNavbar.scss";
 import { useAuth } from "../Context/AuthContext";
 import { translateLauguage } from "../function/translate";
 import { filterTenantMenuSections } from "../utils/tenantAccess";
 import { businessMenuSections } from "./businessMenuData";
+import "./menuNavbar.scss";
 
 function getContrastText(hexColor) {
   if (!hexColor || !hexColor.startsWith("#")) return "#ffffff";
@@ -63,8 +29,8 @@ export default function MenuNavbar() {
   const { t } = translateLauguage(language);
   const { sidebarColor, layoutMode, setLayoutMode } = useThemeContext();
 
-
   const isCompact = layoutMode === "compact";
+  const isSidebar = layoutMode === "sidebar";
 
   const menuData = [
     {
@@ -251,6 +217,7 @@ export default function MenuNavbar() {
         },
       ],
     },
+
     ...businessMenuSections.map((section) => {
       const SectionIcon = section.icon;
 
@@ -304,7 +271,9 @@ export default function MenuNavbar() {
   };
 
   const handleLogoClick = () => {
-    setLayoutMode(isCompact ? "default" : "compact");
+    if (layoutMode === "default") setLayoutMode("compact");
+    else if (layoutMode === "compact") setLayoutMode("sidebar");
+    else setLayoutMode("default");
   };
 
 
@@ -376,7 +345,9 @@ export default function MenuNavbar() {
         flexDirection: "column",
         overflowY: "auto",
         overflowX: "hidden",
-        "&::-webkit-scrollbar": { width: "4px" },
+        width: isSidebar ? "auto" : "100%",
+        minWidth: isSidebar ? "80px" : "auto",
+        "&::-webkit-scrollbar": { width: isSidebar ? "3px" : "4px" },
         "&::-webkit-scrollbar-track": { background: "transparent" },
         "&::-webkit-scrollbar-thumb": {
           background: "rgba(255,255,255,0.18)",

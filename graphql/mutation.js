@@ -1206,3 +1206,188 @@ mutation UpdateLeaveRequestStatus($id: ID!, $status: LeaveRequestStatus!, $admin
   }
 }
 `
+// ================================MOBILE APP CONTROLL MUTATION=======================
+export const CREATE_CUISINE_TYPE = gql`
+mutation CreateCuisineType($shopId: ID!, $input: CuisineTypeInput!) {
+  createCuisineType(shopId: $shopId, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+    
+  }
+}`
+
+export const UPDATE_CUISINE_TYPE = gql`mutation UpdateCuisineType($id: ID!, $input: CuisineTypeInput!) {
+  updateCuisineType(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const DELETE_CUISINE_TYPE = gql`
+mutation DeleteCuisineType($id: ID!) {
+  deleteCuisineType(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const CREATE_CUISINE_ORIGIN = gql`
+mutation CreateCuisineOrigin($shopId: ID!, $input: CuisineOriginInput!) {
+  createCuisineOrigin(shopId: $shopId, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const UPDATE_CUISINE_ORIGIN = gql`
+mutation UpdateCuisineOrigin($id: ID!, $input: CuisineOriginInput!) {
+  updateCuisineOrigin(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const DELETE_CUISINE_ORIGIN = gql`
+mutation DeleteCuisineOrigin($id: ID!) {
+  deleteCuisineOrigin(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+
+export const CREATE_MEAL_TYPE = gql`
+mutation CreateMealType($shopId: ID!, $input: MealTypeInput!) {
+  createMealType(shopId: $shopId, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+
+export const UPDATE_MEAL_TYPE = gql`
+mutation UpdateMealType($id: ID!, $input: MealTypeInput!) {
+  updateMealType(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const DELETE_MEAL_TYPE = gql`
+mutation DeleteMealType($id: ID!) {
+  deleteMealType(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const CREATE_SHOP_PROMOTION = gql`
+mutation CreateShopPromotion($shopId: ID!, $input: ShopPromotionInput!) {
+  createShopPromotion(shopId: $shopId, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`
+
+export const UPDATE_SHOP_PROMOTION = gql`
+mutation UpdateShopPromotion($id: ID!, $input: ShopPromotionInput!) {
+  updateShopPromotion(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const DELETE_SHOP_PROMOTION = gql`
+mutation DeleteShopPromotion($id: ID!) {
+  deleteShopPromotion(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+
+export const CREATE_SHOP_EVENT = gql`
+query GetShopEventsWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getShopEventsWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
+    data {
+      _id
+      title
+      description
+      date
+      status
+      createdAt
+      updatedAt
+    }
+    paginator {
+      slNo
+      prev
+      next
+      perPage
+      totalPosts
+      totalPages
+      currentPage
+      hasPrevPage
+      hasNextPage
+      totalDocs
+    }
+  }
+}`
+
+export const UPDATE_SHOP_EVENT = gql`
+mutation UpdateShopEvent($id: ID!, $input: ShopEventInput!) {
+  updateShopEvent(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`
+
+export const DELETE_SHOP_EVENT = gql`
+mutation DeleteShopEvent($id: ID!) {
+  deleteShopEvent(_id: $id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}`

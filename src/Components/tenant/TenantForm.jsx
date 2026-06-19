@@ -1,22 +1,10 @@
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 /* eslint-disable react/prop-types */
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import QueueOutlinedIcon from "@mui/icons-material/QueueOutlined";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { useMutation } from "@apollo/client/react";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 
 import { REGISTER_TENANT_OWNER, UPDATE_TENANT } from "../../../graphql/mutation";
@@ -175,13 +163,13 @@ export default function TenantForm({ open, onClose, dialogTitle = "Create", tena
             <Typography fontWeight={800}>{t("tenant_information") || "Tenant Information"}</Typography>
           </Stack>
           <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
-            <TextField label={t("khmer_name")} value={form.tenantNameKh} onChange={handleChange("tenantNameKh")} required fullWidth />
-            <TextField label={t("english_name")} value={form.tenantNameEn} onChange={handleChange("tenantNameEn")} fullWidth />
+            <TextField size="small" label={t("khmer_name")} value={form.tenantNameKh} onChange={handleChange("tenantNameKh")} required fullWidth />
+            <TextField size="small" label={t("english_name")} value={form.tenantNameEn} onChange={handleChange("tenantNameEn")} fullWidth />
             {!isCreate && (
               <>
-                <TextField label={t("email")} value={form.tenantEmail} onChange={handleChange("tenantEmail")} fullWidth />
-                <TextField label={t("phone")} value={form.tenantPhone} onChange={handleChange("tenantPhone")} fullWidth />
-                <TextField label={t("address")} value={form.tenantAddress} onChange={handleChange("tenantAddress")} fullWidth sx={{ gridColumn: { md: "1 / -1" } }} />
+                <TextField size="small" label={t("email")} value={form.tenantEmail} onChange={handleChange("tenantEmail")} fullWidth />
+                <TextField size="small" label={t("phone")} value={form.tenantPhone} onChange={handleChange("tenantPhone")} fullWidth />
+                <TextField size="small" label={t("address")} value={form.tenantAddress} onChange={handleChange("tenantAddress")} fullWidth sx={{ gridColumn: { md: "1 / -1" } }} />
               </>
             )}
           </Box>
@@ -193,15 +181,15 @@ export default function TenantForm({ open, onClose, dialogTitle = "Create", tena
                 <Typography fontWeight={800}>{t("business_owner") || "Business Owner"}</Typography>
               </Stack>
               <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } }}>
-                <TextField label={t("khmer_name")} value={form.ownerNameKh} onChange={handleChange("ownerNameKh")} required fullWidth />
-                <TextField label={t("english_name")} value={form.ownerNameEn} onChange={handleChange("ownerNameEn")} required fullWidth />
-                <TextField label={t("email")} value={form.ownerEmail} onChange={handleChange("ownerEmail")} required fullWidth />
-                <TextField label={t("phone")} value={form.ownerPhone} onChange={handleChange("ownerPhone")} required fullWidth />
-                <TextField select label={t("gender")} value={form.ownerGender} onChange={handleChange("ownerGender")} fullWidth>
+                <TextField size="small" label={t("khmer_name")} value={form.ownerNameKh} onChange={handleChange("ownerNameKh")} required fullWidth />
+                <TextField size="small" label={t("english_name")} value={form.ownerNameEn} onChange={handleChange("ownerNameEn")} required fullWidth />
+                <TextField size="small" label={t("email")} value={form.ownerEmail} onChange={handleChange("ownerEmail")} required fullWidth />
+                <TextField size="small" label={t("phone")} value={form.ownerPhone} onChange={handleChange("ownerPhone")} required fullWidth />
+                <TextField size="small" select label={t("gender")} value={form.ownerGender} onChange={handleChange("ownerGender")} fullWidth>
                   <MenuItem value="male">{t("male")}</MenuItem>
                   <MenuItem value="female">{t("female")}</MenuItem>
                 </TextField>
-                <TextField label={t("password")} type="password" value={form.ownerPassword} onChange={handleChange("ownerPassword")} required fullWidth />
+                <TextField size="small" label={t("password")} type="password" value={form.ownerPassword} onChange={handleChange("ownerPassword")} required fullWidth />
               </Box>
             </>
           )}

@@ -1,9 +1,7 @@
-
 // import { createTheme, ThemeProvider as MuiThemeProvider } from "@mui/material";
 // import { createContext, useContext, useEffect, useMemo, useState } from "react";
 // import KhmerBg  from "../assets/Image/khmer-bg.png"; // Make sure to have this image in the specified path
 // const ThemeContext = createContext();
-
 // export const useThemeContext = () => {
 //   const context = useContext(ThemeContext);
 //   if (!context) {
@@ -11,74 +9,57 @@
 //   }
 //   return context;
 // };
-
 // export const ThemeProvider = ({ children }) => {
 //   const [mode, setMode] = useState(() => {
 //     return localStorage.getItem("themeMode") || "light";
 //   });
-
 //   const [primaryColor, setPrimaryColor] = useState(() => {
 //     return localStorage.getItem("primaryColor") || "#1976d2";
 //   });
-
 //   const [sidebarColor, setSidebarColor] = useState(() => {
 //     return localStorage.getItem("sidebarColor") || "#1e293b";
 //   });
-
 //   const [layoutMode, setLayoutMode] = useState(() => {
 //     return localStorage.getItem("layoutMode") || "default";
 //   });
-
 //   const [topbarColor, setTopbarColor] = useState(() => {
 //     return localStorage.getItem("topbarColor") || "#1E293B";
 //   });
-
 //   const [fontSize, setFontSize] = useState(() => {
 //     return localStorage.getItem("fontSize") || "medium";
 //   });
-
 //   const [mobileDrawerWidth, setMobileDrawerWidth] = useState(() => {
 //     return Number(localStorage.getItem("mobileDrawerWidth")) || 280;
 //   });
-
 //   const [mobileShowLabels, setMobileShowLabels] = useState(() => {
 //     const v = localStorage.getItem("mobileShowLabels");
 //     return v === null ? true : v === "true";
 //   });
-
 //   // Persist settings
 //   useEffect(() => {
 //     localStorage.setItem("themeMode", mode);
 //   }, [mode]);
-
 //   useEffect(() => {
 //     localStorage.setItem("primaryColor", primaryColor);
 //   }, [primaryColor]);
-
 //   useEffect(() => {
 //     localStorage.setItem("sidebarColor", sidebarColor);
 //   }, [sidebarColor]);
-
 //   useEffect(() => {
 //     localStorage.setItem("layoutMode", layoutMode);
 //   }, [layoutMode]);
-
 //   useEffect(() => {
 //     localStorage.setItem("topbarColor", topbarColor);
 //   }, [topbarColor]);
-
 //   useEffect(() => {
 //     localStorage.setItem("fontSize", fontSize);
 //   }, [fontSize]);
-
 //   useEffect(() => {
 //     localStorage.setItem("mobileDrawerWidth", String(mobileDrawerWidth));
 //   }, [mobileDrawerWidth]);
-
 //   useEffect(() => {
 //     localStorage.setItem("mobileShowLabels", String(mobileShowLabels));
 //   }, [mobileShowLabels]);
-
 //   const toggleColorMode = (newMode) => {
 //     if (newMode) {
 //       setMode(newMode);
@@ -90,7 +71,6 @@
 //       });
 //     }
 //   };
-
 //   const resetSettings = () => {
 //     setMode("light");
 //     setPrimaryColor("#1976d2");
@@ -100,7 +80,6 @@
 //     setFontSize("medium");
 //     setMobileDrawerWidth(280);
 //     setMobileShowLabels(true);
-
 //     localStorage.removeItem("themeMode");
 //     localStorage.removeItem("primaryColor");
 //     localStorage.removeItem("sidebarColor");
@@ -110,7 +89,6 @@
 //     localStorage.removeItem("mobileDrawerWidth");
 //     localStorage.removeItem("mobileShowLabels");
 //   };
-
 //   // Inject global CSS for Khmer New Year starry night background
 // // useEffect(() => {
 // //     if (mode === "khmerNewYear") {
@@ -194,7 +172,6 @@
 // //       document.body.classList.remove("khmer-new-year-mode");
 // //     }
 // //   }, [mode]);
-
 // useEffect(() => {
 //   if (mode === "khmerNewYear") {
 //     document.body.classList.add("khmer-new-year-mode");
@@ -202,7 +179,6 @@
 //       const style = document.createElement("style");
 //       style.id = "khmer-pattern-style";
 //       style.textContent = `
- 
 //         body.khmer-new-year-mode {
 //           // background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url(${KhmerBg});
 //           background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url(${KhmerBg});
@@ -279,20 +255,16 @@
 //     document.body.classList.remove("khmer-new-year-mode");
 //   }
 // }, [mode]);
-
 //   const theme = useMemo(() => {
 //     const isKhmerNewYear = mode === "khmerNewYear";
-  
 //     const baseMode = isKhmerNewYear ? "dark" : mode === "glass" ? "dark" : mode;
 //     const isGlass = mode === "glass";
-
 //     let effectivePrimary = primaryColor;
 //     let effectiveSecondary = "#6b7280";
 //     if (isKhmerNewYear) {
 //       effectivePrimary = "#C62828";   // festive red
 //       effectiveSecondary = "#FFB300"; // gold
 //     }
-
 //     return createTheme({
 //       palette: {
 //         mode: baseMode,
@@ -841,7 +813,6 @@
 //       },
 //     });
 //   }, [mode, primaryColor, sidebarColor, topbarColor, fontSize]);
-
 //   const value = {
 //     mode,
 //     primaryColor,
@@ -861,16 +832,15 @@
 //     setMobileShowLabels,
 //     resetSettings,
 //   };
-
 //   return (
 //     <ThemeContext.Provider value={value}>
 //       <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>
 //     </ThemeContext.Provider>
 //   );
 // };
+/* eslint-disable react/prop-types, react-refresh/only-export-components */
 import { createTheme, ThemeProvider as MuiThemeProvider } from "@mui/material";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import KhmerBg from "../assets/Image/khmer-bg.png";
 
 const ThemeContext = createContext();
 
@@ -915,6 +885,17 @@ const tokens = {
     text:       "#e6edf3",
     textMuted:  "#8b949e",
     textSubtle: "#6e7681",
+  },
+  crypto: {
+    bg:         "#02070f",
+    bgSubtle:   "#081025",
+    bgMuted:    "#0f172a",
+    surface:    "rgba(5, 13, 29, 0.94)",
+    border:     "rgba(0, 255, 183, 0.18)",
+    borderSubtle: "rgba(0, 255, 183, 0.10)",
+    text:       "#e6f7ff",
+    textMuted:  "#7ac7d4",
+    textSubtle: "#4b6b8a",
   },
   khmer: {
     bg:         "#080a0f",
@@ -979,50 +960,41 @@ const injectBaseStyles = () => {
       z-index: 0;
     }
 
-    /* ── Khmer New Year mode ── */
-    body.theme-khmer {
-      background: linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.82)), url(${KhmerBg});
-      background-size: cover;
-      background-position: center;
+    /* ── Crypto trading mode ── */
+    body.theme-crypto {
+      background: radial-gradient(circle at top left, rgba(0, 255, 183, 0.12), transparent 20%),
+                  radial-gradient(circle at bottom right, rgba(66, 153, 225, 0.15), transparent 20%),
+                  linear-gradient(135deg, #02070f 0%, #031124 35%, #081f3b 100%);
       background-attachment: fixed;
-      background-color: #080a0f;
-      color: #f0f6fc;
+      color: #e6f7ff;
     }
-    body.theme-khmer::before {
+    body.theme-crypto::before {
       content: '';
       position: fixed;
       inset: 0;
       pointer-events: none;
       background-image:
-        radial-gradient(1.5px 1.5px at 15% 12%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1px 1px   at 35% 28%, rgba(230,160,40,0.8),    transparent),
-        radial-gradient(2px 2px   at 55%  8%, rgba(255,255,255,0.7),   transparent),
-        radial-gradient(1px 1px   at 70% 45%, rgba(255,255,255,0.6),   transparent),
-        radial-gradient(1.5px 1.5px at 85% 20%, rgba(230,160,40,0.9), transparent),
-        radial-gradient(1px 1px   at 25% 65%, rgba(255,255,255,0.5),   transparent),
-        radial-gradient(2px 2px   at 45% 80%, rgba(230,160,40,0.6),    transparent),
-        radial-gradient(1px 1px   at 65% 70%, rgba(255,255,255,0.8),   transparent),
-        radial-gradient(1.5px 1.5px at 90% 85%, rgba(255,255,255,0.5), transparent);
-      background-size: 100% 100%;
-      animation: starfield 6s ease-in-out infinite alternate;
+        radial-gradient(circle at 20% 15%, rgba(0, 255, 183, 0.15), transparent 15%),
+        radial-gradient(circle at 80% 25%, rgba(66, 153, 225, 0.12), transparent 18%),
+        radial-gradient(circle at 50% 80%, rgba(84, 255, 206, 0.08), transparent 15%),
+        radial-gradient(circle at 85% 75%, rgba(24, 144, 255, 0.06), transparent 14%);
+      background-size: cover;
+      opacity: 0.95;
       z-index: 0;
     }
-    @keyframes starfield {
-      0%   { opacity: 0.55; }
-      100% { opacity: 1; }
-    }
-    body.theme-khmer::after {
+    body.theme-crypto::after {
       content: '';
       position: fixed;
       inset: 0;
       pointer-events: none;
       background: repeating-linear-gradient(
-        45deg,
-        rgba(230,160,40,0.025) 0px,
-        rgba(230,160,40,0.025) 1px,
+        0deg,
+        rgba(0,255,183,0.04) 0px,
+        rgba(0,255,183,0.04) 1px,
         transparent 1px,
-        transparent 12px
+        transparent 8px
       );
+      opacity: 0.35;
       z-index: 0;
     }
 
@@ -1060,7 +1032,7 @@ export const ThemeProvider = ({ children }) => {
   // Apply body class + base styles
   useEffect(() => {
     injectBaseStyles();
-    document.body.classList.remove("theme-light", "theme-dark", "theme-glass", "theme-khmer");
+    document.body.classList.remove("theme-light", "theme-dark", "theme-glass", "theme-crypto", "theme-khmer");
     const cls = mode === "khmerNewYear" ? "theme-khmer" : `theme-${mode}`;
     document.body.classList.add(cls);
   }, [mode]);
@@ -1070,7 +1042,8 @@ export const ThemeProvider = ({ children }) => {
     setMode((prev) => {
       if (prev === "light") return "dark";
       if (prev === "dark")  return "glass";
-      if (prev === "glass") return "khmerNewYear";
+      if (prev === "glass") return "crypto";
+      if (prev === "crypto") return "khmerNewYear";
       return "light";
     });
   };
@@ -1092,9 +1065,10 @@ export const ThemeProvider = ({ children }) => {
   const theme = useMemo(() => {
     const isKhmer  = mode === "khmerNewYear";
     const isGlass  = mode === "glass";
-    const isDark   = mode === "dark" || isGlass || isKhmer;
-    const baseMode = isDark ? "dark" : "light";
-    const t        = isKhmer ? tokens.khmer : isGlass ? tokens.glass : tokens[mode] || tokens.light;
+    const isCrypto = mode === "crypto";
+    const isDark   = mode === "dark" || isGlass || isCrypto || isKhmer;
+    const baseMode = isKhmer || isGlass || isCrypto ? "dark" : "light";
+    const t = isKhmer ? tokens.khmer : tokens[mode] || tokens.dark;
 
     // Accent colors
     const accent       = isKhmer ? "#e6a028" : primaryColor || "#0969da";
@@ -1367,8 +1341,9 @@ export const ThemeProvider = ({ children }) => {
         MuiOutlinedInput: {
           styleOverrides: {
             root: {
-              backgroundColor: isDark ? t.bg : "#ffffff",
+              backgroundColor: isDark ? t.surface : "#ffffff",
               borderRadius: radius,
+              
               fontSize: "0.875rem",
               "& fieldset": {
                 borderColor: t.border,
@@ -1406,15 +1381,18 @@ export const ThemeProvider = ({ children }) => {
  
         MuiSelect: {
           styleOverrides: {
+            root: {
+              backgroundColor: isDark ? t.surface : "#ffffff",
+              color: t.text,
+            },
             icon: { color: t.textMuted },
           },
         },
 
-       
         MuiMenu: {
           styleOverrides: {
             paper: {
-              backgroundColor: isDark ? t.bgSubtle : "#ffffff",
+              backgroundColor: isDark ? t.surface : "#ffffff",
               backgroundImage: "none",
               border: `1px solid ${t.border}`,
               borderRadius: radius + 2,
@@ -1461,7 +1439,7 @@ export const ThemeProvider = ({ children }) => {
         MuiAutocomplete: {
           styleOverrides: {
             paper: {
-              backgroundColor: isDark ? t.bgSubtle : "#ffffff",
+              backgroundColor: isDark ? t.surface : "#ffffff",
               backgroundImage: "none",
               border: `1px solid ${t.border}`,
               borderRadius: radius + 2,
@@ -1504,7 +1482,7 @@ export const ThemeProvider = ({ children }) => {
           styleOverrides: {
             paper: {
               backgroundImage: "none",
-              backgroundColor: isDark ? t.bgSubtle : "#ffffff",
+              backgroundColor: isDark ? t.surface : "#ffffff",
               border: `1px solid ${t.border}`,
               borderRadius: radius + 2,
               boxShadow: isDark
@@ -1708,7 +1686,7 @@ export const ThemeProvider = ({ children }) => {
           styleOverrides: {
             paper: {
               backgroundImage: "none",
-              backgroundColor: isDark ? t.bgSubtle : "#ffffff",
+              backgroundColor: isDark ? t.surface : "#ffffff",
               border: `1px solid ${t.border}`,
               borderRadius: radius * 2,
               boxShadow: isDark

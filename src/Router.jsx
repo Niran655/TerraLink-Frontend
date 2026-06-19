@@ -1,5 +1,4 @@
 import { Navigate, useRoutes } from 'react-router-dom';
-import React, { useState } from 'react';
 
 import EmployeeAttendance from './Pages/EmployeeAttendance';
 import AttendanceQrScan from './Pages/AttendanceQrScan';
@@ -13,12 +12,13 @@ import AttendanceQr from './Pages/AttendanceQr';
 import ReportInShop from './Pages/ReportInShop';
 import StoreSetting from './Pages/StoreSetting';
 import { canManageSettings, canManageTenant, canManageUsers } from './utils/tenantAccess';
+import CmsCrmMenu from './Pages/CmsCrmMenu';
 import Department from './Pages/Department';
 import Permission from './Pages/Permission';
 import SaleReturn from './Pages/SaleReturn';
-import SocialCms from './Pages/SocialCms';
-import CmsCrmMenu from './Pages/CmsCrmMenu';
 import Dashboard from './Pages/Dashboard';
+import MobileApp from './Pages/MobileApp';
+import SocialCms from './Pages/SocialCms';
 import Warehouse from './Pages/Warehouse';
 import Category from './Pages/Category';
 import Customer from './Pages/Customer';
@@ -33,12 +33,12 @@ import Product from './Pages/Product';
 import Profile from './Pages/Profile';
 import Income from './Pages/Income';
 import Report from './Pages/Report';
+import Tenant from './Pages/Tenant';
 import Login from './Pages/Login';
 import Store from './Pages/Store';
 import TablePage from './Pages/Table';
 import Unit from './Pages/Unit';
 import User from './Pages/User';
-import Tenant from './Pages/Tenant';
 import Pos from './Pages/Pos';
  
 export default function Router() {
@@ -72,6 +72,7 @@ export default function Router() {
         { path: 'setting', element: <Guard allow={canManageTenant(user)}><Settings/></Guard> },
         { path: '/setting/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
         { path: '/setting/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
+      
         { path: '/setting/customer', element: <Customer/>},
         { path: '/setting/table', element: <TablePage/>},
         { path: '/setting/permission', element: <Guard allow={canManageSettings(user)}><Permission/></Guard>},
@@ -99,6 +100,7 @@ export default function Router() {
         { path: '/store/pos/:shopId', element: <Pos/>},
         { path: 'warehouse', element: <Warehouse/>},
         { path: '/store/pos/:id/warehouse-in-shop', element: <WarehouseInShop/>},
+        { path: '/store/pos/:id/mobile-app-controller', element: <MobileApp/>},
         { path: "*", element: <NotFound /> },
         // push ban
         // test push

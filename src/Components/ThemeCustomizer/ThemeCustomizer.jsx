@@ -1,24 +1,11 @@
 /* eslint-disable react/prop-types */
 import SettingsIcon from "@mui/icons-material/Settings";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
-import {
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  FormControl,
-  FormControlLabel,
-  IconButton,
-  Radio,
-  RadioGroup,
-  Slider,
-  Switch,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Divider, Drawer, FormControl, FormControlLabel, IconButton, Radio, RadioGroup, Slider, Switch, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
+
 import { useThemeContext } from "../../Context/ThemeContext";
 
  
@@ -68,11 +55,12 @@ const MODES = [
   { key: "dark",        label: "Dark",    icon: "🌑" },
   { key: "light",       label: "Light",   icon: "☀️" },
   { key: "glass",       label: "Glass",   icon: "✦"  },
+  { key: "crypto",      label: "Crypto",  icon: "💹" },
   { key: "khmerNewYear",label: "Khmer",   icon: "🇰🇭" },
 ];
 
 // ─── Helper: is this mode dark-based? ─────────────────────────────────────────
-const isDarkBased = (m) => ["dark", "glass", "khmerNewYear"].includes(m);
+const isDarkBased = (m) => ["dark", "glass", "crypto", "khmerNewYear"].includes(m);
 
 // ─── Section header ────────────────────────────────────────────────────────────
 function SectionLabel({ children, mode }) {

@@ -1,32 +1,10 @@
-import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  Box,
-  Grid,
-  Button,
-  Typography,
-  IconButton,
-  Fade,
-  Backdrop,
-  Paper,
-} from "@mui/material";
-
 import { Link as RouterLink } from "react-router-dom";
-
-import {
-  CornerUpLeft,
-  Grid2X2,
-  ScrollText,
-  ShoppingCart,
-  Users,
-  Warehouse,
-  X,
-} from "lucide-react";
+import { Backdrop, Box, Button, Dialog, DialogContent, Fade, Grid, IconButton, Paper, Typography } from "@mui/material";
+import { CornerUpLeft, Grid2X2, Phone, ScrollText, ShoppingCart, Users, Warehouse, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "../../Context/AuthContext";
 import { translateLauguage } from "../../function/translate";
-
 import "../../Styles/menu.scss";
 
 export default function MenuModal({ open, onClose }) {
@@ -87,6 +65,14 @@ export default function MenuModal({ open, onClose }) {
       description: "Manage staff",
       icon: <Users size={32} color="#3F51B5" />,
       to: `/store/pos/${id}/staff`,
+      // bgColor: "#3F51B5",
+      textColor: "#fff",
+    },
+        {
+      title: t("mobile_app"),
+      description: "Manage mobile app",
+      icon: <Phone size={32} color="#3F51B5" />,
+      to: `/store/pos/${id}/mobile-app-controller`,
       // bgColor: "#3F51B5",
       textColor: "#fff",
     },

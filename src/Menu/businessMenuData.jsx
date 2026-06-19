@@ -1,20 +1,4 @@
-import {
-  CalendarClock,
-  FileImage,
-  FolderTree,
-  Gift,
-  Globe2,
-  Mail,
-  Megaphone,
-  MessageSquareText,
-  Newspaper,
-  SearchCheck,
-  Share2,
-  Tags,
-  UserCheck,
-  UsersRound,
-  Workflow,
-} from "lucide-react";
+import { CalendarClock, FileImage, FolderTree, Gift, Globe2, Mail, Megaphone, MessageSquareText, Newspaper, SearchCheck, Share2, Tags, UserCheck, UsersRound, Workflow } from "lucide-react";
 
 export const CMS_MODULES = [
   {
