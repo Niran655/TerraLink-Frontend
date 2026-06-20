@@ -56,6 +56,7 @@ const defaultDayHours = {
   close: "22:00",
   open24: false,
   closed: false,
+  
 };
 
 const defaultHours = {
