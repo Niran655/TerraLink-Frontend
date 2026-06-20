@@ -1,5 +1,3 @@
-
-
 import { useMutation } from "@apollo/client/react";
 import { IconButton, Stack } from "@mui/material";
 import { SquarePen, Trash } from "lucide-react";
@@ -8,7 +6,7 @@ import { useState } from "react";
 import { DELETE_CUISINE_ORIGIN } from "../../../../graphql/mutation";
 import { useAuth } from "../../../Context/AuthContext";
 import UseDeleteForm from "../../include/useDeleteForm";
-import CuisineOriginForm from "./cuisineOrigineForm";
+import CuisineOriginForm from "./CuisineOrigineForm";
 
 export default function CuisineOriginAction({
   data,
