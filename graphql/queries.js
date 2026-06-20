@@ -2482,9 +2482,10 @@ query GetMealTypesWithPagination($shopId: ID!, $page: Int, $limit: Int, $paginat
   getMealTypesWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
     data {
       _id
-      name
+      nameKh
+      nameEn
       status
-      shopId
+      
       createdAt
       updatedAt
     }
@@ -2563,3 +2564,75 @@ query GetShopEventsWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagina
   }
 }
 `
+
+export const GET_SHOP_GALLERY_WITH_PAGINATION = gql` 
+query GetShopGalleryWithPagination($shopId: ID!, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getShopGalleryWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
+    data {
+      _id
+      image
+      title
+      category
+      cover
+      status
+      createdAt
+    }
+    paginator {
+      slNo
+      prev
+      next
+      perPage
+      totalPosts
+      totalPages
+      currentPage
+      hasPrevPage
+      hasNextPage
+      totalDocs
+    }
+  }
+}
+`
+
+export const GET_SHOP_PROFILE = gql`
+  query GetShopProfile($shopId: ID!) {
+    getShopProfile(shopId: $shopId) {
+      _id
+      nameEn
+      nameKh
+      code
+      type
+      image
+      description
+      shortDescription
+      history
+      mission
+      keywords
+      openingHours {
+        monday { open close open24 closed }
+        tuesday { open close open24 closed }
+        wednesday { open close open24 closed }
+        thursday { open close open24 closed }
+        friday { open close open24 closed }
+        saturday { open close open24 closed }
+        sunday { open close open24 closed }
+        holiday { open close open24 closed }
+        specialHours
+      }
+      contactInfo {
+        phone mobile telegram whatsapp facebook instagram tiktok website email
+      }
+      location {
+        country province district commune village street latitude longitude googleMap parking
+      }
+      rewardsSettings {
+        enabled points checkin review purchase referral birthday vipLevel coupon
+      }
+      aiKnowledge {
+        businessStory menu services popularItems faq reservationPolicy deliveryPolicy cancellationPolicy parking petFriendly paymentMethods additionalNotes
+      }
+      mobileSettings {
+        booking reviews rewards delivery aiChat qrCheckin events promotions callButton navigation
+      }
+    }
+  }
+`;

@@ -655,5 +655,50 @@
   "Title is required": "សូមបញ្ចូលចំណងជើង",
   "Menu item is required": "សូមជ្រើសរើសធាតុម៉ឺនុយ",
   "Content is required": "សូមបញ្ចូលមាតិកា",
-  "Action is required": "សូមជ្រើសរើសសកម្មភាព"
+  "Action is required": "សូមជ្រើសរើសសកម្មភាព",
+
+  
+  "about":"អំពីយើង",
+  "shop_information":"ព័តមានហាង",
+    "edit_business_description": "កែសម្រួលព័ត៌មានណែនាំអំពីអាជីវកម្ម",
+  "short_description": "ការពិពណ៌នាខ្លី",
+  "long_description": "ការពិពណ៌នាលម្អិត",
+  "history": "ប្រវត្តិអាជីវកម្ម",
+  "mission": "បេសកកម្ម",
+  "keywords": "ពាក្យគន្លឹះ",
+  
+  "business_name": "ឈ្មោះអាជីវកម្ម",
+  "shop_code": "កូដហាង",
+  "business_type": "ប្រភេទអាជីវកម្ម",
+  "logo": "រូបសញ្ញា",
+  "cover_photo": "រូបថតគម្រប",
+  
+  "business_hours": "ម៉ោងបើកបរ",
+  "closed_on_holidays": "បិទនៅថ្ងៃឈប់សម្រាក",
+
+  
+  "cuisine_types": "ប្រភេទម្ហូប",
+  "add_cuisine_type": "បន្ថែមប្រភេទម្ហូប",
+  "edit_cuisine_type": "កែប្រែប្រភេទម្ហូប",
+  "cuisine_origins": "ប្រភពម្ហូប",
+  "add_cuisine_origin": "បន្ថែមប្រភពម្ហូប",
+  "edit_cuisine_origin": "កែប្រែប្រភពម្ហូប",
+  "meal_types": "ប្រភេទអាហារ",
+  "add_meal_type": "បន្ថែមប្រភេទអាហារ",
+  "edit_meal_type": "កែប្រែប្រភេទអាហារ",
+  "gallery": "វិចិត្រសាល",
+  "add_gallery_image": "បន្ថែមរូបភាពវិចិត្រសាល",
+  "edit_gallery_image": "កែប្រែរូបភាពវិចិត្រសាល",
+  "address_location": "អាសយដ្ឋាន",
+  "contact_information": "ព័ត៌មានទំនាក់ទំនង",
+  "customer_reviews": "ការវាយតម្លៃរបស់អតិថិជន",
+  "rewards_program": "កម្មវិធីរង្វាន់",
+  "promotions": "ការផ្សព្វផ្សាយ",
+  "events": "ព្រឹត្តិការណ៍",
+  "mobile_settings": "ការកំណត់ទូរស័ព្ទ",
+  "shop_management":"ការគ្រប់គ្រងហាង"
+
+
+
+
 }

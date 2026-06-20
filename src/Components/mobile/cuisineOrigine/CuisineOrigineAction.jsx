@@ -1,4 +1,4 @@
-// CuisineOriginAction.jsx
+
 
 import { useMutation } from "@apollo/client/react";
 import { IconButton, Stack } from "@mui/material";
@@ -11,25 +11,25 @@ import UseDeleteForm from "../../include/useDeleteForm";
 import CuisineOriginForm from "./cuisineOrigineForm";
 
 export default function CuisineOriginAction({
-  data,          // the cuisine origin object (for edit/delete)
-  setRefetch,    // function to refetch list after mutation
+  data,
+  setRefetch,
   t,
-  shopId,        // needed for create; but edit/delete use the item's _id
+  shopId,
 }) {
   const { setAlert } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  // Edit modal state
+
   const [openEdit, setOpenEdit] = useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
 
-  // Delete modal state
+
   const [openDelete, setOpenDelete] = useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
 
-  // Delete mutation
+
   const [deleteCuisineOrigin] = useMutation(DELETE_CUISINE_ORIGIN, {
     onCompleted: ({ deleteCuisineOrigin }) => {
       setLoading(false);
@@ -63,7 +63,7 @@ export default function CuisineOriginAction({
         </IconButton>
       </Stack>
 
-      {/* Edit Form */}
+
       <CuisineOriginForm
         open={openEdit}
         onClose={handleCloseEdit}
@@ -73,7 +73,7 @@ export default function CuisineOriginAction({
         shopId={shopId}
       />
 
-      {/* Delete Confirmation */}
+
       <UseDeleteForm
         open={openDelete}
         onClose={handleCloseDelete}

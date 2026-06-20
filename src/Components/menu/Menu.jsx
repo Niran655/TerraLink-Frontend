@@ -1,6 +1,6 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Backdrop, Box, Button, Dialog, DialogContent, Fade, Grid, IconButton, Paper, Typography } from "@mui/material";
-import { CornerUpLeft, Grid2X2, Phone, ScrollText, ShoppingCart, Users, Warehouse, X } from "lucide-react";
+import { CornerUpLeft, Grid2X2, Phone, ScrollText, ShoppingCart, Smartphone, Users, Warehouse, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "../../Context/AuthContext";
@@ -71,7 +71,7 @@ export default function MenuModal({ open, onClose }) {
         {
       title: t("mobile_app"),
       description: "Manage mobile app",
-      icon: <Phone size={32} color="#3F51B5" />,
+      icon: <Smartphone size={32} color="#3F51B5" />,
       to: `/store/pos/${id}/mobile-app-controller`,
       // bgColor: "#3F51B5",
       textColor: "#fff",

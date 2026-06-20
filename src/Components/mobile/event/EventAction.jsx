@@ -1,43 +1,40 @@
-// MealTypeAction.jsx
-
+// Components/mobile/event/EventAction.jsx
 import { useMutation } from "@apollo/client/react";
 import { IconButton, Stack } from "@mui/material";
 import { SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
-import { DELETE_MEAL_TYPE } from "../../../../graphql/mutation";
+import { DELETE_SHOP_EVENT } from "../../../../graphql/mutation";
 import { useAuth } from "../../../Context/AuthContext";
 import UseDeleteForm from "../../include/useDeleteForm";
-import MealTypeForm from "./MealTypeForm";
+import EventForm from "./EventForm";
 
-export default function MealTypeAction({
-  data,        
-  setRefetch,   
+export default function EventAction({
+  data,
+  setRefetch,
   t,
-  shopId,        
+  shopId,
 }) {
   const { setAlert } = useAuth();
   const [loading, setLoading] = useState(false);
 
- 
   const [openEdit, setOpenEdit] = useState(false);
   const handleOpenEdit = () => setOpenEdit(true);
   const handleCloseEdit = () => setOpenEdit(false);
- 
+
   const [openDelete, setOpenDelete] = useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
 
-  
-  const [deleteMealType] = useMutation(DELETE_MEAL_TYPE, {
-    onCompleted: ({ deleteMealType }) => {
+  const [deleteEvent] = useMutation(DELETE_SHOP_EVENT, {
+    onCompleted: ({ deleteShopEvent }) => {
       setLoading(false);
-      if (deleteMealType?.isSuccess) {
+      if (deleteShopEvent?.isSuccess) {
         handleCloseDelete();
-        setAlert(true, "success", deleteMealType.message);
-        setRefetch();  w
+        setAlert(true, "success", deleteShopEvent.message);
+        setRefetch();
       } else {
-        setAlert(true, "error", deleteMealType.message);
+        setAlert(true, "error", deleteShopEvent.message);
       }
     },
     onError: (error) => {
@@ -48,7 +45,7 @@ export default function MealTypeAction({
 
   const handleDelete = () => {
     setLoading(true);
-    deleteMealType({ variables: { id: data._id } });
+    deleteEvent({ variables: { id: data._id } });
   };
 
   return (
@@ -62,16 +59,15 @@ export default function MealTypeAction({
         </IconButton>
       </Stack>
 
-       
-      <MealTypeForm
+      <EventForm
         open={openEdit}
         onClose={handleCloseEdit}
-        mealTypeData={data}
+        eventData={data}
         setRefetch={setRefetch}
         shopId={shopId}
         t={t}
       />
- 
+
       <UseDeleteForm
         open={openDelete}
         onClose={handleCloseDelete}

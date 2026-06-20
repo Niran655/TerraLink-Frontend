@@ -1391,3 +1391,61 @@ mutation DeleteShopEvent($id: ID!) {
     }
   }
 }`
+
+
+export const CREATE_GALLERY_IMAGE = gql` 
+mutation CreateGalleryImage($shopId: ID!, $input: GalleryImageInput!) {
+  createGalleryImage(shopId: $shopId, input: $input) {
+    message {
+      messageEn
+      messageKh
+    }
+    isSuccess
+  }
+}
+`
+export const UPDATE_GALLERY_IMAGE = gql`
+mutation UpdateGalleryImage($shopId: ID!, $imageId: ID!, $input: GalleryImageInput!) {
+  updateGalleryImage(shopId: $shopId, imageId: $imageId, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`
+export const DELETE_GALLERY_IMAGE = gql`
+mutation DeleteGalleryImage($shopId: ID!, $imageId: ID!) {
+  deleteGalleryImage(shopId: $shopId, imageId: $imageId) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`
+export const SET_GALLERY_COVER = gql`
+mutation SetGalleryCover($shopId: ID!, $imageId: ID!) {
+  setGalleryCover(shopId: $shopId, imageId: $imageId) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`
+
+export const UPDATE_SHOP_PROFILE = gql`
+mutation UpdateShopProfile($input: ShopProfileInput!, $shopId: ID!) {
+  updateShopProfile(input: $input, shopId: $shopId) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
