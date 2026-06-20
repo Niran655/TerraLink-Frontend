@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client/react";
 import { IconButton, Stack } from "@mui/material";
-import { SquarePen, Trash, Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon, SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 import { DELETE_GALLERY_IMAGE, SET_GALLERY_COVER } from "../../../../graphql/mutation";
