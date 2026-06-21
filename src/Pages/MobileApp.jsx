@@ -2043,12 +2043,12 @@ import { Calendar, ChevronLeft, ChevronRight, Clock, Coffee, Gift, Globe, Image,
 import { TabContext, TabPanel } from "@mui/lab";
 import { useEffect, useState } from "react";
 
-import CuisineOriginAction from "../Components/mobile/cuisineOrigine/cuisineOrigineAction";
-import CuisineOriginForm from "../Components/mobile/cuisineOrigine/cuisineOrigineForm";
-import CuisineTypeAction from "../Components/mobile/cuisineType/cuisineTypeAction";
+import CuisineOriginAction from "../Components/mobile/cuisineOrigine/CuisineOrigineAction";
+import CuisineOriginForm from "../Components/mobile/cuisineOrigine/CuisineOrigineForm";
+import CuisineTypeAction from "../Components/mobile/cuisineType/CuisineTypeAction";
 import CuisineTypeForm from "../Components/mobile/cuisineType/CuisineTypeForm";
 import PromotionAction from "../Components/mobile/promotion/PromotionAction";
-import MealTypeAction from "../Components/mobile/mealType/mealTypeAction";
+import MealTypeAction from "../Components/mobile/mealType/MealTypeAction";
 import PromotionForm from "../Components/mobile/promotion/PromotionForm";
 import GalleryAction from "../Components/mobile/gallery/GalleryAction";
 import MealTypeForm from "../Components/mobile/mealType/MealTypeForm";
