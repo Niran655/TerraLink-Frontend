@@ -9,7 +9,7 @@ import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { Visibility, VisibilityOff, EmailOutlined, LockOutlined } from "@mui/icons-material";
-import logo from "../assets/Image/logo.png";
+import logo from "../assets/Image/header-logo.png";
 import { LOGIN } from "../../graphql/mutation";
 import { useAuth } from "../Context/AuthContext";
 import loginBgDark from "../assets/Image/login-bg-dark.png";
@@ -161,12 +161,12 @@ export default function Login() {
                 mb: 1,
               }}
             >
-              LIKA Platform
+              TerraLink Platform
             </Box>
             <Typography
               sx={{ color: "white", fontWeight: 700, fontSize: 18, lineHeight: 1.35 }}
             >
-              Logic Integrated<br />Kiosk Application
+              TerraLink Business
             </Typography>
             <Typography
               sx={{ color: "rgba(203,213,225,0.7)", fontSize: 12, letterSpacing: 0.3 }}
@@ -203,7 +203,7 @@ export default function Login() {
                 mb: 3,
               }}
             >
-              Logic Integrated Kiosk Application
+              TerraLink Business
             </Typography>
 
             <Box

@@ -693,5 +693,6 @@
   "promotions":"Promotions",
   "events":"Events",
   "mobile_settings":"Mobile Setting",
-  "shop_management":"Shop Management"
+  "shop_management":"Shop Management", 
+  "mobile_app":"Mobile App"
 }

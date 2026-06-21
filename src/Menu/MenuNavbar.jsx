@@ -5,7 +5,7 @@ import { BadgePercent, BotMessageSquare, ChartNoAxesColumn, ChevronDown, Currenc
 import { Bell, Gift, Image, QrCode, Settings, Smartphone } from "lucide-react";
 import { useState } from "react";
 
-import logo from "../assets/Image/small-logo.png";
+import logo from "../assets/Image/header-logo.png";
 import { useThemeContext } from "../Context/ThemeContext";
 import { useAuth } from "../Context/AuthContext";
 import { translateLauguage } from "../function/translate";
@@ -393,7 +393,7 @@ export default function MenuNavbar() {
               opacity: 0.95,
             }}
           >
-            LIKA WEB APP SYSTEM
+            TERRALINK BUSINESS
           </Typography>
         )}
       </Stack>
