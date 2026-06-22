@@ -393,7 +393,7 @@ export default function MenuNavbar() {
               opacity: 0.95,
             }}
           >
-            TERRALINK BUSINESS
+            TERRALINK
           </Typography>
         )}
       </Stack>
