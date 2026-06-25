@@ -1,5 +1,6 @@
 import { Link as RouterLink } from "react-router-dom";
 import { Box, Breadcrumbs, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Share2 } from "lucide-react";
 
 import Product from "../assets/Image/best-product.png";
 import Category from "../assets/Image/category.png";
@@ -177,6 +178,27 @@ export default function Settings() {
               </Typography>
               <Typography className="text-body">
                 {t(`create_update_delete`)} {t(`table`)}
+              </Typography>
+            </Stack>
+          </Paper>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 3 }}>
+          <Paper
+            className="setting-box"
+            component={RouterLink}
+            to="/setting/social-accounts"
+            sx={{ cursor: "pointer", textDecoration: "none" }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: "50%", bgcolor: "rgba(24, 119, 242, 0.1)", color: "#1877F2", mb: 1 }}>
+              <Share2 size={24} />
+            </Box>
+            <Stack textAlign="start" spacing={1}>
+              <Typography className="text-title" variant="h5">
+                {t(`social_accounts`) || "Social Accounts"}
+              </Typography>
+              <Typography className="text-body">
+                {t(`manage_facebook_pages`) || "Manage connected Facebook Pages"}
               </Typography>
             </Stack>
           </Paper>

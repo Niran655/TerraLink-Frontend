@@ -25,6 +25,7 @@ import Customer from './Pages/Customer';
 import Employee from './Pages/Employee';
 import NotFound from './Pages/NotFound';
 import Settings from './Pages/Settings';
+import SocialAccounts from './Pages/SocialAccounts';
 import Supplier from './Pages/Supplier';
 import ChatBot from './Pages/ChatBot';
 import AiAssistantWorkspace from './Pages/AiAssistantWorkspace';
@@ -74,6 +75,7 @@ export default function Router() {
         { path: 'cms/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="cms" /></Guard> },
         { path: 'crm/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="crm" /></Guard> },
         { path: 'setting', element: <Guard allow={canManageTenant(user)}><Settings/></Guard> },
+        { path: '/setting/social-accounts', element: <Guard allow={canManageTenant(user)}><SocialAccounts/></Guard> },
         { path: '/setting/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
         { path: '/setting/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
         { path: '/privacy', element: <Privacy/>},
