@@ -258,7 +258,12 @@ export default function MenuNavbar() {
   };
 
   const handleItemClick = (menu) => {
-    if (menu.routeTo) {
+    if (menu.routeTo === "/chat" || menu.routeTo === "/app/ai") {
+      const token = localStorage.getItem("token") || "";
+      const shopId = localStorage.getItem("activeShopId") || "";
+      const url = `${window.location.origin}/app/ai?token=${encodeURIComponent(token)}&shopId=${encodeURIComponent(shopId)}`;
+      window.open(url, "_blank");
+    } else if (menu.routeTo) {
       navigate(menu.routeTo);
     }
   };

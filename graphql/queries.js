@@ -14,6 +14,40 @@ query AiBusinessChat($input: AIBusinessChatInput!) {
 }
 `;
 
+export const GET_CHAT_CONVERSATIONS = gql`
+query GetChatConversations($limit: Int) {
+  getChatConversations(limit: $limit) {
+    _id
+    title
+    updatedAt
+    createdAt
+  }
+}
+`;
+
+export const GET_CHAT_CONVERSATION_BY_ID = gql`
+query GetChatConversationById($id: ID!) {
+  getChatConversationById(_id: $id) {
+    _id
+    title
+    messages {
+      role
+      content
+      model
+      businessAIStatus
+      businessAIRoute
+      businessAIResult
+      error
+      plain
+      createdAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+`;
+
+
 export const GET_FACEBOOK_PAGE_CONNECTIONS = gql`
 query GetFacebookPageConnections($shopId: ID, $active: Boolean) {
   getFacebookPageConnections(shopId: $shopId, active: $active) {

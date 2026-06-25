@@ -1449,3 +1449,86 @@ mutation UpdateShopProfile($input: ShopProfileInput!, $shopId: ID!) {
   }
 }
 `;
+
+export const CREATE_CHAT_CONVERSATION = gql`
+mutation CreateChatConversation($title: String, $shopId: ID) {
+  createChatConversation(title: $title, shopId: $shopId) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+    data {
+      conversationId
+    }
+  }
+}
+`;
+
+export const ADD_CHAT_MESSAGE = gql`
+mutation AddChatMessage(
+  $conversationId: ID!
+  $role: String!
+  $content: String!
+  $model: String
+  $businessAIStatus: String
+  $businessAIRoute: String
+  $businessAIResult: String
+  $error: String
+  $plain: Boolean
+) {
+  addChatMessage(
+    conversationId: $conversationId
+    role: $role
+    content: $content
+    model: $model
+    businessAIStatus: $businessAIStatus
+    businessAIRoute: $businessAIRoute
+    businessAIResult: $businessAIResult
+    error: $error
+    plain: $plain
+  ) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const UPDATE_CHAT_CONVERSATION_TITLE = gql`
+mutation UpdateChatConversationTitle($_id: ID!, $title: String!) {
+  updateChatConversationTitle(_id: $_id, title: $title) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const DELETE_CHAT_CONVERSATION = gql`
+mutation DeleteChatConversation($_id: ID!) {
+  deleteChatConversation(_id: $_id) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;
+
+export const CLEAR_ALL_CHAT_CONVERSATIONS = gql`
+mutation ClearAllChatConversations {
+  clearAllChatConversations {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`;

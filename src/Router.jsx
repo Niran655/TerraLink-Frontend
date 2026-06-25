@@ -27,6 +27,7 @@ import NotFound from './Pages/NotFound';
 import Settings from './Pages/Settings';
 import Supplier from './Pages/Supplier';
 import ChatBot from './Pages/ChatBot';
+import AiAssistantWorkspace from './Pages/AiAssistantWorkspace';
 import Expense from './Pages/Expense';
 import Invoice from './Pages/Invoice';
 import Product from './Pages/Product';
@@ -40,6 +41,9 @@ import TablePage from './Pages/Table';
 import Unit from './Pages/Unit';
 import User from './Pages/User';
 import Pos from './Pages/Pos';
+import Privacy from './Pages/Privacy';
+import Terms from './Pages/Terms';
+import DataDeletion from './Pages/Data-deletion';
  
 export default function Router() {
   const { isAuthenticated, user } = useAuth();
@@ -72,7 +76,9 @@ export default function Router() {
         { path: 'setting', element: <Guard allow={canManageTenant(user)}><Settings/></Guard> },
         { path: '/setting/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
         { path: '/setting/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
-      
+        { path: '/privacy', element: <Privacy/>},
+        { path: '/terms', element: <Terms/>},
+        { path: '/data-deletion', element: <DataDeletion/>},
         { path: '/setting/customer', element: <Customer/>},
         { path: '/setting/table', element: <TablePage/>},
         { path: '/setting/permission', element: <Guard allow={canManageSettings(user)}><Permission/></Guard>},
@@ -106,6 +112,10 @@ export default function Router() {
         // test push
       ],
     },
+    {
+      path: '/app/ai',
+      element: <AiAssistantWorkspace />
+    }
   ]);
   
   return AttendanceCheckInPage || (isAuthenticated ? Content : LoginPage);

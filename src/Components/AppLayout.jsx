@@ -322,7 +322,14 @@ export default function AppLayout() {
 
   const handleHorizontalNavigate = (path) => {
     handleHorizontalMenuClose();
-    navigate(path);
+    if (path === "/chat" || path === "/app/ai") {
+      const token = localStorage.getItem("token") || "";
+      const shopId = localStorage.getItem("activeShopId") || "";
+      const url = `${window.location.origin}/app/ai?token=${encodeURIComponent(token)}&shopId=${encodeURIComponent(shopId)}`;
+      window.open(url, "_blank");
+    } else {
+      navigate(path);
+    }
   };
 
   const handleGoToShop = async (shopId) => {

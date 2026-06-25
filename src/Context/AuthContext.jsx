@@ -52,6 +52,35 @@ const getTokenExpirationTime = (token) => {
 };
 
 const getStoredToken = () => {
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    const tokenParam = params.get("token");
+    const shopIdParam = params.get("shopId");
+    if (tokenParam) {
+      localStorage.setItem("token", tokenParam);
+      try {
+        const payload = parseJwtPayload(tokenParam);
+        if (payload) {
+          const basicUser = {
+            _id: payload.id || payload.userId,
+            email: payload.email,
+            role: payload.role,
+            tenantId: payload.tenantId,
+            shopIds: payload.shopIds || [],
+            nameEn: payload.nameEn || payload.email?.split("@")[0] || "User",
+            nameKh: payload.nameKh || payload.email?.split("@")[0] || "User"
+          };
+          localStorage.setItem("user", JSON.stringify(basicUser));
+        }
+      } catch (e) {
+        console.error("Error decoding JWT from URL parameters:", e);
+      }
+    }
+    if (shopIdParam) {
+      localStorage.setItem("activeShopId", shopIdParam);
+    }
+  }
+
   const storedToken = localStorage.getItem("token");
   if (!storedToken) return null;
 
