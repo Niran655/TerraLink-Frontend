@@ -118,7 +118,9 @@ const CONNECT_FACEBOOK = gql`
         messageEn
         messageKh
       }
-      data
+      data {
+        url
+      }
     }
   }
 `;

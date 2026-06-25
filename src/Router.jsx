@@ -75,7 +75,7 @@ export default function Router() {
         { path: 'cms/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="cms" /></Guard> },
         { path: 'crm/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="crm" /></Guard> },
         { path: 'setting', element: <Guard allow={canManageTenant(user)}><Settings/></Guard> },
-        { path: '/setting/social-accounts', element: <Guard allow={canManageTenant(user)}><SocialAccounts/></Guard> },
+        { path: 'setting/social-accounts', element: <Guard allow={canManageTenant(user)}><SocialAccounts/></Guard> },
         { path: '/setting/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
         { path: '/setting/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
         { path: '/privacy', element: <Privacy/>},
