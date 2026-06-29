@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Paper, Stack, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Snackbar, Alert } from "@mui/material";
+import { Box, Typography, Paper, Stack, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@mui/material";
 import { History, Trash2, Download } from "lucide-react";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { gql } from "@apollo/client";
@@ -37,17 +37,48 @@ export default function LoginHistory() {
   const [clearHistory, { loading: clearing }] = useMutation(CLEAR_LOGIN_HISTORY);
   
   const [toast, setToast] = useState({ open: false, message: "", severity: "success" });
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
 
   const handleClearHistory = async () => {
     try {
       const { data: res } = await clearHistory();
       if (res.clearLoginHistory.isSuccess) {
-        setToast({ open: true, message: res.clearLoginHistory.message.messageEn, severity: "success" });
+        setToast({ open: true, message: res.clearLoginHistory.message.messageEn || "Login history cleared.", severity: "success" });
         refetch();
       }
     } catch (err) {
       setToast({ open: true, message: "Failed to clear history.", severity: "error" });
+    } finally {
+      setConfirmClearOpen(false);
     }
+  };
+
+  const handleExportLogs = () => {
+    const logs = data?.getLoginHistory || [];
+    if (logs.length === 0) {
+      setToast({ open: true, message: "No login logs available to export.", severity: "warning" });
+      return;
+    }
+
+    const headers = "Date & Time,Device,Browser,IP Address,Location,Status,Reason\n";
+    const rows = logs.map(log => 
+      `"${new Date(log.date).toLocaleString()}","${log.device}","${log.browser}","${log.ipAddress}","${log.location}","${log.status}","${log.reason || ''}"`
+    ).join("\n");
+
+    const fileContent = "\uFEFF" + headers + rows; // Add UTF-8 BOM
+    const blob = new Blob([fileContent], { type: "text/csv;charset=utf-8" });
+    const filename = `terralink-login-history-${new Date().toISOString().split('T')[0]}.csv`;
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setToast({ open: true, message: `Login logs exported successfully as ${filename}.`, severity: "success" });
   };
 
   const getStatusChip = (status) => {
@@ -74,7 +105,7 @@ export default function LoginHistory() {
           <Button 
             variant="outlined" 
             startIcon={<Download size={18} />}
-           
+            onClick={handleExportLogs}
           >
             Export Logs
           </Button>
@@ -82,9 +113,8 @@ export default function LoginHistory() {
             variant="outlined" 
             color="error"
             startIcon={<Trash2 size={18} />}
-            onClick={handleClearHistory}
+            onClick={() => setConfirmClearOpen(true)}
             disabled={clearing}
-           
           >
             {clearing ? "Clearing..." : "Clear History"}
           </Button>
@@ -123,10 +153,17 @@ export default function LoginHistory() {
                     <TableCell>
                       <Stack direction="row" alignItems="center" spacing={1}>
                         {getStatusChip(log.status || (log.reason ? 'FAILED' : 'SUCCESS'))}
-                        {log.reason && (
-                          <Typography variant="caption" color="error">{log.reason}</Typography>
-                        )}
                       </Stack>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography 
+                        variant="body2" 
+                        color={log.status === 'SUCCESS' ? 'text.secondary' : 'error.main'}
+                        fontWeight="500"
+                        sx={{ fontSize: '0.85rem' }}
+                      >
+                        {log.reason || (log.status === 'SUCCESS' ? 'Password Authentication Success' : 'Authentication Failure')}
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 ))
@@ -141,6 +178,22 @@ export default function LoginHistory() {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Clear History Confirmation Dialog */}
+      <Dialog open={confirmClearOpen} onClose={() => setConfirmClearOpen(false)}>
+        <DialogTitle sx={{ fontWeight: 700 }}>Clear Login History?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to permanently clear your login history? This will delete all recorded device connections and login attempt logs from our audit trails.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2.5 }}>
+          <Button onClick={() => setConfirmClearOpen(false)} color="inherit" sx={{ textTransform: "none" }}>Cancel</Button>
+          <Button onClick={handleClearHistory} color="error" variant="contained" disabled={clearing} sx={{ textTransform: "none" }}>
+            {clearing ? "Clearing..." : "Clear History"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar 
         open={toast.open} 
