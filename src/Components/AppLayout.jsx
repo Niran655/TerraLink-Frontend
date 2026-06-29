@@ -63,7 +63,7 @@ import { translateLauguage } from "../function/translate";
 import Menu from "./menu/Menu";
 import { MenuMobile, MenuNavbar } from "../Menu";
 import { useLazyQuery, useQuery } from "@apollo/client/react";
-import { GET_ALL_SHOP, GET_OPEN_SHIFT } from "../../graphql/queries";
+import { GET_ALL_SHOP, GET_OPEN_SHIFT, GET_MY_PERMISSIONS } from "../../graphql/queries";
 import {
   canAccessShop,
   filterTenantMenuSections,
@@ -128,6 +128,15 @@ export default function AppLayout() {
     fetchPolicy: "cache-and-network",
   });
   const [checkOpenShift] = useLazyQuery(GET_OPEN_SHIFT);
+
+  const { data: permissionData } = useQuery(GET_MY_PERMISSIONS, {
+    skip: !user,
+    fetchPolicy: "cache-and-network",
+  });
+
+  const userPermissions = useMemo(() => {
+    return permissionData?.getMyPermissions?.permissions || [];
+  }, [permissionData]);
 
   const stores = useMemo(
     () => (shopData?.getAllShops || []).filter((shop) => canAccessShop(user, shop?._id)),
@@ -384,8 +393,8 @@ export default function AppLayout() {
   };
 
   const visibleHorizontalSections = useMemo(
-    () => filterTenantMenuSections(horizontalSections, user),
-    [horizontalSections, user]
+    () => filterTenantMenuSections(horizontalSections, user, userPermissions),
+    [horizontalSections, user, userPermissions]
   );
 
   const StoreDropdownMenu = () => {
@@ -872,7 +881,7 @@ export default function AppLayout() {
             }),
           }}
         >
-          <MenuNavbar />
+          <MenuNavbar userPermissions={userPermissions} />
         </Box>
       )}
 
@@ -895,6 +904,7 @@ export default function AppLayout() {
           <MenuMobile
             onNavigate={handleDrawerToggle}
             showLabels={mobileShowLabels}
+            userPermissions={userPermissions}
           />
         </Drawer>
       )}

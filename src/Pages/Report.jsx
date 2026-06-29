@@ -460,6 +460,7 @@ const ReportPage = ({ shopId = null }) => {
     const printWindow = window.open("", "_blank");
     const doc = printWindow.document;
     const reportTitle = tabs[activeTab].label;
+    const reportTabValue = tabs[activeTab].value;
     const companyName = user?.companyName || user?.shopName || user?.nameEn || "Smart Market";
     const phone = user?.phone || "";
     const email = user?.email || "";
@@ -468,9 +469,43 @@ const ReportPage = ({ shopId = null }) => {
     const rows = getTableRows();
     const totalRevenue = reportData?.totalRevenue || reportData?.totalIncome || 0;
     const generatedDate = formatDateLong(new Date());
-    const detailViewLabel = tabs[activeTab].value === "sale"
+    const detailViewLabel = reportTabValue === "sale"
       ? saleDetailOptions.find(o => o.value === saleDetailView)?.label || ""
       : "";
+
+    const reportTitleKhmer = {
+      sale: "របាយការណ៍លក់",
+      purchase: "របាយការណ៍ទិញ",
+      inventory: "របាយការណ៍សារពើភ័ណ្ឌ",
+      invoice: "របាយការណ៍វិក្កយបត្រ",
+      supplier: "របាយការណ៍អ្នកផ្គត់ផ្គង់",
+      supplierDue: "របាយការណ៍ជំពាក់អ្នកផ្គត់ផ្គង់",
+      customer: "របាយការណ៍អតិថិជន",
+      customerDue: "របាយការណ៍ជំពាក់អតិថិជន",
+      product: "របាយការណ៍ផលិតផល",
+      productExpiry: "របាយការណ៍ផលិតផលហួសកាលកំណត់",
+      productAlert: "របាយការណ៍ផលិតផលមានការព្រមានបរិមាណ",
+      expense: "របាយការណ៍ចំណាយ",
+      income: "របាយការណ៍ចំណូល",
+      tax: "របាយការណ៍ពន្ធ",
+      pnl: "របាយការណ៍ចំណេញ និងខាត",
+      annual: "របាយការណ៍ប្រចាំឆ្នាំ",
+    }[reportTabValue] || "របាយការណ៍";
+
+    const getKhmerDateString = (date) => {
+      const khmerMonths = [
+        "មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា",
+        "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"
+      ];
+      const khmerNumbers = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
+      const toKhmerNum = (num) => String(num).split("").map(d => khmerNumbers[Number(d)] || d).join("");
+      
+      const day = toKhmerNum(date.getDate());
+      const month = khmerMonths[date.getMonth()];
+      const year = toKhmerNum(date.getFullYear());
+      return `រាជធានីភ្នំពេញ, ថ្ងៃទី${day} ខែ${month} ឆ្នាំ${year}`;
+    };
+    const khmerDateStr = getKhmerDateString(new Date());
 
     doc.write(`
       <!DOCTYPE html>
@@ -479,67 +514,338 @@ const ReportPage = ({ shopId = null }) => {
         <meta charset="UTF-8">
         <title>${reportTitle}</title>
         <style>
+          @import url('https://fonts.googleapis.com/css2?family=Moul&family=Siemreap:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+          
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          @page { size: A4 portrait; margin: 1.8cm 1.5cm; }
-          body { font-family: 'Segoe UI', sans-serif; background: white; color: #1e293b; line-height: 1.5; }
-          .print-container { max-width: 100%; margin: 0 auto; }
-          .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1976D2; padding-bottom: 20px; margin-bottom: 20px; }
-          .company-info h1 { font-size: 28px; font-weight: 700; color: #1976D2; margin-bottom: 8px; }
-          .company-info p { font-size: 12px; color: #475569; margin: 2px 0; }
-          .report-info { text-align: right; }
-          .report-info h2 { font-size: 24px; font-weight: 600; color: #1976D2; margin-bottom: 8px; }
-          .report-info p { font-size: 12px; color: #475569; }
-          .filters { background: #E3F2FD; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-          th { background: #1976D2; color: white; padding: 12px 8px; font-weight: 600; font-size: 13px; text-align: left; }
-          td { padding: 10px 8px; border-bottom: 1px solid #e2e8f0; font-size: 12px; }
-          tr:nth-child(even) td { background: #F8FAFF; }
-          .totals { display: flex; justify-content: flex-end; margin-top: 20px; padding-top: 12px; border-top: 2px solid #1976D2; }
-          .totals-box { width: 300px; }
-          .totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
-          .totals-row.total { font-weight: 700; font-size: 16px; border-top: 1px solid #cbd5e1; margin-top: 6px; padding-top: 8px; }
-          .footer { margin-top: 32px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 16px; }
-          @media print { th { background: #1976D2 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+          @page { size: A4 portrait; margin: 1.5cm 1.5cm 2cm 1.5cm; }
+          body { 
+            font-family: 'Siemreap', 'Inter', sans-serif; 
+            background: white; 
+            color: #000000; 
+            line-height: 1.6; 
+            font-size: 11pt;
+          }
+          .print-container { 
+            width: 100%; 
+            margin: 0 auto; 
+          }
+          
+          /* Header Grid Layout */
+          .header-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            width: 100%;
+          }
+          
+          /* National Header Styles */
+          .national-header {
+            text-align: center;
+            justify-self: end;
+          }
+          .national-title {
+            font-family: 'Moul', serif;
+            font-size: 11pt;
+            color: #1D4592;
+            margin-bottom: 2px;
+          }
+          .national-motto {
+            font-family: 'Siemreap', sans-serif;
+            font-size: 9.5pt;
+            font-weight: 600;
+            color: #333333;
+          }
+          .national-divider {
+            border-bottom: 1.5px solid #1D4592;
+            width: 80px;
+            margin: 4px auto 0 auto;
+            position: relative;
+          }
+          .national-divider::after {
+            content: "";
+            display: block;
+            border-bottom: 0.5px solid #1D4592;
+            width: 50px;
+            margin: 2px auto 0 auto;
+          }
+          
+          /* Company Info Styles */
+          .company-info {
+            text-align: left;
+          }
+          .company-title-kh {
+            font-family: 'Moul', serif;
+            font-size: 12pt;
+            color: #1D4592;
+            margin-bottom: 4px;
+          }
+          .company-title-en {
+            font-family: 'Inter', sans-serif;
+            font-size: 10pt;
+            font-weight: 700;
+            color: #555555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+          }
+          .company-details p {
+            font-family: 'Siemreap', 'Inter', sans-serif;
+            font-size: 8.5pt;
+            color: #444444;
+            line-height: 1.4;
+            margin: 2px 0;
+          }
+          
+          /* Report Title Section */
+          .report-title-container {
+            text-align: center;
+            margin-bottom: 25px;
+            border-top: 2px solid #1D4592;
+            border-bottom: 2px solid #1D4592;
+            padding: 12px 0;
+            background-color: #f4f7fc;
+            clear: both;
+          }
+          .report-title-kh {
+            font-family: 'Moul', serif;
+            font-size: 14pt;
+            color: #1D4592;
+            margin-bottom: 4px;
+          }
+          .report-title-en {
+            font-family: 'Inter', sans-serif;
+            font-size: 11pt;
+            font-weight: 700;
+            color: #333333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+          
+          /* Meta Info */
+          .meta-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 20px;
+            font-size: 9pt;
+            font-family: 'Siemreap', sans-serif;
+            border-bottom: 1px solid #1D4592;
+            padding-bottom: 8px;
+          }
+          .meta-left {
+            text-align: left;
+            color: #333333;
+          }
+          .meta-right {
+            text-align: right;
+            color: #333333;
+          }
+          
+          /* Table Styles */
+          table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-bottom: 25px; 
+          }
+          th { 
+            border: 1px solid #1D4592;
+            background: #1D4592; 
+            color: #ffffff; 
+            padding: 8px 6px; 
+            font-family: 'Siemreap', 'Inter', sans-serif;
+            font-weight: 700; 
+            font-size: 9pt; 
+            text-align: center;
+          }
+          td { 
+            border: 1px solid #b9cde5;
+            padding: 8px 6px; 
+            font-family: 'Siemreap', 'Inter', sans-serif;
+            font-size: 8.5pt; 
+            color: #000000;
+          }
+          tr:nth-child(even) td {
+            background-color: #f9fbfd;
+          }
+          
+          /* Totals Box */
+          .totals-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+          }
+          .totals-table {
+            width: 280px;
+            border-collapse: collapse;
+            margin-bottom: 0;
+            border: 1px solid #1D4592;
+          }
+          .totals-table td {
+            padding: 6px 8px;
+            font-size: 9pt;
+            border: 1px solid #1D4592;
+          }
+          .totals-table td.label {
+            font-weight: 600;
+            text-align: left;
+            background: #f4f7fc;
+            color: #1D4592;
+          }
+          .totals-table td.val {
+            text-align: right;
+            font-weight: 700;
+            color: #000000;
+          }
+          
+          /* Signatures Grid */
+          .signatures-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            text-align: center;
+            margin-top: 50px;
+            page-break-inside: avoid;
+          }
+          .signature-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .sig-title-kh {
+            font-family: 'Siemreap', sans-serif;
+            font-weight: 700;
+            font-size: 9.5pt;
+            color: #1D4592;
+            margin-bottom: 2px;
+          }
+          .sig-title-en {
+            font-family: 'Inter', sans-serif;
+            font-size: 8.5pt;
+            color: #555555;
+            margin-bottom: 60px;
+          }
+          .sig-name {
+            font-family: 'Siemreap', sans-serif;
+            font-size: 9.5pt;
+            font-weight: 600;
+            border-bottom: 1px dotted #1D4592;
+            width: 150px;
+            padding-bottom: 2px;
+          }
+          
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            th { 
+              background-color: #1D4592 !important; 
+              color: #ffffff !important;
+              border: 1px solid #1D4592 !important;
+            }
+            td {
+              border: 1px solid #b9cde5 !important;
+            }
+            tr:nth-child(even) td {
+              background-color: #f9fbfd !important;
+            }
+            .report-title-container {
+              background-color: #f4f7fc !important;
+              border-top: 2px solid #1D4592 !important;
+              border-bottom: 2px solid #1D4592 !important;
+            }
+            .totals-table td.label {
+              background-color: #f4f7fc !important;
+            }
+          }
         </style>
       </head>
       <body>
         <div class="print-container">
-          <div class="header">
+          
+          <!-- Top Header Grid -->
+          <div class="header-grid">
             <div class="company-info">
-              <h1>${companyName}</h1>
-              <p>${address}</p>
-              <p>📞 ${phone} | ✉️ ${email}</p>
+              <div class="company-title-kh">${companyName}</div>
+              <div class="company-title-en">TERRALINK PARTNER</div>
+              <div class="company-details">
+                <p>លេខអត្តសញ្ញាណកម្ម អតប (VAT TIN): ${user?.vatNumber || "N/A"}</p>
+                <p>អាសយដ្ឋាន: ${address}</p>
+                <p>ទូរស័ព្ទ: ${phone} | អ៊ីមែល: ${email}</p>
+              </div>
             </div>
-            <div class="report-info">
-              <h2>${reportTitle}</h2>
-              ${detailViewLabel ? `<p>${t("view") || "View"}: ${detailViewLabel}</p>` : ""}
-              <p>${t("date") || "Date"}: ${generatedDate}</p>
-              <p>${t("shop") || "Shop"}: ${shopId || t("all_shops") || "All Shops"}</p>
+            <div class="national-header">
+              <div class="national-title">ព្រះរាជាណាចក្រកម្ពុជា</div>
+              <div class="national-motto">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+              <div class="national-divider"></div>
             </div>
           </div>
-          <div class="filters">
-            <span><strong>${t("period") || "Period"}:</strong> ${formatDateLong(dateRange.start)} – ${formatDateLong(dateRange.end)}</span>
-            <span><strong>${t("generated") || "Generated"}:</strong> ${generatedDate}</span>
+          
+          <!-- Report Title Container -->
+          <div class="report-title-container">
+            <div class="report-title-kh">${reportTitleKhmer}</div>
+            <div class="report-title-en">${reportTitle}</div>
           </div>
+          
+          <!-- Metadata Info Block -->
+          <div class="meta-info-grid">
+            <div class="meta-left">
+              <p><strong>រយៈពេល (Period):</strong> ${formatDateLong(dateRange.start)} – ${formatDateLong(dateRange.end)}</p>
+              ${detailViewLabel ? `<p><strong>ប្រភេទ (Type):</strong> ${detailViewLabel}</p>` : ""}
+            </div>
+            <div class="meta-right">
+              <p>${khmerDateStr}</p>
+              <p><strong>ហាង (Shop ID):</strong> ${shopId || "All Shops"}</p>
+            </div>
+          </div>
+          
+          <!-- Main Table -->
           <table>
-            <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</thead>
+            <thead>
+              <tr>
+                ${headers.map(h => `<th>${h}</th>`).join("")}
+              </tr>
+            </thead>
             <tbody>
               ${rows.map(row => `<tr>${row.map((cell, idx) => {
-      const isNumeric = typeof cell === "string" && cell.startsWith("$");
-      const align = idx === 0 ? "left" : isNumeric ? "right" : "center";
-      return `<td style="text-align:${align}">${cell}</td>`;
-    }).join("")}</tr>`).join("")}
-              ${rows.length === 0 ? `<tr><td colspan="${headers.length}" style="text-align:center">${t("no_data") || "No data available"}</td></tr>` : ""}
+                const isNumeric = typeof cell === "string" && cell.startsWith("$");
+                const align = idx === 0 ? "left" : isNumeric ? "right" : "center";
+                return `<td style="text-align:${align}">${cell}</td>`;
+              }).join("")}</tr>`).join("")}
+              ${rows.length === 0 ? `<tr><td colspan="${headers.length}" style="text-align:center">គ្មានទិន្នន័យស្រង់ចេញទេ (No data available)</td></tr>` : ""}
             </tbody>
           </table>
-          ${totalRevenue && tabs[activeTab].value === "sale" && saleDetailView !== "recentTransactions" ? `
-          <div class="totals">
-            <div class="totals-box">
-              <div class="totals-row"><span>${t("total_revenue") || "Total Revenue"}</span><span>${formatCurrency(totalRevenue)}</span></div>
-              <div class="totals-row total"><span>${t("grand_total") || "GRAND TOTAL"}</span><span>${formatCurrency(totalRevenue)}</span></div>
-            </div>
+          
+          <!-- Totals Area -->
+          ${totalRevenue && reportTabValue === "sale" && saleDetailView !== "recentTransactions" ? `
+          <div class="totals-container">
+            <table class="totals-table">
+              <tr>
+                <td class="label">សរុប (Total Revenue)</td>
+                <td class="val">${formatCurrency(totalRevenue)}</td>
+              </tr>
+              <tr>
+                <td class="label" style="font-weight: 700;">សរុបរួម (Grand Total)</td>
+                <td class="val" style="font-size: 11pt;">${formatCurrency(totalRevenue)}</td>
+              </tr>
+            </table>
           </div>` : ""}
-          <div class="footer"><p>${t("thank_you") || "Thank you for choosing"} ${companyName} | ${t("system_generated") || "System generated report"}</p></div>
+          
+          <!-- Signatures Section -->
+          <div class="signatures-grid">
+            <div class="signature-col">
+              <div class="sig-title-kh">រៀបចំដោយ</div>
+              <div class="sig-title-en">Prepared By</div>
+              <div class="sig-name"></div>
+            </div>
+            <div class="signature-col">
+              <div class="sig-title-kh">ពិនិត្យដោយ</div>
+              <div class="sig-title-en">Checked By</div>
+              <div class="sig-name"></div>
+            </div>
+            <div class="signature-col">
+              <div class="sig-title-kh">អនុម័តដោយ</div>
+              <div class="sig-title-en">Approved By</div>
+              <div class="sig-name"></div>
+            </div>
+          </div>
+          
         </div>
       </body>
       </html>

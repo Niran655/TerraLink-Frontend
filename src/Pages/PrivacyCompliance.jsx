@@ -6,34 +6,34 @@ import { jsPDF } from "jspdf";
 export default function PrivacyCompliance() {
   const handleDownloadDPA = () => {
     const doc = new jsPDF();
-    
+
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(18);
     doc.text("DATA PROCESSING AGREEMENT (DPA)", 14, 22);
-    
+
     doc.setFontSize(9);
     doc.setFont("Helvetica", "normal");
     doc.setTextColor(100);
     doc.text("Effective Date: June 29, 2026 | Document Reference: TL-AI-DPA-2026", 14, 28);
-    
+
     doc.setDrawColor(200);
     doc.line(14, 32, 196, 32);
-    
+
     doc.setTextColor(0);
     doc.setFontSize(11);
     doc.setFont("Helvetica", "bold");
     doc.text("1. Purpose, Scope, and Applicability", 14, 42);
-    
+
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(9.5);
     const body1 = "This Data Processing Agreement (\"DPA\") is entered into by and between TerraLink Inc. (\"Processor\") and the Customer subscribing to TerraLink Services (\"Controller\"). This agreement governs the security, storage, and processing parameters of Controller's business data, sales invoices, user sessions, and customer lists. This DPA is integrated into, and subject to, the Master Terms of Service.";
     const splitBody1 = doc.splitTextToSize(body1, 180);
     doc.text(splitBody1, 14, 47);
-    
+
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(11);
     doc.text("2. Technical Partitioning & Tenant Isolation", 14, 70);
-    
+
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(9.5);
     const body2 = "Processor warrants that strict logical boundaries are maintained to isolate Controller's databases. Specifically:\n" +
@@ -41,11 +41,11 @@ export default function PrivacyCompliance() {
       "• Encryption Standards: All Controller data is encrypted in transit using TLS 1.3 protocols and at rest using AES-256 bit encryption standards. Backups are encrypted under separate unique tenant keys.";
     const splitBody2 = doc.splitTextToSize(body2, 180);
     doc.text(splitBody2, 14, 75);
-    
+
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(11);
     doc.text("3. AI Data Scoping & Non-Training Guarantees", 14, 110);
-    
+
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(9.5);
     const body3 = "To protect proprietary business operations, Processor establishes the following guarantees regarding artificial intelligence (AI) agents:\n" +
@@ -57,7 +57,7 @@ export default function PrivacyCompliance() {
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(11);
     doc.text("4. Subprocessors and Audits", 14, 150);
-    
+
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(9.5);
     const body4 = "Processor works with vetted cloud providers (e.g. Supabase, Firebase) for backup and cloud hosting under standard GDPR-compliant processing clauses. Controller has the right to request audit logs detailing database accesses by subprocessor nodes.";
@@ -70,30 +70,30 @@ export default function PrivacyCompliance() {
     doc.setFontSize(8);
     doc.setTextColor(150);
     doc.text("TerraLink Corporate Privacy Office | Reference: DPA-ENG-2026", 14, 280);
-    
+
     doc.save("terralink-dpa-agreement-en.pdf");
   };
 
   const handleDownloadRetention = () => {
     const doc = new jsPDF();
-    
+
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(18);
     doc.text("DATA RETENTION & DELETION POLICY", 14, 22);
-    
+
     doc.setFontSize(9);
     doc.setFont("Helvetica", "normal");
     doc.setTextColor(100);
     doc.text("Effective Date: June 29, 2026 | Document Reference: TL-DRP-2026", 14, 28);
-    
+
     doc.setDrawColor(200);
     doc.line(14, 32, 196, 32);
-    
+
     doc.setTextColor(0);
     doc.setFontSize(11);
     doc.setFont("Helvetica", "bold");
     doc.text("1. Retention Overview & Schedules", 14, 42);
-    
+
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(9.5);
     const body1 = "This Policy outlines how long TerraLink retains data and the exact purging processes. Retentions are classified as:\n" +
@@ -102,11 +102,11 @@ export default function PrivacyCompliance() {
       "• Database Backups: Snapshot copies are saved on a rolling 30-day schedule (FIFO) for disaster recovery and system stability.";
     const splitBody1 = doc.splitTextToSize(body1, 180);
     doc.text(splitBody1, 14, 47);
-    
+
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(11);
     doc.text("2. Multi-Phase Deletion Process", 14, 82);
-    
+
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(9.5);
     const body2 = "When a tenant initiates account deletion or requests complete database purges:\n" +
@@ -115,11 +115,11 @@ export default function PrivacyCompliance() {
       "• Phase 3 (Backup Expiration): Backups containing archival records expire naturally within their 30-day retention cycles, resulting in absolute database deletion.";
     const splitBody2 = doc.splitTextToSize(body2, 180);
     doc.text(splitBody2, 14, 87);
-    
+
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(11);
     doc.text("3. Legal & Accounting Preservations", 14, 126);
-    
+
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(9.5);
     const body3 = "In accordance with local accounting regulations and tax guidelines, transactional invoices and cash receipts must be archived for up to 7 years. These records are isolated, encrypted, and excluded from standard deletion schedules until their compliance term is met.";
@@ -129,16 +129,16 @@ export default function PrivacyCompliance() {
     doc.setFontSize(8);
     doc.setTextColor(150);
     doc.text("TerraLink Corporate Privacy Office | Reference: DRP-ENG-2026", 14, 280);
-    
+
     doc.save("terralink-data-retention-policy-en.pdf");
   };
 
   const handlePrintKhmer = (type) => {
     const printWindow = window.open("", "_blank");
-    
+
     let title = "";
     let contentHtml = "";
-    
+
     if (type === "dpa") {
       title = "កិច្ចព្រមព្រៀងដំណើរការទិន្នន័យ AI (Enterprise AI DPA)";
       contentHtml = `
@@ -165,7 +165,7 @@ export default function PrivacyCompliance() {
           </ul>
 
           <h3 style="color: #1D4592; margin-top: 30px;">៤. អ្នកដំណើរការរង និងការសវនកម្ម</h3>
-          <p>អ្នកដំណើរការធ្វើការជាមួយអ្នកផ្តល់សេវាពពក (Cloud Providers) ដែលបានវាយតម្លៃត្រឹមត្រូវ (ដូចជា Supabase, Firebase) សម្រាប់ការរក្សាទុកទិន្នន័យ ក្រោមលក្ខខណ្ឌស្របតាម GDPR។ អ្នកគ្រប់គ្រងមានសិទ្ធិស្នើសុំកំណត់ហេតុសវនកម្មដែលបង្ហាញពីការចូលប្រើប្រាស់មូលដ្ឋានទិន្នន័យ។</p>
+          <p>អ្នកដំណើរការធ្វើការជាមួយអ្នកផ្តល់សេវាពពក (Cloud Providers) ដែលបានវាយតម្លៃត្រឹមត្រូវ (ដូចជា Supabase) សម្រាប់ការរក្សាទុកទិន្នន័យ ក្រោមលក្ខខណ្ឌស្របតាម GDPR។ អ្នកគ្រប់គ្រងមានសិទ្ធិស្នើសុំកំណត់ហេតុសវនកម្មដែលបង្ហាញពីការចូលប្រើប្រាស់មូលដ្ឋានទិន្នន័យ។</p>
 
           <br/><br/>
           <table style="width: 100%; margin-top: 40px; line-height: 1.5;">
@@ -173,7 +173,7 @@ export default function PrivacyCompliance() {
               <td style="width: 50%;">
                 <strong>តំណាងក្រុមហ៊ុន TerraLink Inc.</strong><br/><br/>
                 ___________________________<br/>
-                នាយកផ្នែកអនុលោមភាពសន្តិសុខ និងឯកជនភាព
+                អនុលោមភាពសន្តិសុខ និងឯកជនភាព
               </td>
               <td style="width: 50%;">
                 <strong>តំណាងអង្គភាពអតិថិជន (Tenant)</strong><br/><br/>
@@ -213,7 +213,7 @@ export default function PrivacyCompliance() {
         </div>
       `;
     }
-    
+
     printWindow.document.write(`
       <html>
         <head>
@@ -244,7 +244,7 @@ export default function PrivacyCompliance() {
         </body>
       </html>
     `);
-    
+
     printWindow.document.close();
   };
 
@@ -269,14 +269,14 @@ export default function PrivacyCompliance() {
             <CheckCircle size={24} color="#4CAF50" />
             <Typography variant="h6" fontWeight="600">Enterprise AI Data Processing Agreement</Typography>
           </Stack>
-          
+
           {/* Scrollable Long Legal Document */}
-          <Box sx={{ 
-            maxHeight: 250, 
-            overflowY: "auto", 
-            p: 2, 
-            mb: 3, 
-            bgcolor: "action.hover", 
+          <Box sx={{
+            maxHeight: 250,
+            overflowY: "auto",
+            p: 2,
+            mb: 3,
+            bgcolor: "action.hover",
             borderRadius: 1.5,
             border: "1px solid",
             borderColor: "divider",
@@ -292,7 +292,7 @@ export default function PrivacyCompliance() {
               <strong>2. Data Partitioning & Tenant Isolation:</strong> The Processor warrants that Controller's data is stored in isolated logical databases. Access control policies dynamically prevent query leaks or cross-tenant storage overlaps. Data is encrypted using TLS 1.3 in transit and AES-256 at rest.
             </Typography>
             <Typography variant="body2" paragraph>
-              <strong>3. No Cross-Client AI Training:</strong> The Processor guarantees that no customer database records, product listings, or custom prompts are utilized for training or fine-tuning underlying Large Language Models (LLMs) used by subprocessors or other customers. 
+              <strong>3. No Cross-Client AI Training:</strong> The Processor guarantees that no customer database records, product listings, or custom prompts are utilized for training or fine-tuning underlying Large Language Models (LLMs) used by subprocessors or other customers.
             </Typography>
             <Typography variant="body2" paragraph>
               <strong>4. Subprocessors:</strong> Cloud data infrastructure is managed through verified subprocessors complying with GDPR frameworks. Audit logs of cloud operations are available to the Controller upon request.
@@ -300,20 +300,20 @@ export default function PrivacyCompliance() {
           </Box>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-            <Button 
-              variant="contained" 
-              color="primary" 
+            <Button
+              variant="contained"
+              color="primary"
               startIcon={<Download size={18} />}
-              onClick={handleDownloadDPA} 
+              onClick={handleDownloadDPA}
               sx={{ textTransform: "none", fontWeight: 600 }}
             >
               Download DPA (English)
             </Button>
-            <Button 
-              variant="outlined" 
-              color="primary" 
+            <Button
+              variant="outlined"
+              color="primary"
               startIcon={<Globe size={18} />}
-              onClick={() => handlePrintKhmer("dpa")} 
+              onClick={() => handlePrintKhmer("dpa")}
               sx={{ textTransform: "none", fontWeight: 600 }}
             >
               Download DPA (ភាសាខ្មែរ)
@@ -329,12 +329,12 @@ export default function PrivacyCompliance() {
           </Stack>
 
           {/* Scrollable Retention Policy details */}
-          <Box sx={{ 
-            maxHeight: 250, 
-            overflowY: "auto", 
-            p: 2, 
-            mb: 3, 
-            bgcolor: "action.hover", 
+          <Box sx={{
+            maxHeight: 250,
+            overflowY: "auto",
+            p: 2,
+            mb: 3,
+            bgcolor: "action.hover",
             borderRadius: 1.5,
             border: "1px solid",
             borderColor: "divider",
@@ -358,20 +358,20 @@ export default function PrivacyCompliance() {
           </Box>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-            <Button 
-              variant="contained" 
-              color="primary" 
+            <Button
+              variant="contained"
+              color="primary"
               startIcon={<Download size={18} />}
-              onClick={handleDownloadRetention} 
+              onClick={handleDownloadRetention}
               sx={{ textTransform: "none", fontWeight: 600 }}
             >
               Download Policy (English)
             </Button>
-            <Button 
-              variant="outlined" 
-              color="primary" 
+            <Button
+              variant="outlined"
+              color="primary"
               startIcon={<Globe size={18} />}
-              onClick={() => handlePrintKhmer("retention")} 
+              onClick={() => handlePrintKhmer("retention")}
               sx={{ textTransform: "none", fontWeight: 600 }}
             >
               Download Policy (ភាសាខ្មែរ)

@@ -1,4 +1,8 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+import { useQuery } from '@apollo/client/react';
+import { useMemo } from 'react';
+import { GET_MY_PERMISSIONS } from '../graphql/queries';
+import { Box, CircularProgress } from '@mui/material';
 
 import EmployeeAttendance from './Pages/EmployeeAttendance';
 import AttendanceQrScan from './Pages/AttendanceQrScan';
@@ -60,8 +64,42 @@ import SecurityObservability from './Pages/SecurityObservability';
 export default function Router() {
   const { isAuthenticated, user } = useAuth();
 
-  const Guard = ({ children, allow = true }) =>
-    allow ? children : <Navigate to="/store" replace />;
+  const { data: permissionData, loading: permissionLoading } = useQuery(GET_MY_PERMISSIONS, {
+    skip: !isAuthenticated || !user,
+    fetchPolicy: "cache-and-network"
+  });
+
+  const userPermissions = useMemo(() => {
+    return permissionData?.getMyPermissions?.permissions || [];
+  }, [permissionData]);
+
+  const Guard = ({ children, module, allow = true }) => {
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+    // superAdmin and owner can access everything bypass checks
+    if (user?.role === "superAdmin" || user?.role === "owner") {
+      return children;
+    }
+
+    if (permissionLoading) {
+      return (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+          <CircularProgress />
+        </Box>
+      );
+    }
+
+    // If a module is specified, check if user has view permission for it
+    if (module) {
+      const allowed = userPermissions.some(p => p.module === module && p.actions?.view);
+      if (!allowed) {
+        return <Navigate to="/dashboard" replace />;
+      }
+      return children;
+    }
+
+    return allow ? children : <Navigate to="/store" replace />;
+  };
 
   const AttendanceCheckInPage = useRoutes([
     { path: '/setting/attendance-qr-scan', element: <AttendanceQrScan /> },
@@ -82,59 +120,57 @@ export default function Router() {
         { path: '/', element: <Navigate to="/dashboard" /> },
         { path: 'dashboard', element: <Dashboard /> },
         { path: 'chat', element: <ChatBot /> },
-        { path: 'social-cms', element: <Guard allow={canManageTenant(user)}><SocialCms/></Guard> },
-        { path: 'cms/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="cms" /></Guard> },
-        { path: 'crm/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="crm" /></Guard> },
-        { path: 'setting', element: <Guard allow={canManageTenant(user)}><Navigate to="/setting/user" replace /></Guard> },
-        { path: 'setting/social-accounts', element: <Guard allow={canManageTenant(user)}><SocialAccounts/></Guard> },
-        { path: '/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
-        { path: '/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
+        { path: 'social-cms', element: <Guard module="cms"><SocialCms/></Guard> },
+        { path: 'cms/:module', element: <Guard module="cms"><CmsCrmMenu area="cms" /></Guard> },
+        { path: 'crm/:module', element: <Guard module="crm"><CmsCrmMenu area="crm" /></Guard> },
+        { path: 'setting', element: <Guard module="settings"><Navigate to="/setting/user" replace /></Guard> },
+        { path: 'setting/social-accounts', element: <Guard module="settings"><SocialAccounts/></Guard> },
+        { path: '/unit', element: <Guard module="inventory"><Unit/></Guard>},
+        { path: '/supplier', element: <Guard module="inventory"><Supplier/></Guard>},
         { path: '/privacy', element: <Privacy/>},
         { path: '/terms', element: <Terms/>},
         { path: '/data-deletion', element: <DataDeletion/>},
-        { path: 'setting/ai-permissions', element: <Guard allow={canManageTenant(user)}><AIPermissions/></Guard> },
-        { path: 'setting/account-security', element: <Guard allow={canManageTenant(user)}><AccountSecurity/></Guard> },
-        { path: 'setting/active-sessions', element: <Guard allow={canManageTenant(user)}><ActiveSessions/></Guard> },
-        { path: 'setting/login-history', element: <Guard allow={canManageTenant(user)}><LoginHistory/></Guard> },
-        { path: 'setting/data-ownership', element: <Guard allow={canManageTenant(user)}><DataOwnership/></Guard> },
-        { path: 'setting/export-backup', element: <Guard allow={canManageTenant(user)}><ExportBackup/></Guard> },
-        { path: 'setting/ai-activity-logs', element: <Guard allow={canManageTenant(user)}><AIActivityLogs/></Guard> },
-        { path: 'setting/api-keys', element: <Guard allow={canManageTenant(user)}><APIKeys/></Guard> },
-        { path: 'setting/security-alerts', element: <Guard allow={canManageTenant(user)}><SecurityAlerts/></Guard> },
-        { path: 'setting/privacy-compliance', element: <Guard allow={canManageTenant(user)}><PrivacyCompliance/></Guard> },
-        { path: 'setting/security-center', element: <Guard allow={canManageTenant(user)}><SecurityCenter/></Guard> },
-        { path: 'setting/security-observability', element: <Guard allow={canManageTenant(user)}><SecurityObservability/></Guard> },
-        { path: '/customer', element: <Customer/>},
-        { path: '/table', element: <TablePage/>},
-        { path: '/setting/permission', element: <Guard allow={canManageSettings(user)}><Permission/></Guard>},
-        { path: '/setting/employee', element: <Guard allow={canManageTenant(user)}><Employee/></Guard>},
-        { path: '/setting/department', element: <Guard allow={canManageTenant(user)}><Department/></Guard>},
-        { path: '/setting/employee-salary', element: <Guard allow={canManageTenant(user)}><EmployeeSalary/></Guard>},
-        { path: '/setting/employee-attendance', element: <Guard allow={canManageTenant(user)}><EmployeeAttendance/></Guard>},
-        { path: '/setting/admin-attendance', element: <Guard allow={canManageTenant(user)}><AdminAttendance/></Guard>},
-        { path: '/setting/attendance-qr', element: <Guard allow={canManageTenant(user)}><AttendanceQr/></Guard>},
+        { path: 'setting/ai-permissions', element: <Guard module="settings"><AIPermissions/></Guard> },
+        { path: 'setting/account-security', element: <Guard module="settings"><AccountSecurity/></Guard> },
+        { path: 'setting/active-sessions', element: <Guard module="settings"><ActiveSessions/></Guard> },
+        { path: 'setting/login-history', element: <Guard module="settings"><LoginHistory/></Guard> },
+        { path: 'setting/data-ownership', element: <Guard module="settings"><DataOwnership/></Guard> },
+        { path: 'setting/export-backup', element: <Guard module="settings"><ExportBackup/></Guard> },
+        { path: 'setting/ai-activity-logs', element: <Guard module="settings"><AIActivityLogs/></Guard> },
+        { path: 'setting/api-keys', element: <Guard module="settings"><APIKeys/></Guard> },
+        { path: 'setting/security-alerts', element: <Guard module="settings"><SecurityAlerts/></Guard> },
+        { path: 'setting/privacy-compliance', element: <Guard module="settings"><PrivacyCompliance/></Guard> },
+        { path: 'setting/security-center', element: <Guard module="settings"><SecurityCenter/></Guard> },
+        { path: 'setting/security-observability', element: <Guard module="settings"><SecurityObservability/></Guard> },
+        { path: '/customer', element: <Guard module="customers"><Customer/></Guard>},
+        { path: '/table', element: <Guard module="inventory"><TablePage/></Guard>},
+        { path: '/setting/permission', element: <Guard module="settings"><Permission/></Guard>},
+        { path: '/setting/employee', element: <Guard module="hr"><Employee/></Guard>},
+        { path: '/setting/department', element: <Guard module="hr"><Department/></Guard>},
+        { path: '/setting/employee-salary', element: <Guard module="hr"><EmployeeSalary/></Guard>},
+        { path: '/setting/employee-attendance', element: <Guard module="hr"><EmployeeAttendance/></Guard>},
+        { path: '/setting/admin-attendance', element: <Guard module="hr"><AdminAttendance/></Guard>},
+        { path: '/setting/attendance-qr', element: <Guard module="hr"><AttendanceQr/></Guard>},
         { path: '/store', element: <Store/>},
-        { path: 'report', element: <Report/> },
-        { path: 'expense', element: <Expense/> },
-        { path: 'income', element: <Income/> },
-        { path: 'invoice', element: <Invoice/> },
-        { path: 'sale-return', element: <SaleReturn/> },
-        { path: '/store/pos/:id/report-in-shop', element: <ReportInShop/> },
-        { path: '/store/pos/:id/dashboard-in-shop', element: <DashboardInShop/> },
+        { path: 'report', element: <Guard module="reports"><Report/></Guard> },
+        { path: 'expense', element: <Guard module="finance"><Expense/></Guard> },
+        { path: 'income', element: <Guard module="finance"><Income/></Guard> },
+        { path: 'invoice', element: <Guard module="sale"><Invoice/></Guard> },
+        { path: 'sale-return', element: <Guard module="sale"><SaleReturn/></Guard> },
+        { path: '/store/pos/:id/report-in-shop', element: <Guard module="pos"><ReportInShop/></Guard> },
+        { path: '/store/pos/:id/dashboard-in-shop', element: <Guard module="pos"><DashboardInShop/></Guard> },
+        { path: '/store/pos/:id/warehouse-in-shop', element: <Guard module="pos"><WarehouseInShop/></Guard> },
+        { path: '/store/pos/:id/mobile-app-controller', element: <Guard module="pos"><MobileApp/></Guard> },
         { path: 'profile', element:<Profile/>},
         { path: "user/:userId/profile", element: <Profile /> },
         { path: '/setting/tenant', element: <Guard allow={user?.role === "superAdmin"}><Tenant/></Guard> },
-        { path: '/user', element: <Guard allow={canManageUsers(user)}><User/></Guard> },
+        { path: '/user', element: <Guard module="settings"><User/></Guard> },
         { path: '/store-setting/:shopId', element: <StoreSetting/>},
-        { path: '/category', element: <Guard allow={canManageTenant(user)}><Category/></Guard> },
-        { path: '/product', element: <Product/>},
-        { path: '/store/pos/:shopId', element: <Pos/>},
-        { path: 'warehouse', element: <Warehouse/>},
-        { path: '/store/pos/:id/warehouse-in-shop', element: <WarehouseInShop/>},
-        { path: '/store/pos/:id/mobile-app-controller', element: <MobileApp/>},
+        { path: '/category', element: <Guard module="categories"><Category/></Guard> },
+        { path: '/product', element: <Guard module="products"><Product/></Guard>},
+        { path: '/store/pos/:shopId', element: <Guard module="pos"><Pos/></Guard>},
+        { path: 'warehouse', element: <Guard module="inventory"><Warehouse/></Guard>},
         { path: "*", element: <NotFound /> },
-        // push ban
-        // test push
       ],
     },
     {

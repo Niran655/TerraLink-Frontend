@@ -291,6 +291,25 @@ query GetRolePermissions {
   }
 }
 `
+
+export const GET_MY_PERMISSIONS = gql`
+query GetMyPermissions {
+  getMyPermissions {
+    role
+    permissions {
+      module
+      actions {
+        view
+        add
+        edit
+        delete
+        export
+        approveVoid
+      }
+    }
+  }
+}
+`
 export const GET_CUSTOMERS_WITH_PAGINATION = gql`
 query GetCustomersWithPagination($shopIds: ID, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $active: Boolean) {
   getCustomersWithPagination(shopIds: $shopIds, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, active: $active) {

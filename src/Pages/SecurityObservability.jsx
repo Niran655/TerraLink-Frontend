@@ -26,6 +26,7 @@ import {
   Divider,
   InputAdornment,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import {
   ArrowLeft,
@@ -46,6 +47,7 @@ import {
   Zap,
   HelpCircle,
   FileCode,
+  ChevronRight,
 } from "lucide-react";
 import { useQuery } from "@apollo/client/react";
 import { gql } from "@apollo/client";
@@ -71,13 +73,14 @@ const GET_API_REQUEST_LOGS = gql`
 `;
 
 export default function SecurityObservability() {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { data, loading, refetch } = useQuery(GET_API_REQUEST_LOGS, {
     fetchPolicy: "network-only",
   });
 
   // State Management
-  const [metric, setMetric] = useState("Requests Count");
+  const [metric, setMetric] = useState("Data Transfer");
   const [aggregation, setAggregation] = useState("Sum");
   const [timeRange, setTimeRange] = useState("Last 12 hours");
   const [resolution, setResolution] = useState("5 minutes");
@@ -111,7 +114,7 @@ export default function SecurityObservability() {
   };
 
   // Metric options
-  const metricsList = ["Requests Count", "Error Rate", "Latency (ms)", "Violation Count"];
+  const metricsList = ["Requests Count", "Error Rate", "Latency (ms)", "Violation Count", "Data Transfer"];
   const aggregationsList = ["Sum", "Average", "P95", "P99"];
   const timeRangesList = ["Last 30 minutes", "Last 1 hour", "Last 12 hours", "Last 24 hours", "Last 7 days"];
   const resolutionsList = ["1 minute", "5 minutes", "15 minutes", "1 hour"];
@@ -139,29 +142,95 @@ export default function SecurityObservability() {
 
   // Chart configuration & transition mapping
   const chartData = useMemo(() => {
-    const hours = ["12h ago", "10h ago", "8h ago", "6h ago", "4h ago", "2h ago", "Now"];
+    // 40 points for high-density rendering to match screenshot spikes
+    const categories = Array(40).fill("");
+    categories[0] = "12h ago";
+    categories[39] = "2m ago";
     
-    // Vary charts based on metric selector
-    let counts = [5, 4, 18, 2, 29, 3, 4];
-    let title = "Total API Requests";
-    let color = "#2196F3"; // Bright Blue
+    let series = [];
+    let colors = [];
 
-    if (metric === "Error Rate") {
-      counts = [0.2, 0.4, 3.8, 0, 8.1, 0, 1.2];
-      title = "Error Rate (%)";
-      color = "#F44336"; // Red
+    // Helper to generate realistic spiky data matching the image
+    const generateSpikyData = (base, variance, spikeIndices) => {
+      return Array.from({ length: 40 }, (_, i) => {
+        if (spikeIndices.includes(i)) {
+          // Sharp spikes
+          return base + variance * (0.8 + Math.random() * 0.4);
+        }
+        // Small baseline activity
+        return base + (Math.random() * base * 0.3);
+      });
+    };
+
+    if (metric === "Data Transfer") {
+      series = [
+        {
+          name: "Ingress",
+          data: generateSpikyData(0.2, 5.0, [2, 20, 22, 27, 33, 35])
+        },
+        {
+          name: "Egress",
+          data: generateSpikyData(0.1, 1.5, [0, 8, 10, 18, 25, 30, 35])
+        },
+        {
+          name: "Cached",
+          data: generateSpikyData(0.05, 0.3, [2, 20, 27])
+        }
+      ];
+      colors = ["#008FFB", "#FEB019", "#00E396"]; // Blue, Yellow/Orange, Green
+    } else if (metric === "Error Rate") {
+      series = [
+        {
+          name: "HTTP 5xx",
+          data: generateSpikyData(0.1, 8.0, [4, 15, 28, 35])
+        },
+        {
+          name: "HTTP 4xx",
+          data: generateSpikyData(0.3, 3.0, [2, 10, 20, 32])
+        }
+      ];
+      colors = ["#F44336", "#FF9800"]; // Red, Orange
     } else if (metric === "Latency (ms)") {
-      counts = [120, 140, 420, 110, 560, 95, 130];
-      title = "P95 Latency (ms)";
-      color = "#FF9800"; // Orange
+      series = [
+        {
+          name: "P95 Latency",
+          data: generateSpikyData(110, 480, [5, 12, 22, 27, 34])
+        },
+        {
+          name: "Average Latency",
+          data: generateSpikyData(45, 120, [5, 12, 22, 27, 34])
+        }
+      ];
+      colors = ["#9C27B0", "#2196F3"]; // Purple, Blue
     } else if (metric === "Violation Count") {
-      counts = [0, 0, 2, 0, 4, 0, 0];
-      title = "Security Violations";
-      color = "#9C27B0"; // Purple
+      series = [
+        {
+          name: "Blocked IPs",
+          data: generateSpikyData(0, 4, [3, 11, 21, 29, 36])
+        },
+        {
+          name: "XSS Attempts",
+          data: generateSpikyData(0, 2, [1, 9, 21, 35])
+        }
+      ];
+      colors = ["#E91E63", "#FF5722"]; // Pink, Orange
+    } else {
+      // Default / Requests Count
+      series = [
+        {
+          name: "GraphQL Queries",
+          data: generateSpikyData(5, 30, [3, 10, 18, 24, 28, 35])
+        },
+        {
+          name: "GraphQL Mutations",
+          data: generateSpikyData(1, 10, [3, 18, 28])
+        }
+      ];
+      colors = ["#2196F3", "#00E396"]; // Blue, Green
     }
 
     return {
-      series: [{ name: title, data: counts }],
+      series,
       options: {
         chart: {
           id: "observability-chart",
@@ -170,50 +239,70 @@ export default function SecurityObservability() {
           animations: {
             enabled: true,
             easing: "easeinout",
-            speed: 600,
-            animateGradually: { enabled: true, delay: 150 },
-            dynamicAnimation: { enabled: true, speed: 450 }
+            speed: 600
           }
         },
-        theme: { mode: "dark" },
-        colors: [color],
-        stroke: { curve: "smooth", width: 3 },
+        theme: { mode: theme.palette.mode },
+        colors: colors,
+        stroke: { curve: "straight", width: 2 },
+        markers: { size: 0 },
         fill: {
-          type: "gradient",
-          gradient: {
-            shadeIntensity: 1,
-            opacityFrom: chartType === "area" ? 0.6 : 0.1,
-            opacityTo: 0.05,
-            stops: [0, 90, 100]
-          }
+          type: "solid",
+          opacity: 0.05
         },
         xaxis: {
-          categories: hours,
-          labels: { style: { colors: "#888888", fontFamily: "Inter, sans-serif" } },
-          axisBorder: { show: false },
+          categories: categories,
+          labels: {
+            show: true,
+            style: { colors: theme.palette.text.secondary, fontFamily: "Inter, sans-serif", fontSize: "11px" }
+          },
+          axisBorder: { show: true, color: theme.palette.divider },
           axisTicks: { show: false }
         },
         yaxis: {
-          labels: { style: { colors: "#888888", fontFamily: "Inter, sans-serif" } }
+          labels: {
+            style: { colors: theme.palette.text.secondary, fontFamily: "Inter, sans-serif", fontSize: "11px" },
+            formatter: (val) => {
+              if (metric === "Data Transfer") {
+                return val === 0 ? "0B" : `${val.toFixed(0)}MB`;
+              }
+              if (metric === "Error Rate") return `${val.toFixed(1)}%`;
+              if (metric === "Latency (ms)") return `${val.toFixed(0)}ms`;
+              return `${val.toFixed(0)}`;
+            }
+          },
+          min: 0,
+          max: metric === "Data Transfer" ? 6 : undefined,
+          tickAmount: metric === "Data Transfer" ? 3 : undefined
         },
         grid: {
-          borderColor: "rgba(255, 255, 255, 0.08)",
-          strokeDashArray: 4
+          show: true,
+          borderColor: theme.palette.divider,
+          strokeDashArray: 0,
+          xaxis: { lines: { show: false } },
+          yaxis: { lines: { show: true } }
+        },
+        legend: {
+          show: true,
+          position: "bottom",
+          horizontalAlign: "center",
+          labels: { colors: theme.palette.text.primary }
         },
         tooltip: {
-          theme: "dark",
-          x: { show: true },
+          theme: theme.palette.mode,
+          x: { show: false },
           y: {
             formatter: (val) => {
-              if (metric === "Error Rate") return `${val}%`;
-              if (metric === "Latency (ms)") return `${val} ms`;
-              return `${val} calls`;
+              if (metric === "Data Transfer") return `${val.toFixed(2)} MB`;
+              if (metric === "Error Rate") return `${val.toFixed(2)} %`;
+              if (metric === "Latency (ms)") return `${val.toFixed(0)} ms`;
+              return `${val.toFixed(0)} calls`;
             }
           }
         }
       }
     };
-  }, [metric, chartType]);
+  }, [metric, chartType, theme]);
 
   // Filter logs locally based on search
   const filteredLogs = useMemo(() => {
@@ -229,6 +318,22 @@ export default function SecurityObservability() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: "background.default", minHeight: "100vh", color: "text.primary" }}>
+      <style>
+        {`
+          .apexcharts-tooltip {
+            background: ${theme.palette.mode === "dark" ? "#111115 !important" : "#ffffff !important"};
+            border: 1px solid ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.12)"} !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+          }
+          .apexcharts-tooltip-series-group {
+            background: transparent !important;
+          }
+          .apexcharts-tooltip-text-y-label,
+          .apexcharts-tooltip-text-y-value {
+            color: ${theme.palette.mode === "dark" ? "#ffffff !important" : "#111115 !important"};
+          }
+        `}
+      </style>
       
       {/* Header section with back button */}
       <Stack direction="row" alignItems="center" spacing={2} mb={3}>
@@ -422,12 +527,57 @@ export default function SecurityObservability() {
       </Alert>
 
       {/* Chart Dashboard Panel */}
-      <Paper sx={{ p: 3, mb: 4, border: "1px solid", borderColor: "divider", borderRadius: 2, bgcolor: "background.paper" }}>
+      <Paper sx={{
+        p: 3,
+        mb: 4,
+        border: "1px solid",
+        borderColor: theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "divider",
+        borderRadius: "12px",
+        bgcolor: theme.palette.mode === "dark" ? "#0a0a0c" : "background.paper"
+      }}>
         
         {/* Chart Header */}
-        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="subtitle1" fontWeight="700">Trend History</Typography>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={2}>
+          <Box textAlign="start">
+            <Typography variant="h6" fontWeight="700" sx={{ color: "text.primary", fontSize: "1.1rem" }}>
+              {metric === "Data Transfer"
+                ? "Fast Data Transfer"
+                : metric === "Requests Count"
+                ? "API Request Volume"
+                : metric === "Error Rate"
+                ? "Error Analytics"
+                : metric === "Latency (ms)"
+                ? "System Latency"
+                : "Security Violations"}
+            </Typography>
+            <Typography variant="caption" sx={{ color: "text.secondary", mt: 0.5, display: "block" }}>
+              Total
+            </Typography>
+            <Typography variant="h5" fontWeight="800" sx={{ color: "text.primary", mt: 0.2 }}>
+              {metric === "Data Transfer"
+                ? "44 MB"
+                : metric === "Requests Count"
+                ? "245 Requests"
+                : metric === "Error Rate"
+                ? "1.4%"
+                : metric === "Latency (ms)"
+                ? "235 ms"
+                : "6 Violations"}
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            {/* Chart Toggles (Line, Bar, Area) */}
+            <Stack direction="row" spacing={0.5} sx={{ bgcolor: "action.hover", p: 0.5, borderRadius: 1.5 }}>
+              <IconButton size="small" onClick={() => setChartType("line")} sx={{ color: chartType === "line" ? "primary.main" : "text.secondary" }}>
+                <LineChart size={16} />
+              </IconButton>
+              <IconButton size="small" onClick={() => setChartType("bar")} sx={{ color: chartType === "bar" ? "primary.main" : "text.secondary" }}>
+                <BarChart size={16} />
+              </IconButton>
+              <IconButton size="small" onClick={() => setChartType("area")} sx={{ color: chartType === "area" ? "primary.main" : "text.secondary" }}>
+                <AreaChart size={16} />
+              </IconButton>
+            </Stack>
             <Tooltip title="Resolution step">
               <Button
                 variant="text"
@@ -439,18 +589,8 @@ export default function SecurityObservability() {
                 {resolution}
               </Button>
             </Tooltip>
-          </Stack>
-          
-          {/* Chart Toggles (Line, Bar, Area) */}
-          <Stack direction="row" spacing={0.5} sx={{ bgcolor: "action.hover", p: 0.5, borderRadius: 1.5 }}>
-            <IconButton size="small" onClick={() => setChartType("line")} color={chartType === "line" ? "primary" : "default"}>
-              <LineChart size={16} />
-            </IconButton>
-            <IconButton size="small" onClick={() => setChartType("bar")} color={chartType === "bar" ? "primary" : "default"}>
-              <BarChart size={16} />
-            </IconButton>
-            <IconButton size="small" onClick={() => setChartType("area")} color={chartType === "area" ? "primary" : "default"}>
-              <AreaChart size={16} />
+            <IconButton size="small" sx={{ color: "text.secondary" }}>
+              <ChevronRight size={18} />
             </IconButton>
           </Stack>
         </Stack>
@@ -467,7 +607,7 @@ export default function SecurityObservability() {
 
         {/* Chart Action Buttons */}
         <Stack direction="row" justifyContent="flex-end" spacing={2} mt={2}>
-          <IconButton size="small" title="Download chart data" sx={{ border: "1px solid", borderColor: "divider", borderRadius: 1.5 }}>
+          <IconButton size="small" title="Download chart data" sx={{ border: "1px solid", borderColor: "divider", borderRadius: 1.5, color: "text.primary" }}>
             <Download size={16} />
           </IconButton>
           <Button

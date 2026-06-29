@@ -1,9 +1,9 @@
 import { BusinessOutlined, CategoryOutlined, EventAvailableOutlined, GroupOutlined, Inventory2Outlined, LocalShippingOutlined, PeopleAltOutlined, RestaurantOutlined, SecurityOutlined, StraightenOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Avatar, Box, Collapse, List, ListItem, ListItemButton, ListItemIcon, Stack, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, Collapse, List, ListItem, ListItemButton, ListItemIcon, Stack, Tooltip, Typography, TextField, InputAdornment, Paper, ListItemText, Dialog } from "@mui/material";
 // import { BadgePercent, BotMessageSquare, ChartNoAxesColumn, ChevronDown, Currency, FileText, LayoutDashboard, RotateCcw, ShoppingCart, TrendingDown, TrendingUp, Warehouse } from "lucide-react";
 // import { Bell, Gift, Image, QrCode, Settings, Smartphone } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   BadgePercent,
   Bot,
@@ -49,6 +49,7 @@ import {
   Network,
   FolderSync,
   Shield,
+  Search,
 } from "lucide-react";
 import logo from "../assets/Image/header-logo.png";
 import { useThemeContext } from "../Context/ThemeContext";
@@ -67,7 +68,7 @@ function getContrastText(hexColor) {
   return luminance > 0.5 ? "#000000" : "#ffffff";
 }
 
-export default function MenuNavbar() {
+export default function MenuNavbar({ userPermissions = [] }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { language, user } = useAuth();
@@ -76,6 +77,20 @@ export default function MenuNavbar() {
 
   const isCompact = layoutMode === "compact";
   const isSidebar = layoutMode === "sidebar";
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const menuData = [
     {
@@ -250,6 +265,25 @@ export default function MenuNavbar() {
         },
       ],
     },
+    ...businessMenuSections.map((section) => {
+      const SectionIcon = section.icon;
+
+      return {
+        sectionKey: section.key,
+        pageTitle: t(section.label),
+        pageIcon: <SectionIcon className="icon" />,
+        children: section.modules.map((module) => {
+          const ModuleIcon = module.icon;
+
+          return {
+            pageTitle: t(module.label),
+            routeTo: module.path,
+            pageIcon: <ModuleIcon className="icon" />,
+          };
+        }),
+      };
+    }),
+
     {
       sectionKey: "settings",
       pageTitle: t("settings") || "Settings",
@@ -323,28 +357,31 @@ export default function MenuNavbar() {
         },
       ],
     },
-
-    ...businessMenuSections.map((section) => {
-      const SectionIcon = section.icon;
-
-      return {
-        sectionKey: section.key,
-        pageTitle: t(section.label),
-        pageIcon: <SectionIcon className="icon" />,
-        children: section.modules.map((module) => {
-          const ModuleIcon = module.icon;
-
-          return {
-            pageTitle: t(module.label),
-            routeTo: module.path,
-            pageIcon: <ModuleIcon className="icon" />,
-          };
-        }),
-      };
-    }),
   ];
-  const visibleMenuData = filterTenantMenuSections(menuData, user);
+  const visibleMenuData = filterTenantMenuSections(menuData, user, userPermissions);
   const flatMenuData = visibleMenuData.flatMap((section) => section.children);
+
+  const filteredFeatures = useMemo(() => {
+    if (!searchQuery) return [];
+    const q = searchQuery.toLowerCase();
+    const list = [];
+    visibleMenuData.forEach((section) => {
+      section.children.forEach((child) => {
+        if (
+          child.pageTitle.toLowerCase().includes(q) ||
+          (section.pageTitle && section.pageTitle.toLowerCase().includes(q))
+        ) {
+          list.push({
+            title: child.pageTitle,
+            route: child.routeTo,
+            section: section.pageTitle,
+            icon: child.pageIcon
+          });
+        }
+      });
+    });
+    return list;
+  }, [searchQuery, visibleMenuData]);
 
   // Find which section should be active based on URL
   const initialActiveSection = visibleMenuData.find((section) =>
@@ -493,6 +530,202 @@ export default function MenuNavbar() {
       </Stack>
 
       <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+        {/* Search Input Trigger */}
+        {!isCompact && (
+          <Box
+            onClick={() => setIsSearchOpen(true)}
+            sx={{
+              cursor: "pointer",
+              px: 2,
+              pt: 2,
+              pb: 1,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                height: 36,
+                borderRadius: 0.5,
+                px: 1.5,
+                fontSize: "0.85rem",
+                color: "rgba(255,255,255,0.4)",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid transparent",
+                transition: "all 0.15s ease",
+                "&:hover": {
+                  borderColor: "rgba(255, 255, 255, 0.15)",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)"
+                }
+              }}
+            >
+              <Search size={16} style={{ marginRight: 8, color: "rgba(255,255,255,0.5)" }} />
+              <span>{t("Find...") || "Find..."}</span>
+              <Box sx={{ flexGrow: 1 }} />
+              <Box
+                sx={{
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  borderRadius: 1,
+                  px: 0.6,
+                  py: 0.1,
+                  fontSize: "0.7rem",
+                  color: "rgba(255,255,255,0.4)"
+                }}
+              >
+                Ctrl K
+              </Box>
+            </Box>
+          </Box>
+        )}
+
+        {/* Modal Search Dialog */}
+        <Dialog
+          open={isSearchOpen}
+          onClose={() => {
+            setIsSearchOpen(false);
+            setSearchQuery("");
+          }}
+          fullWidth
+          maxWidth="sm"
+          sx={{
+            "& .MuiDialog-paper": {
+              bgcolor: "#0c0c0e",
+              backgroundImage: "none",
+              borderRadius: 3,
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              color: "white",
+              overflow: "hidden"
+            },
+            "& .MuiBackdrop-root": {
+              backdropFilter: "blur(4px)",
+              bgcolor: "rgba(0, 0, 0, 0.7)"
+            }
+          }}
+        >
+          {/* Search input in dialog */}
+          <Box sx={{ p: 2, display: "flex", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+            <Search size={20} style={{ color: "rgba(255,255,255,0.5)", marginRight: 12 }} />
+            <TextField
+              autoFocus
+              fullWidth
+              variant="standard"
+              placeholder="Type a command or search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                disableUnderline: true,
+                style: { color: "white", fontSize: "1rem" }
+              }}
+            />
+            <Box
+              onClick={() => {
+                setIsSearchOpen(false);
+                setSearchQuery("");
+              }}
+              sx={{
+                cursor: "pointer",
+                border: "1px solid rgba(255,255,255,0.15)",
+                borderRadius: 1,
+                px: 0.8,
+                py: 0.2,
+                fontSize: "0.75rem",
+                color: "rgba(255,255,255,0.4)",
+                "&:hover": { color: "white", borderColor: "white" }
+              }}
+            >
+              ESC
+            </Box>
+          </Box>
+
+          {/* Search results list in dialog */}
+          <Box sx={{ maxHeight: 380, overflowY: "auto", p: 1 }}>
+            {filteredFeatures.length > 0 ? (
+              <List sx={{ p: 0 }}>
+                {filteredFeatures.map((feat, idx) => (
+                  <ListItem key={idx} disablePadding>
+                    <ListItemButton
+                      onClick={() => {
+                        handleItemClick({ routeTo: feat.route });
+                        setIsSearchOpen(false);
+                        setSearchQuery("");
+                      }}
+                      sx={{
+                        borderRadius: 2,
+                        py: 1.25,
+                        px: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        "&:hover": {
+                          bgcolor: "rgba(255,255,255,0.06)"
+                        }
+                      }}
+                    >
+                      <Stack direction="row" alignItems="center" spacing={2}>
+                        <ListItemIcon sx={{ minWidth: 0, color: "primary.main", "& svg, & .icon": { width: 18, height: 18 } }}>
+                          {feat.icon || <Search size={18} />}
+                        </ListItemIcon>
+                        <Typography sx={{ color: "white", fontSize: "0.9rem", fontWeight: 600 }}>
+                          {feat.title}
+                        </Typography>
+                      </Stack>
+                      <Typography sx={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem", fontWeight: 500 }}>
+                        {feat.section}
+                      </Typography>
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            ) : searchQuery ? (
+              <Box sx={{ p: 4, textAlign: "center", color: "rgba(255,255,255,0.4)" }}>
+                <Typography variant="body2">No results found for "{searchQuery}"</Typography>
+              </Box>
+            ) : (
+              // Default list showing all modules when nothing is typed yet!
+              <Box sx={{ p: 1 }}>
+                <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.3)", px: 2, py: 1, display: "block", fontWeight: 600, letterSpacing: "0.05em" }}>
+                  ALL NAVIGATION CHANNELS
+                </Typography>
+                <List sx={{ p: 0 }}>
+                  {visibleMenuData.flatMap(section =>
+                    section.children.map((child, childIdx) => (
+                      <ListItem key={`${section.sectionKey}-${childIdx}`} disablePadding>
+                        <ListItemButton
+                          onClick={() => {
+                            handleItemClick({ routeTo: child.routeTo });
+                            setIsSearchOpen(false);
+                          }}
+                          sx={{
+                            borderRadius: 2,
+                            py: 1,
+                            px: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            "&:hover": { bgcolor: "rgba(255,255,255,0.06)" }
+                          }}
+                        >
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <ListItemIcon sx={{ minWidth: 0, color: "rgba(255,255,255,0.4)", "& svg, & .icon": { width: 16, height: 16 } }}>
+                              {child.pageIcon || <Search size={16} />}
+                            </ListItemIcon>
+                            <Typography sx={{ color: "rgba(255,255,255,0.8)", fontSize: "0.85rem" }}>
+                              {child.pageTitle}
+                            </Typography>
+                          </Stack>
+                          <Typography sx={{ color: "rgba(255,255,255,0.3)", fontSize: "0.75rem" }}>
+                            {section.pageTitle}
+                          </Typography>
+                        </ListItemButton>
+                      </ListItem>
+                    ))
+                  )}
+                </List>
+              </Box>
+            )}
+          </Box>
+        </Dialog>
+
         <List sx={{ px: 1, pt: 1.5, pb: 0 }}>
           {isCompact ? (
             flatMenuData.map((menu, index) => {
