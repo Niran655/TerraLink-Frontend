@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Paper, Stack, Button } from "@mui/material";
-import { Scale, CheckCircle, ShieldAlert } from "lucide-react";
+import { Scale, CheckCircle, ShieldAlert, Download, Globe } from "lucide-react";
 import { jsPDF } from "jspdf";
 
 export default function PrivacyCompliance() {
@@ -300,10 +300,22 @@ export default function PrivacyCompliance() {
           </Box>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-            <Button variant="contained" color="primary" onClick={handleDownloadDPA} sx={{ textTransform: "none", fontWeight: 600 }}>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              startIcon={<Download size={18} />}
+              onClick={handleDownloadDPA} 
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
               Download DPA (English)
             </Button>
-            <Button variant="outlined" color="primary" onClick={() => handlePrintKhmer("dpa")} sx={{ textTransform: "none", fontWeight: 600 }}>
+            <Button 
+              variant="outlined" 
+              color="primary" 
+              startIcon={<Globe size={18} />}
+              onClick={() => handlePrintKhmer("dpa")} 
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
               Download DPA (ភាសាខ្មែរ)
             </Button>
           </Stack>
@@ -346,10 +358,22 @@ export default function PrivacyCompliance() {
           </Box>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-            <Button variant="contained" color="secondary" onClick={handleDownloadRetention} sx={{ textTransform: "none", fontWeight: 600 }}>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              startIcon={<Download size={18} />}
+              onClick={handleDownloadRetention} 
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
               Download Policy (English)
             </Button>
-            <Button variant="outlined" color="secondary" onClick={() => handlePrintKhmer("retention")} sx={{ textTransform: "none", fontWeight: 600 }}>
+            <Button 
+              variant="outlined" 
+              color="primary" 
+              startIcon={<Globe size={18} />}
+              onClick={() => handlePrintKhmer("retention")} 
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
               Download Policy (ភាសាខ្មែរ)
             </Button>
           </Stack>
