@@ -1,10 +1,55 @@
 import { BusinessOutlined, CategoryOutlined, EventAvailableOutlined, GroupOutlined, Inventory2Outlined, LocalShippingOutlined, PeopleAltOutlined, RestaurantOutlined, SecurityOutlined, StraightenOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Box, Collapse, List, ListItem, ListItemButton, ListItemIcon, Stack, Tooltip, Typography } from "@mui/material";
-import { BadgePercent, BotMessageSquare, ChartNoAxesColumn, ChevronDown, Currency, FileText, LayoutDashboard, RotateCcw, ShoppingCart, TrendingDown, TrendingUp, Warehouse } from "lucide-react";
-import { Bell, Gift, Image, QrCode, Settings, Smartphone } from "lucide-react";
+// import { BadgePercent, BotMessageSquare, ChartNoAxesColumn, ChevronDown, Currency, FileText, LayoutDashboard, RotateCcw, ShoppingCart, TrendingDown, TrendingUp, Warehouse } from "lucide-react";
+// import { Bell, Gift, Image, QrCode, Settings, Smartphone } from "lucide-react";
 import { useState } from "react";
-
+import {
+  BadgePercent,
+  Bot,
+  BotMessageSquare,
+  ChartNoAxesColumn,
+  ChevronDown,
+  Currency,
+  FileText,
+  LayoutDashboard,
+  RotateCcw,
+  ShoppingCart,
+  TrendingDown,
+  TrendingUp,
+  Warehouse,
+  Bell,
+  Gift,
+  Image,
+  QrCode,
+  Settings,
+  Smartphone,
+  ShieldCheck,
+  UserCog,
+  Users,
+  History,
+  LogIn,
+  Link2,
+  Database,
+  Download,
+  KeyRound,
+  Lock,
+  FileLock,
+  Fingerprint,
+  Cloud,
+  CloudDownload,
+  UserCheck,
+  Activity,
+  Server,
+  HardDrive,
+  Globe,
+  BadgeCheck,
+  ScanFace,
+  ShieldAlert,
+  Network,
+  FolderSync,
+  Shield,
+} from "lucide-react";
 import logo from "../assets/Image/header-logo.png";
 import { useThemeContext } from "../Context/ThemeContext";
 import { useAuth } from "../Context/AuthContext";
@@ -112,66 +157,54 @@ export default function MenuNavbar() {
         },
         {
           pageTitle: t("products"),
-          routeTo: "/setting/product",
+          routeTo: "/product",
           pageIcon: <Inventory2Outlined className="icon" />,
         },
         {
           pageTitle: t("category"),
-          routeTo: "/setting/category",
+          routeTo: "/category",
           pageIcon: <CategoryOutlined className="icon" />,
         },
         {
           pageTitle: t("unit"),
-          routeTo: "/setting/unit",
+          routeTo: "/unit",
           pageIcon: <StraightenOutlined className="icon" />,
+        },
+        {
+          pageTitle: t("table"),
+          routeTo: "/table",
+          pageIcon: <RestaurantOutlined className="icon" />,
         },
       ],
     },
     {
       sectionKey: "people",
-      pageTitle: t("people"),
+      pageTitle: t("user") || "User",
       pageIcon: <PeopleAltOutlined className="icon" />,
       children: [
         ...(user?.role === "superAdmin"
           ? [
-              {
-                pageTitle: t("tenants") || "Tenants",
-                routeTo: "/setting/tenant",
-                pageIcon: <BusinessOutlined className="icon" />,
-              },
-            ]
+            {
+              pageTitle: t("tenants") || "Tenants",
+              routeTo: "/setting/tenant",
+              pageIcon: <BusinessOutlined className="icon" />,
+            },
+          ]
           : []),
         {
           pageTitle: t("user"),
-          routeTo: "/setting/user",
+          routeTo: "/user",
           pageIcon: <GroupOutlined className="icon" />,
         },
         {
           pageTitle: t("suppliers"),
-          routeTo: "/setting/supplier",
+          routeTo: "/supplier",
           pageIcon: <LocalShippingOutlined className="icon" />,
         },
         {
           pageTitle: t("customer"),
-          routeTo: "/setting/customer",
+          routeTo: "/customer",
           pageIcon: <PeopleAltOutlined className="icon" />,
-        },
-        {
-          pageTitle: t("permission"),
-          routeTo: "/setting/permission",
-          pageIcon: <SecurityOutlined className="icon" />,
-        },
-      ],
-    },
-    {
-      sectionKey: "restaurant",
-      pageTitle: t("restaurant"),
-      pageIcon: <RestaurantOutlined className="icon" />,
-      children: [
-        {
-          pageTitle: t("table"),
-          routeTo: "/setting/table",
-          pageIcon: <RestaurantOutlined className="icon" />,
         },
       ],
     },
@@ -217,6 +250,79 @@ export default function MenuNavbar() {
         },
       ],
     },
+    {
+      sectionKey: "settings",
+      pageTitle: t("settings") || "Settings",
+      pageIcon: <Settings className="icon" />,
+      children: [
+        {
+          pageTitle: t("security_center") || "Security Center",
+          routeTo: "/setting/security-center",
+          pageIcon: <Shield className="icon" />,
+          matchPaths: ["/setting/security-center"],
+        },
+        {
+          pageTitle: t("account_security") || "Account Security",
+          routeTo: "/setting/account-security",
+          pageIcon: <ShieldCheck className="icon" />,
+        },
+        {
+          pageTitle: t("active_sessions") || "Active Sessions",
+          routeTo: "/setting/active-sessions",
+          pageIcon: <Activity className="icon" />,
+        },
+        {
+          pageTitle: t("login_history") || "Login History",
+          routeTo: "/setting/login-history",
+          pageIcon: <History className="icon" />,
+        },
+        {
+          pageTitle: t("connected_accounts") || "Connected Accounts",
+          routeTo: "/setting/social-accounts",
+          pageIcon: <Link2 className="icon" />,
+        },
+        {
+          pageTitle: t("roles_permissions") || "Roles & Permissions",
+          routeTo: "/setting/permission",
+          pageIcon: <Users className="icon" />,
+        },
+        {
+          pageTitle: t("ai_permissions") || "AI Permissions",
+          routeTo: "/setting/ai-permissions",
+          pageIcon: <Bot className="icon" />,
+        },
+        {
+          pageTitle: t("ai_activity_logs") || "AI Activity Logs",
+          routeTo: "/setting/ai-activity-logs",
+          pageIcon: <BotMessageSquare className="icon" />,
+        },
+        {
+          pageTitle: t("data_ownership") || "Data Ownership",
+          routeTo: "/setting/data-ownership",
+          pageIcon: <Database className="icon" />,
+        },
+        {
+          pageTitle: t("export_backup") || "Export & Backup",
+          routeTo: "/setting/export-backup",
+          pageIcon: <CloudDownload className="icon" />,
+        },
+        {
+          pageTitle: t("security_alerts") || "Security Alerts",
+          routeTo: "/setting/security-alerts",
+          pageIcon: <ShieldAlert className="icon" />,
+        },
+        {
+          pageTitle: t("api_keys_integrations") || "API Keys & Integrations",
+          routeTo: "/setting/api-keys",
+          pageIcon: <KeyRound className="icon" />,
+        },
+        {
+          pageTitle: t("privacy_compliance") || "Privacy & Compliance",
+          routeTo: "/setting/privacy-compliance",
+          pageIcon: <FileLock className="icon" />,
+        },
+      ],
+    },
 
     ...businessMenuSections.map((section) => {
       const SectionIcon = section.icon;
@@ -239,15 +345,17 @@ export default function MenuNavbar() {
   ];
   const visibleMenuData = filterTenantMenuSections(menuData, user);
   const flatMenuData = visibleMenuData.flatMap((section) => section.children);
-  const [openSections, setOpenSections] = useState(() =>
-    visibleMenuData.reduce((acc, section) => {
-      const hasActiveChild = section.children.some((child) => {
-        const paths = child.matchPaths || [child.routeTo];
-        return paths.some((path) => location.pathname === path);
-      });
 
-      return { ...acc, [section.sectionKey]: hasActiveChild };
-    }, {})
+  // Find which section should be active based on URL
+  const initialActiveSection = visibleMenuData.find((section) =>
+    section.children.some((child) => {
+      const paths = child.matchPaths || [child.routeTo];
+      return paths.some((path) => location.pathname === path || location.pathname.startsWith(`${path}/`));
+    })
+  );
+
+  const [activeDrilldown, setActiveDrilldown] = useState(
+    initialActiveSection ? initialActiveSection.sectionKey : null
   );
 
   const textColor = getContrastText(sidebarColor);
@@ -268,19 +376,11 @@ export default function MenuNavbar() {
     }
   };
 
-  const toggleSection = (sectionKey) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [sectionKey]: !prev[sectionKey],
-    }));
-  };
-
   const handleLogoClick = () => {
     if (layoutMode === "default") setLayoutMode("compact");
     else if (layoutMode === "compact") setLayoutMode("sidebar");
     else setLayoutMode("default");
   };
-
 
   const itemSx = (active) => ({
     backgroundColor: active ? "rgba(255,255,255,0.1)" : "transparent",
@@ -306,22 +406,10 @@ export default function MenuNavbar() {
     justifyContent: isCompact ? "center" : "flex-start",
   };
 
-  const sectionSx = (open) => ({
-    backgroundColor: open ? "rgba(255,255,255,0.12)" : "transparent",
-    borderRadius: "8px",
-    border: open ? "1px solid rgba(255,255,255,0.12)" : "1px solid transparent",
-    mb: open ? 0.75 : 1,
-    transition: "background-color 0.15s ease, border-color 0.15s ease",
-    "&:hover": {
-      backgroundColor: open ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)",
-    },
-  });
-
   const childItemSx = {
     borderRadius: "6px",
     mb: "2px",
-    ml: 1,
-    width: "calc(100% - 8px)",
+    width: "100%",
     border: "1px solid transparent",
     backgroundColor: "transparent",
     "&:hover": {
@@ -333,10 +421,12 @@ export default function MenuNavbar() {
     color: textColor,
     borderRadius: "6px",
     px: 1.25,
-    py: 0.6,
-    minHeight: 34,
+    py: 0.75,
+    minHeight: 36,
     justifyContent: "flex-start",
   };
+
+  const activeSectionData = visibleMenuData.find(s => s.sectionKey === activeDrilldown);
 
   return (
     <Box
@@ -360,7 +450,6 @@ export default function MenuNavbar() {
         },
       }}
     >
-
       <Stack
         direction="row"
         alignItems="center"
@@ -403,149 +492,168 @@ export default function MenuNavbar() {
         )}
       </Stack>
 
-      {/* ── Menu items ──────────────────────────────────────────────────── */}
       <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
         <List sx={{ px: 1, pt: 1.5, pb: 0 }}>
-          {(isCompact ? flatMenuData : visibleMenuData).map((menu, index) => {
-            if (isCompact) {
+          {isCompact ? (
+            flatMenuData.map((menu, index) => {
               const active = isActive(menu);
               const menuKey = `compact-${menu.routeTo || menu.pageTitle}-${index}`;
-
-              const row = (
-                <ListItem
-                  key={menuKey}
-                  disablePadding
-                  sx={itemSx(active)}
-                  onClick={() => handleItemClick(menu)}
-                >
-                  <ListItemButton sx={btnSx}>
-                    <ListItemIcon
-                      sx={{
-                        color: active ? textColor : `${textColor}99`,
-                        minWidth: 0,
-                        mr: 0,
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        "& svg, & .icon": { width: 18, height: 18 },
-                      }}
-                    >
-                      {menu.pageIcon}
-                    </ListItemIcon>
-                  </ListItemButton>
-                </ListItem>
-              );
-
               return (
                 <Tooltip key={menuKey} title={menu.pageTitle} placement="right" arrow>
-                  {row}
+                  <ListItem disablePadding sx={itemSx(active)} onClick={() => handleItemClick(menu)}>
+                    <ListItemButton sx={btnSx}>
+                      <ListItemIcon
+                        sx={{
+                          color: active ? textColor : `${textColor}99`,
+                          minWidth: 0,
+                          mr: 0,
+                          flexShrink: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          "& svg, & .icon": { width: 18, height: 18 },
+                        }}
+                      >
+                        {menu.pageIcon}
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </ListItem>
                 </Tooltip>
               );
-            }
+            })
+          ) : activeDrilldown && activeSectionData ? (
+            <>
+              {/* Back button for drilldown */}
+              <ListItem disablePadding sx={{ mb: 2 }}>
+                <ListItemButton
+                  onClick={() => setActiveDrilldown(null)}
+                  sx={{
+                    borderRadius: "6px",
+                    px: 1,
+                    py: 0.5,
+                    color: `${textColor}aa`,
+                    "&:hover": { color: textColor, backgroundColor: "rgba(255,255,255,0.06)" }
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 0, mr: 1, color: "inherit" }}>
+                    <ChevronDown size={18} style={{ transform: "rotate(90deg)" }} />
+                  </ListItemIcon>
+                  <Typography sx={{ fontSize: "0.85rem", fontWeight: 600, color: "inherit" }}>
+                    {activeSectionData.pageTitle}
+                  </Typography>
+                </ListItemButton>
+              </ListItem>
 
-            const section = menu;
-            const sectionKey = `section-${section.sectionKey}-${index}`;
-            const sectionOpen = openSections[section.sectionKey];
-            const sectionActive = section.children.some((child) => isActive(child));
+              {/* Children of the active section */}
+              {activeSectionData.children.map((child) => {
+                const active = isActive(child);
+                const childKey = `${activeSectionData.sectionKey}-${child.routeTo || child.pageTitle}`;
 
-            return (
-              <Box key={sectionKey} sx={{ mb: 0.75 }}>
-                <ListItem disablePadding sx={sectionSx(sectionOpen)}>
-                  <ListItemButton sx={btnSx} onClick={() => toggleSection(section.sectionKey)}>
-                    <ListItemIcon
-                      sx={{
-                        color: sectionActive ? textColor : `${textColor}99`,
-                        minWidth: 0,
-                        mr: 1.25,
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        "& svg, & .icon": { width: 18, height: 18 },
-                      }}
+                return (
+                  <ListItem key={childKey} disablePadding sx={childItemSx} onClick={() => handleItemClick(child)}>
+                    <ListItemButton sx={{
+                      ...childBtnSx,
+                      backgroundColor: active ? "rgba(255,255,255,0.1)" : "transparent",
+                      color: active ? textColor : `${textColor}d9`,
+                      "&:hover": {
+                        backgroundColor: active ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)",
+                        color: textColor
+                      }
+                    }}>
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: 1.25,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "inherit"
+                        }}
+                      >
+                        {child.pageIcon || <Box sx={{ width: 16, height: 16 }} />}
+                      </ListItemIcon>
+                      <Typography
+                        sx={{
+                          fontSize: "0.85rem",
+                          fontWeight: active ? 600 : 400,
+                          color: "inherit",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {child.pageTitle}
+                      </Typography>
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
+            </>
+          ) : (
+            /* Root Sections list */
+            visibleMenuData.map((section, index) => {
+              const sectionKey = `section-${section.sectionKey}-${index}`;
+              const sectionActive = section.children.some((child) => isActive(child));
+
+              return (
+                <Box key={sectionKey} sx={{ mb: "2px" }}>
+                  <ListItem disablePadding sx={{
+                    borderRadius: "6px",
+                    border: "1px solid transparent",
+                    backgroundColor: sectionActive ? "rgba(255,255,255,0.08)" : "transparent",
+                    transition: "background-color 0.15s ease",
+                    "&:hover": {
+                      backgroundColor: "rgba(255,255,255,0.06)",
+                    }
+                  }}>
+                    <ListItemButton
+                      sx={btnSx}
+                      onClick={() => setActiveDrilldown(section.sectionKey)}
                     >
-                      {section.pageIcon}
-                    </ListItemIcon>
-                    <Typography
-                      sx={{
-                        fontSize: "0.8375rem",
-                        fontWeight: sectionActive ? 700 : 600,
-                        color: sectionActive ? textColor : `${textColor}dd`,
-                        flexGrow: 1,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {section.pageTitle}
-                    </Typography>
-                    <ChevronDown
-                      size={16}
-                      style={{
-                        transform: sectionOpen ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.18s ease",
-                        color: `${textColor}cc`,
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-
-                <Collapse in={sectionOpen} timeout="auto" unmountOnExit>
-                  <List disablePadding sx={{ pb: 0.5 }}>
-                    {section.children.map((child) => {
-                      const active = isActive(child);
-                      const childKey = `${section.sectionKey}-${child.routeTo || child.pageTitle}`;
-
-                      return (
-                        <ListItem key={childKey} disablePadding sx={childItemSx} onClick={() => handleItemClick(child)}>
-                          <ListItemButton sx={childBtnSx}>
-                            <ListItemIcon
-                              sx={{
-                                minWidth: 0,
-                                mr: 1.15,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <Box
-                                sx={{
-                                  width: 7,
-                                  height: 7,
-                                  borderRadius: "50%",
-                                  border: `2px solid ${active ? "#ffb86c" : `${textColor}cc`}`,
-                                  backgroundColor: active ? "#ffb86c" : "transparent",
-                                }}
-                              />
-                            </ListItemIcon>
-                            <Typography
-                              sx={{
-                                fontSize: "0.8125rem",
-                                fontWeight: active ? 600 : 400,
-                                color: active ? "#ffb86c" : `${textColor}d9`,
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                lineHeight: 1.4,
-                              }}
-                            >
-                              {child.pageTitle}
-                            </Typography>
-                          </ListItemButton>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                </Collapse>
-              </Box>
-            );
-
-          })}
+                      <ListItemIcon
+                        sx={{
+                          color: sectionActive ? textColor : `${textColor}99`,
+                          minWidth: 0,
+                          mr: 1.25,
+                          flexShrink: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          "& svg, & .icon": { width: 18, height: 18 },
+                        }}
+                      >
+                        {section.pageIcon}
+                      </ListItemIcon>
+                      <Typography
+                        sx={{
+                          fontSize: "0.85rem",
+                          fontWeight: sectionActive ? 600 : 500,
+                          color: sectionActive ? textColor : `${textColor}dd`,
+                          flexGrow: 1,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {section.pageTitle}
+                      </Typography>
+                      <ChevronDown
+                        size={16}
+                        style={{
+                          transform: "rotate(-90deg)", // points right to indicate drilldown
+                          color: `${textColor}66`,
+                        }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Box>
+              );
+            })
+          )}
         </List>
       </Box>
- 
     </Box>
   );
 }

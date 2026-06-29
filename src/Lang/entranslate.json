@@ -691,8 +691,25 @@
   "customer_reviews":"Customer Reviews",
   "rewards_program":"Rewards Program",
   "promotions":"Promotions",
-  "events":"Events",
-  "mobile_settings":"Mobile Setting",
-  "shop_management":"Shop Management", 
-  "mobile_app":"Mobile App"
+
+  
+  "settings": "Settings",
+  "account_security": "Account Security",
+  "active_sessions": "Active Sessions",
+  "login_history": "Login History",
+  "connected_accounts": "Connected Accounts",
+  "roles_permissions": "Roles & Permissions",
+  "ai_permissions": "AI Permissions",
+  "ai_activity_logs": "AI Activity Logs",
+  "data_ownership": "Data Ownership",
+  "export_backup": "Export & Backup",
+  "security_alerts": "Security Alerts",
+  "api_keys_integrations": "API Keys & Integrations",
+  "privacy_compliance": "Privacy & Compliance",
+  "events": "Events",
+  "mobile_settings": "Mobile Setting",
+  "shop_management": "Shop Management",
+  "mobile_app": "Mobile App",
+  "security_center":"Security Center"
+
 }

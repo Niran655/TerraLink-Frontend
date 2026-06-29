@@ -1,42 +1,26 @@
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
-import { Stack, TableBody, TableCell, TableRow, Typography } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
+import TableBody from "@mui/material/TableBody";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
 import * as React from "react";
 
-export default function CircularIndeterminate() {
+export default function CircularIndeterminate({ cols = 6, rows = 5 }) {
   return (
-    <TableBody   sx={{ height: "300px", borderRadius: "20px" }}>
-      <TableRow>
-        <TableCell colSpan={15} align="center">
-          <Box >
-            <Stack
-              direction="row"
-              justifyContent="center"
-              sx={{ width: "100%" }}
-            >
-              <Stack
-                direction="column"
-                textAlign="center"
-                sx={{ width: "100%" }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                    height: "100px",
-                    width: "100%",
-                  }}
-                >
-                  <CircularProgress />
-                </Box>
-                <Typography>កំពុងដំណើរការ</Typography>
-              </Stack>
-            </Stack>
-          </Box>
-        </TableCell>
-      </TableRow>
+    <TableBody>
+      {Array.from({ length: rows }).map((_, rIdx) => (
+        <TableRow key={rIdx}>
+          {Array.from({ length: cols }).map((_, cIdx) => (
+            <TableCell key={cIdx}>
+              <Skeleton
+                variant="text"
+                width={cIdx === 0 ? "30%" : cIdx === cols - 1 ? "60%" : "85%"}
+                height={24}
+                animation="wave"
+              />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
     </TableBody>
   );
 }

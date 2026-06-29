@@ -697,9 +697,22 @@
   "events": "ព្រឹត្តិការណ៍",
   "mobile_settings": "ការកំណត់ទូរស័ព្ទ",
   "shop_management":"ការគ្រប់គ្រងហាង",
-  "mobile_app":"គ្រប់គ្រងកម្មវីធី"
-
-
+  "mobile_app":"គ្រប់គ្រងកម្មវីធី",
+  
+  "settings": "ការកំណត់",
+  "account_security": "សុវត្ថិភាពគណនី",
+  "active_sessions": "សម័យប្រើប្រាស់សកម្ម",
+  "login_history": "ប្រវត្តិការចូល",
+  "connected_accounts": "គណនីដែលបានភ្ជាប់",
+  "roles_permissions": "តួនាទី និងសិទ្ធិ",
+  "ai_permissions": "សិទ្ធិ AI",
+  "ai_activity_logs": "កំណត់ហេតុសកម្មភាព AI",
+  "data_ownership": "កម្មសិទ្ធិទិន្នន័យ",
+  "export_backup": "នាំចេញ និងបម្រុងទុក",
+  "security_alerts": "ការជូនដំណឹងសុវត្ថិភាព",
+  "api_keys_integrations": "កូនសោ API និងការរួមបញ្ចូល",
+  "privacy_compliance": "ភាពឯកជន និងការអនុលោម",
+  "security_center":"មជ្ឈមណ្ឌលសុវត្ថិភាព"
 
 
 }

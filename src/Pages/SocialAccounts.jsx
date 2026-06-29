@@ -46,6 +46,7 @@ import {
 import { gql } from "@apollo/client";
 import { useAuth } from "../Context/AuthContext";
 import { translateLauguage } from "../function/translate";
+import { SocialPagesSkeleton, SocialInsightsSkeleton, SocialPostsSkeleton, SocialCommentsSkeleton } from "../include/Skeletons";
 
 // GraphQL queries & mutations inline matching backend schemas
 const GET_FACEBOOK_PAGES = gql`
@@ -308,15 +309,15 @@ export default function SocialAccounts() {
 
   return (
     <Box sx={{ p: { xs: 1, md: 3 }, bgcolor: "background.default" }}>
-      {/* Header Banner */}
+ 
       <Box
         sx={{
           background: "linear-gradient(135deg, #1877F2 0%, #1D4592 100%)",
-          borderRadius: 2,
+          borderRadius: 1,
           p: 3,
           mb: 3,
           color: "white",
-          boxShadow: "0 8px 32px rgba(24, 119, 242, 0.15)",
+           
         }}
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
@@ -324,11 +325,11 @@ export default function SocialAccounts() {
             <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)", width: 48, height: 48 }}>
               <Facebook size={24} />
             </Avatar>
-            <Box>
+            <Box sx={{textAlign: "left"}}>
               <Typography variant="h5" fontWeight={700}>
                 Facebook Page Integration
               </Typography>
-              <Typography variant="body2" sx={{ opacity: 0.85 }}>
+              <Typography>
                 Connect and manage your corporate Facebook Pages, view reach insights, and moderate post feedback.
               </Typography>
             </Box>
@@ -344,7 +345,7 @@ export default function SocialAccounts() {
               fontWeight: 700,
               px: 3,
               textTransform: "none",
-              borderRadius: 2,
+           
               "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
             }}
           >
@@ -353,7 +354,7 @@ export default function SocialAccounts() {
         </Stack>
       </Box>
 
-      {/* Connection Selection for Child Tabs */}
+   
       {connectedPages.length > 0 && (
         <Paper sx={{ p: 2, mb: 3, borderRadius: 2, border: "1px solid", borderColor: "divider" }}>
           <Stack direction="row" alignItems="center" spacing={2} flexWrap="wrap">
@@ -377,7 +378,7 @@ export default function SocialAccounts() {
         </Paper>
       )}
 
-      {/* Tabs */}
+     
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
         <Tabs
           value={currentTab}
@@ -408,9 +409,7 @@ export default function SocialAccounts() {
       {currentTab === 0 && (
         <Box>
           {pagesLoading ? (
-            <Stack py={8} alignItems="center">
-              <CircularProgress />
-            </Stack>
+            <SocialPagesSkeleton />
           ) : connectedPages.length === 0 ? (
             <Paper sx={{ py: 8, px: 3, textAlign: "center", borderRadius: 2, border: "1px dashed", borderColor: "divider" }}>
               <Facebook size={48} strokeWidth={1} style={{ margin: "0 auto 16px", color: "#b0bec5" }} />
@@ -420,7 +419,7 @@ export default function SocialAccounts() {
               <Typography variant="body2" color="text.secondary" mb={3} maxWidth={400} mx="auto">
                 Authenticate with Facebook to sync your business Facebook Page. TerraLink stores your tokens with bank-grade encryption.
               </Typography>
-              <Button variant="contained" color="primary" onClick={handleConnect} sx={{ borderRadius: 2, px: 4 }}>
+              <Button variant="contained" color="primary" onClick={handleConnect}>
                 Connect Page Now
               </Button>
             </Paper>
@@ -488,9 +487,7 @@ export default function SocialAccounts() {
       {currentTab === 1 && (
         <Box>
           {insightsLoading ? (
-            <Stack py={8} alignItems="center">
-              <CircularProgress />
-            </Stack>
+            <SocialInsightsSkeleton />
           ) : !insights ? (
             <Paper sx={{ p: 4, textAlign: "center" }}>
               <Typography>Could not retrieve insights for this page. Reconnect the page and try again.</Typography>
@@ -622,9 +619,7 @@ export default function SocialAccounts() {
                 <Divider />
                 <CardContent>
                   {postsLoading ? (
-                    <Stack py={4} alignItems="center">
-                      <CircularProgress size={24} />
-                    </Stack>
+                    <SocialPostsSkeleton />
                   ) : pagePosts.length === 0 ? (
                     <Typography color="text.secondary" variant="body2">
                       No posts found on this page. Create posts in the CMS dashboard first.
@@ -683,9 +678,7 @@ export default function SocialAccounts() {
                       </Typography>
                     </Stack>
                   ) : commentsLoading ? (
-                    <Stack flexGrow={1} justifyContent="center" alignItems="center" py={8}>
-                      <CircularProgress size={28} />
-                    </Stack>
+                    <SocialCommentsSkeleton />
                   ) : postComments.length === 0 ? (
                     <Stack flexGrow={1} justifyContent="center" alignItems="center" py={8}>
                       <Typography color="text.secondary" variant="body2">

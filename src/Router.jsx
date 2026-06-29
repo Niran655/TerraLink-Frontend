@@ -45,7 +45,18 @@ import Pos from './Pages/Pos';
 import Privacy from './Pages/Privacy';
 import Terms from './Pages/Terms';
 import DataDeletion from './Pages/Data-deletion';
- 
+import SecurityCenter from './Pages/SecurityCenter';
+import AIPermissions from './Pages/AIPermissions';
+import AccountSecurity from './Pages/AccountSecurity';
+import ActiveSessions from './Pages/ActiveSessions';
+import LoginHistory from './Pages/LoginHistory';
+import DataOwnership from './Pages/DataOwnership';
+import ExportBackup from './Pages/ExportBackup';
+import AIActivityLogs from './Pages/AIActivityLogs';
+import APIKeys from './Pages/APIKeys';
+import SecurityAlerts from './Pages/SecurityAlerts';
+import PrivacyCompliance from './Pages/PrivacyCompliance';
+import SecurityObservability from './Pages/SecurityObservability';
 export default function Router() {
   const { isAuthenticated, user } = useAuth();
 
@@ -74,15 +85,27 @@ export default function Router() {
         { path: 'social-cms', element: <Guard allow={canManageTenant(user)}><SocialCms/></Guard> },
         { path: 'cms/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="cms" /></Guard> },
         { path: 'crm/:module', element: <Guard allow={canManageTenant(user)}><CmsCrmMenu area="crm" /></Guard> },
-        { path: 'setting', element: <Guard allow={canManageTenant(user)}><Settings/></Guard> },
+        { path: 'setting', element: <Guard allow={canManageTenant(user)}><Navigate to="/setting/user" replace /></Guard> },
         { path: 'setting/social-accounts', element: <Guard allow={canManageTenant(user)}><SocialAccounts/></Guard> },
-        { path: '/setting/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
-        { path: '/setting/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
+        { path: '/unit', element: <Guard allow={canManageTenant(user)}><Unit/></Guard>},
+        { path: '/supplier', element: <Guard allow={canManageTenant(user)}><Supplier/></Guard>},
         { path: '/privacy', element: <Privacy/>},
         { path: '/terms', element: <Terms/>},
         { path: '/data-deletion', element: <DataDeletion/>},
-        { path: '/setting/customer', element: <Customer/>},
-        { path: '/setting/table', element: <TablePage/>},
+        { path: 'setting/ai-permissions', element: <Guard allow={canManageTenant(user)}><AIPermissions/></Guard> },
+        { path: 'setting/account-security', element: <Guard allow={canManageTenant(user)}><AccountSecurity/></Guard> },
+        { path: 'setting/active-sessions', element: <Guard allow={canManageTenant(user)}><ActiveSessions/></Guard> },
+        { path: 'setting/login-history', element: <Guard allow={canManageTenant(user)}><LoginHistory/></Guard> },
+        { path: 'setting/data-ownership', element: <Guard allow={canManageTenant(user)}><DataOwnership/></Guard> },
+        { path: 'setting/export-backup', element: <Guard allow={canManageTenant(user)}><ExportBackup/></Guard> },
+        { path: 'setting/ai-activity-logs', element: <Guard allow={canManageTenant(user)}><AIActivityLogs/></Guard> },
+        { path: 'setting/api-keys', element: <Guard allow={canManageTenant(user)}><APIKeys/></Guard> },
+        { path: 'setting/security-alerts', element: <Guard allow={canManageTenant(user)}><SecurityAlerts/></Guard> },
+        { path: 'setting/privacy-compliance', element: <Guard allow={canManageTenant(user)}><PrivacyCompliance/></Guard> },
+        { path: 'setting/security-center', element: <Guard allow={canManageTenant(user)}><SecurityCenter/></Guard> },
+        { path: 'setting/security-observability', element: <Guard allow={canManageTenant(user)}><SecurityObservability/></Guard> },
+        { path: '/customer', element: <Customer/>},
+        { path: '/table', element: <TablePage/>},
         { path: '/setting/permission', element: <Guard allow={canManageSettings(user)}><Permission/></Guard>},
         { path: '/setting/employee', element: <Guard allow={canManageTenant(user)}><Employee/></Guard>},
         { path: '/setting/department', element: <Guard allow={canManageTenant(user)}><Department/></Guard>},
@@ -99,12 +122,12 @@ export default function Router() {
         { path: '/store/pos/:id/report-in-shop', element: <ReportInShop/> },
         { path: '/store/pos/:id/dashboard-in-shop', element: <DashboardInShop/> },
         { path: 'profile', element:<Profile/>},
-        { path: "setting/user/:userId/profile", element: <Profile /> },
+        { path: "user/:userId/profile", element: <Profile /> },
         { path: '/setting/tenant', element: <Guard allow={user?.role === "superAdmin"}><Tenant/></Guard> },
-        { path: '/setting/user', element: <Guard allow={canManageUsers(user)}><User/></Guard> },
+        { path: '/user', element: <Guard allow={canManageUsers(user)}><User/></Guard> },
         { path: '/store-setting/:shopId', element: <StoreSetting/>},
-        { path: '/setting/category', element: <Guard allow={canManageTenant(user)}><Category/></Guard> },
-        { path: '/setting/product', element: <Product/>},
+        { path: '/category', element: <Guard allow={canManageTenant(user)}><Category/></Guard> },
+        { path: '/product', element: <Product/>},
         { path: '/store/pos/:shopId', element: <Pos/>},
         { path: 'warehouse', element: <Warehouse/>},
         { path: '/store/pos/:id/warehouse-in-shop', element: <WarehouseInShop/>},

@@ -841,6 +841,8 @@ export default function AppLayout() {
     </Box>
   );
 
+  const isSettingsRoute = location.pathname.startsWith("/setting");
+
   return (
     <Box
       sx={{
@@ -851,14 +853,14 @@ export default function AppLayout() {
       }}
     >
 
-      {!isPosPage && !isMobile && !isTopNav && (
+      {(!isPosPage && (!isMobile && (!isTopNav || isSettingsRoute))) && (
         <Box
           sx={{
             position: "fixed",
             left: 0,
             top: 0,
             height: "100vh",
-            width: sidebarWidth,
+            width: sidebarWidth || 250, // Default to 250 for SettingsSidebar if it was 0 for TopNav
             bgcolor: sidebarBg,
             color: theme.palette.getContrastText(sidebarBg),
             borderRight: `1px solid ${theme.palette.divider}`,
@@ -900,7 +902,7 @@ export default function AppLayout() {
 
       <Box
         sx={{
-          marginLeft: !isPosPage && !isMobile && !isTopNav ? `${sidebarWidth}px` : 0,
+          marginLeft: !isPosPage && !isMobile && (!isTopNav || isSettingsRoute) ? `${sidebarWidth || 250}px` : 0,
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
