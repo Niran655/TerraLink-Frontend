@@ -1,22 +1,47 @@
-import Skeleton from "@mui/material/Skeleton";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import * as React from "react";
+import React from "react";
+import {
+  Skeleton,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@mui/material";
 
-export default function CircularIndeterminate({ cols = 6, rows = 5 }) {
+export default function TableSkeleton({ rows = 5 }) {
+  // Define how each column should look
+  const columns = [
+    { width: "90%" }, // Name
+    { width: "70%" }, // Category
+    { width: "55%" }, // Status
+    { circle: true }, // Icon
+    { width: "60%" }, // Price
+    { width: "50%" }, // Quantity
+    { width: "80%" }, // Description
+    { width: "45%" }, // Date
+    { circle: true }, // Actions
+  ];
+
   return (
     <TableBody>
-      {Array.from({ length: rows }).map((_, rIdx) => (
-        <TableRow key={rIdx}>
-          {Array.from({ length: cols }).map((_, cIdx) => (
-            <TableCell key={cIdx}>
-              <Skeleton
-                variant="text"
-                width={cIdx === 0 ? "30%" : cIdx === cols - 1 ? "60%" : "85%"}
-                height={24}
-                animation="wave"
-              />
+      {Array.from({ length: rows }).map((_, rowIndex) => (
+        <TableRow key={rowIndex}>
+          {columns.map((col, colIndex) => (
+            <TableCell key={colIndex}>
+              {col.circle ? (
+                <Skeleton
+                  variant="circular"
+                  width={28}
+                  height={28}
+                  animation="wave"
+                />
+              ) : (
+                <Skeleton
+                  variant="rounded"
+                  width={col.width}
+                  height={24}
+                  animation="wave"
+                  sx={{ borderRadius: 1 }}
+                />
+              )}
             </TableCell>
           ))}
         </TableRow>

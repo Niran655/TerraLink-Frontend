@@ -31,7 +31,7 @@ export default function PurchaseOrderReceive({
 
   const [items, setItems] = useState(
     purchaseOrder.items.map((i) => ({
-      subProductId: i.subProduct._id,
+      subProductId: i.subProduct?._id || "",
       remainingQty: i.remainingQty,
       receivedQty: i.remainingQty,
     }))
@@ -139,8 +139,8 @@ export default function PurchaseOrderReceive({
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     {language === "en"
-                      ? item.subProduct.parentProductId.nameEn
-                      : item.subProduct.parentProductId.nameKh}
+                      ? item.subProduct?.parentProductId?.nameEn || "-"
+                      : item.subProduct?.parentProductId?.nameKh || "-"}
                   </TableCell>
                   <TableCell align="right">{item.quantity}</TableCell>
                   <TableCell align="right">{item.remainingQty}</TableCell>

@@ -1368,7 +1368,7 @@ const Warehouse = () => {
                           return (
                             <TableRow key={row._id} className="table-row">
                               <TableCell>
-                                {productWarehouseTransferPaginator.slNo + index}
+                                {(purchaseOrderPaginator?.slNo || 1) + index}
                               </TableCell>
                               <TableCell>
                                 {language === "en" ? row.supplier?.nameEn : row.supplier?.nameKh || "-"}
