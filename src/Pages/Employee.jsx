@@ -101,7 +101,7 @@ export default function Employee() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={8} />
           ) : employees.length === 0 ? (
             <EmptyData />
           ) : (

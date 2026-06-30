@@ -174,7 +174,7 @@ const Category = () => {
           </TableHead>
 
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={6} />
           ) : categoryData?.length == 0 ? (
             <EmptyData />
           ) : (

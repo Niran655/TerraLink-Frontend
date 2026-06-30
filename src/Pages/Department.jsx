@@ -99,7 +99,7 @@ export default function Department() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={6} />
           ) : departments.length === 0 ? (
             <EmptyData />
           ) : (

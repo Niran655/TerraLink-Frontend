@@ -1,7 +1,7 @@
 import { BusinessOutlined, CategoryOutlined, EventAvailableOutlined, GroupOutlined, Inventory2Outlined, LocalShippingOutlined, PeopleAltOutlined, RestaurantOutlined, SecurityOutlined, StraightenOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Box, List, ListItem, ListItemButton, ListItemIcon, Stack, Typography, TextField, InputAdornment, Paper, ListItemText, Dialog } from "@mui/material";
-import { BadgePercent, BotMessageSquare, ChartNoAxesColumn, ChevronDown, Currency, FileText, LayoutDashboard, RotateCcw, ShoppingCart, TrendingDown, TrendingUp, Warehouse, Settings, Search } from "lucide-react";
+import { BadgePercent, BotMessageSquare, ChartNoAxesColumn, ChevronDown, Currency, FileText, LayoutDashboard, RotateCcw, ShoppingCart, TrendingDown, TrendingUp, Warehouse, Settings, Search, CalendarCheck, UserCheck, QrCode, ScanFace } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 
 import logo from "../assets/Image/header-logo.png";
@@ -165,6 +165,11 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
       pageIcon: <GroupOutlined className="icon" />,
       children: [
         {
+          pageTitle: t("hmr_dashboard") || "HMR Dashboard",
+          routeTo: "/setting/hmr-dashboard",
+          pageIcon: <LayoutDashboard className="icon" />,
+        },
+        {
           pageTitle: t("employee"),
           routeTo: "/setting/employee",
           pageIcon: <PeopleAltOutlined className="icon" />,
@@ -182,22 +187,27 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
         {
           pageTitle: t("employee_attendance") || "Employee Attendance",
           routeTo: "/setting/employee-attendance",
-          pageIcon: <EventAvailableOutlined className="icon" />,
+          pageIcon: <CalendarCheck className="icon" />,
         },
         {
           pageTitle: t("admin_attendance") || "Admin Attendance",
           routeTo: "/setting/admin-attendance",
-          pageIcon: <EventAvailableOutlined className="icon" />,
+          pageIcon: <UserCheck className="icon" />,
         },
         {
           pageTitle: t("attendance_qr") || "Attendance QR",
           routeTo: "/setting/attendance-qr",
-          pageIcon: <EventAvailableOutlined className="icon" />,
+          pageIcon: <QrCode className="icon" />,
         },
         {
           pageTitle: t("qr_check_in") || "QR Check In",
           routeTo: "/setting/attendance-qr-scan",
-          pageIcon: <EventAvailableOutlined className="icon" />,
+          pageIcon: <ScanFace className="icon" />,
+        },
+        {
+          pageTitle: t("hmr_report") || "HMR Report",
+          routeTo: "/setting/hmr-report",
+          pageIcon: <ChartNoAxesColumn className="icon" />,
         },
       ],
     },
@@ -685,10 +695,11 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          color: "inherit"
+                          color: "inherit",
+                          "& svg, & .icon": { width: 18, height: 18 },
                         }}
                       >
-                        {child.pageIcon || <Box sx={{ width: 16, height: 16 }} />}
+                        {child.pageIcon || <Box sx={{ width: 18, height: 18 }} />}
                       </ListItemIcon>
                       <Typography
                         sx={{

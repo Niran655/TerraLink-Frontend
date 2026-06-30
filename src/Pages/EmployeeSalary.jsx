@@ -103,7 +103,7 @@ export default function EmployeeSalary() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={7} />
           ) : salaries.length === 0 ? (
             <EmptyData />
           ) : (

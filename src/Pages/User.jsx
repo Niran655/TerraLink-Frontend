@@ -203,7 +203,7 @@ const User = () => {
           </TableHead>
 
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={9} />
           ) : userRow?.length === 0 ? (
             <EmptyData />
           ) : (

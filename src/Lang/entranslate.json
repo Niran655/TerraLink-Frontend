@@ -494,6 +494,8 @@
   "restaurant": "Restaurant",
   "add_sales_return": "Add Sales Return",
   "hmr": "HMR",
+  "hmr_dashboard": "HMR Dashboard",
+  "hmr_report": "HMR Report",
   "employee": "Employee",
   "department": "Department",
   "employee_salary": "Employee Salary",

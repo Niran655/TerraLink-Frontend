@@ -320,7 +320,7 @@ export default function Expense() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={7} />
           ) : expenses.length === 0 ? (
             <EmptyData />
           ) : (

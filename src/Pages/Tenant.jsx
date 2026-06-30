@@ -140,7 +140,7 @@ export default function Tenant() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={7} />
           ) : filteredTenants.length === 0 ? (
             <EmptyData />
           ) : (

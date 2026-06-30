@@ -175,7 +175,7 @@ const Unit = () => {
           </TableHead>
 
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={6} />
           ) : unitDatas?.length == 0 ? (
             <EmptyData />
           ) : (

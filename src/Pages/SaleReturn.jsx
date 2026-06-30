@@ -267,7 +267,7 @@ export default function SaleReturn() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={9} />
           ) : returns.length === 0 ? (
             <EmptyData />
           ) : (

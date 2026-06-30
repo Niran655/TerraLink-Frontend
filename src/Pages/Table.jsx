@@ -172,7 +172,7 @@ const TablePage = () => {
           </TableHead>
 
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={6} />
           ) : tables.length === 0 ? (
             <EmptyData />
           ) : (

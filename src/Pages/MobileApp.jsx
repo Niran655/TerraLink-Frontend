@@ -3087,7 +3087,7 @@ const MobileApp = () => {
                         </TableRow>
                       </TableHead>
                       {cuisineTypesLoading ? (
-                        <CircularIndeterminate />
+                        <CircularIndeterminate cols={5} />
                       ) : cuisineTypes.length === 0 ? (
                         <EmptyData />
                       ) : (
@@ -3177,7 +3177,7 @@ const MobileApp = () => {
                         </TableRow>
                       </TableHead>
                       {cuisineOriginsLoading ? (
-                        <CircularIndeterminate />
+                        <CircularIndeterminate cols={5} />
                       ) : cuisineOrigins.length === 0 ? (
                         <EmptyData />
                       ) : (
@@ -3267,7 +3267,7 @@ const MobileApp = () => {
                         </TableRow>
                       </TableHead>
                       {mealTypesLoading ? (
-                        <CircularIndeterminate />
+                        <CircularIndeterminate cols={5} />
                       ) : mealTypes.length === 0 ? (
                         <EmptyData />
                       ) : (
@@ -3353,7 +3353,7 @@ const MobileApp = () => {
                         </TableRow>
                       </TableHead>
                       {galleryLoading ? (
-                        <CircularIndeterminate />
+                        <CircularIndeterminate cols={6} />
                       ) : gallery.length === 0 ? (
                         <EmptyData />
                       ) : (
@@ -4007,7 +4007,7 @@ const MobileApp = () => {
                         </TableRow>
                       </TableHead>
                       {promotionsLoading ? (
-                        <CircularIndeterminate />
+                        <CircularIndeterminate cols={8} />
                       ) : promotions.length === 0 ? (
                         <EmptyData />
                       ) : (
@@ -4102,7 +4102,7 @@ const MobileApp = () => {
                         </TableRow>
                       </TableHead>
                       {eventsLoading ? (
-                        <CircularIndeterminate />
+                        <CircularIndeterminate cols={6} />
                       ) : events.length === 0 ? (
                         <EmptyData />
                       ) : (

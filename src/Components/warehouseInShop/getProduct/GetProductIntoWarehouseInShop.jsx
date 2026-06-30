@@ -282,7 +282,7 @@ export default function GetProductIntoWarehouseInShop({
                   </TableHead>
 
                   {loading ? (
-                    <CircularIndeterminate />
+                    <CircularIndeterminate cols={8} />
                   ) : items.length === 0 ? (
                     <EmptyData />
                   ) : (

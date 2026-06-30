@@ -872,7 +872,7 @@ const ReportPage = ({ shopId = null }) => {
   const renderContent = () => {
     if (loading) return (
       <Table>
-        <CircularIndeterminate />
+        <CircularIndeterminate cols={getTableHeaders()?.length || 5} />
       </Table>
     );
     if (error) return (

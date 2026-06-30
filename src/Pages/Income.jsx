@@ -326,7 +326,7 @@ export default function Income() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={8} />
           ) : incomes.length === 0 ? (
             <EmptyData />
           ) : (

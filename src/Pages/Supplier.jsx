@@ -152,7 +152,7 @@ const Supplier = () => {
           </TableHead>
 
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={5} />
           ) : suppliers.length === 0 ? (
             <EmptyData />
           ) : (

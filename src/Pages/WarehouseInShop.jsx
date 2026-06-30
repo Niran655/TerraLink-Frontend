@@ -436,7 +436,7 @@ const WarehouseInShop = () => {
                 </TableRow>
               </TableHead>
               {stockLoading ? (
-                <CircularIndeterminate />
+                <CircularIndeterminate cols={9} />
               ) : filteredStock.length === 0 ? (
                 <EmptyData />
               ) : (
@@ -537,7 +537,7 @@ const WarehouseInShop = () => {
                 </TableRow>
               </TableHead>
               {purchaseLoading ? (
-                <CircularIndeterminate />
+                <CircularIndeterminate cols={8} />
               ) : purchaseError ? (
                 <TableBody>
                   <TableRow>
@@ -651,7 +651,7 @@ const WarehouseInShop = () => {
                 </TableRow>
               </TableHead>
               {transferLoading ? (
-                <CircularIndeterminate />
+                <CircularIndeterminate cols={10} />
               ) : transferError ? (
                 <TableBody>
                   <TableRow>
@@ -769,7 +769,7 @@ const WarehouseInShop = () => {
                 </TableRow>
               </TableHead>
               {requestLoading ? (
-                <CircularIndeterminate />
+                <CircularIndeterminate cols={10} />
               ) : requestError ? (
                 <TableBody>
                   <TableRow>
@@ -877,7 +877,7 @@ const WarehouseInShop = () => {
                 </TableRow>
               </TableHead>
               {movementLoading ? (
-                <CircularIndeterminate />
+                <CircularIndeterminate cols={8} />
               ) : stockMovement.length === 0 ? (
                 <EmptyData />
               ) : (

@@ -254,7 +254,7 @@ export default function EmployeeAttendance() {
               </TableRow>
             </TableHead>
             {historyLoading ? (
-              <CircularIndeterminate />
+              <CircularIndeterminate cols={8} />
             ) : history.length === 0 ? (
               <EmptyData />
             ) : (

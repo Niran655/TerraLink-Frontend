@@ -230,7 +230,7 @@ export default function AdminAttendance() {
                 </TableRow>
               </TableHead>
               {loading ? (
-                <CircularIndeterminate />
+                <CircularIndeterminate cols={9} />
               ) : attendances.length === 0 ? (
                 <EmptyData />
               ) : (

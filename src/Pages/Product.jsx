@@ -235,7 +235,7 @@ const Product = () => {
           </TableHead>
 
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={6} />
           ) : data?.getProductsWithPagination?.data?.length === 0 ? (
             <EmptyData />
           ) : (

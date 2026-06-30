@@ -188,7 +188,7 @@ export default function Invoice() {
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={8} />
           ) : invoices.length === 0 ? (
             <EmptyData />
           ) : (

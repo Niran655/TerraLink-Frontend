@@ -304,7 +304,7 @@ const StoreSetting = () => {
 
 
             {loading ? (
-              <CircularIndeterminate />
+              <CircularIndeterminate cols={10} />
             ) : paginatedData.length === 0 ? (
               <EmptyData />
             ) : (

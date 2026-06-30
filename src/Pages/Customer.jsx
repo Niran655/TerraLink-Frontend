@@ -172,7 +172,7 @@ const Customer = () => {
           </TableHead>
 
           {loading ? (
-            <CircularIndeterminate />
+            <CircularIndeterminate cols={9} />
           ) : customers.length === 0 ? (
             <EmptyData />
           ) : (

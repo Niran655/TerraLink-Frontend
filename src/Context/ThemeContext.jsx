@@ -1067,7 +1067,7 @@ export const ThemeProvider = ({ children }) => {
     const isGlass  = mode === "glass";
     const isCrypto = mode === "crypto";
     const isDark   = mode === "dark" || isGlass || isCrypto || isKhmer;
-    const baseMode = isKhmer || isGlass || isCrypto ? "dark" : "light";
+    const baseMode = isDark ? "dark" : "light";
     const t = isKhmer ? tokens.khmer : tokens[mode] || tokens.dark;
 
     // Accent colors

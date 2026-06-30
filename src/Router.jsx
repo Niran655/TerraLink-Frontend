@@ -61,6 +61,9 @@ import APIKeys from './Pages/APIKeys';
 import SecurityAlerts from './Pages/SecurityAlerts';
 import PrivacyCompliance from './Pages/PrivacyCompliance';
 import SecurityObservability from './Pages/SecurityObservability';
+import HmrDashboard from './Pages/HmrDashboard';
+import HmrReport from './Pages/HmrReport';
+
 export default function Router() {
   const { isAuthenticated, user } = useAuth();
 
@@ -145,6 +148,8 @@ export default function Router() {
         { path: '/customer', element: <Guard module="customers"><Customer/></Guard>},
         { path: '/table', element: <Guard module="inventory"><TablePage/></Guard>},
         { path: '/setting/permission', element: <Guard module="settings"><Permission/></Guard>},
+        { path: '/setting/hmr-dashboard', element: <Guard module="hr"><HmrDashboard/></Guard>},
+        { path: '/setting/hmr-report', element: <Guard module="hr"><HmrReport/></Guard>},
         { path: '/setting/employee', element: <Guard module="hr"><Employee/></Guard>},
         { path: '/setting/department', element: <Guard module="hr"><Department/></Guard>},
         { path: '/setting/employee-salary', element: <Guard module="hr"><EmployeeSalary/></Guard>},
