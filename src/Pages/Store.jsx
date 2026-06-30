@@ -656,7 +656,7 @@ const Store = () => {
         }}
       >
         <Grid container spacing={2}>
-          <Grid size={{ xs: 6, md: 3 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
              
             <TextField
               type="search"

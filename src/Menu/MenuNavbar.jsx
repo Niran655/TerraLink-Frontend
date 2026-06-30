@@ -557,7 +557,7 @@ export default function MenuNavbar({ userPermissions = [] }) {
                 display: "flex",
                 alignItems: "center",
                 height: 36,
-                borderRadius: 0.5,
+                borderRadius: 1,
                 px: 1.5,
                 fontSize: "0.85rem",
                 color: "rgba(255,255,255,0.4)",

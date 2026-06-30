@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Button,
   Card,
   CardContent,
-  Grid2 as Grid,
+  Grid,
   Stack,
   Typography,
   Table,
@@ -41,6 +41,10 @@ import TableSkeleton from "../include/Loading";
 import EmptyData from "../include/EmptyData";
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import FooterPagination from "../include/FooterPagination";
 
 const cardSx = (theme) => ({
   borderRadius: "16px",
@@ -84,6 +88,18 @@ const formatDateLong = (dateStr) => {
   });
 };
 
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return "-";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "-";
+  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const y = date.getFullYear();
+  const hr = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  return `${d}/${m}/${y} ${hr}:${min}`;
+};
+
 export default function HmrReport() {
   const theme = useTheme();
   const { language, user } = useAuth();
@@ -92,8 +108,11 @@ export default function HmrReport() {
 
   const [activeTab, setActiveTab] = useState(0);
   const [selectedDept, setSelectedDept] = useState("all");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   // GraphQL queries
   const { data: employeeData, loading: employeeLoading } = useQuery(GET_EMPLOYEES_WITH_PAGINATION, {
@@ -141,6 +160,28 @@ export default function HmrReport() {
     return salaries.filter((sal) => sal.employee?.department?._id === selectedDept);
   }, [salaryData, selectedDept]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab, selectedDept, startDate, endDate]);
+
+  const paginatedEmployees = useMemo(() => {
+    const startIndex = (page - 1) * limit;
+    return filteredEmployees.slice(startIndex, startIndex + limit);
+  }, [filteredEmployees, page, limit]);
+
+  const paginatedAttendance = useMemo(() => {
+    const startIndex = (page - 1) * limit;
+    return filteredAttendance.slice(startIndex, startIndex + limit);
+  }, [filteredAttendance, page, limit]);
+
+  const paginatedSalaries = useMemo(() => {
+    const startIndex = (page - 1) * limit;
+    return filteredSalaries.slice(startIndex, startIndex + limit);
+  }, [filteredSalaries, page, limit]);
+
+  const currentTotalDocs = activeTab === 0 ? filteredAttendance.length : activeTab === 1 ? filteredSalaries.length : filteredEmployees.length;
+  const currentTotalPages = Math.ceil(currentTotalDocs / limit) || 1;
+
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
@@ -162,8 +203,8 @@ export default function HmrReport() {
         log.employee?.nameEn || "-",
         log.employee?.department?.nameEn || "-",
         log.date ? new Date(log.date).toLocaleDateString() : "-",
-        log.clockIn || "-",
-        log.clockOut || "-",
+        formatDateTime(log.clockIn),
+        formatDateTime(log.clockOut),
         log.status || "present"
       ]);
     } else if (activeTab === 1) {
@@ -229,6 +270,8 @@ export default function HmrReport() {
     const email = user?.email || "";
     const headers = getTableHeaders();
     const rows = getTableRows();
+    const { language } = useAuth();
+    const { t } = translateLauguage(language)
 
     const reportTitleEn = ["Attendance Log Report", "Payroll Details Report", "Employee Directory"][activeTab];
     const reportTitleKh = ["របាយការណ៍វត្តមានបុគ្គលិក", "របាយការណ៍ប្រាក់ខែបុគ្គលិក", "របាយការណ៍ព័ត៌មានបុគ្គលិក"][activeTab];
@@ -240,7 +283,7 @@ export default function HmrReport() {
       ];
       const khmerNumbers = ["០", "១", "២", "៣", "៤", "៥", "៦", "៧", "៨", "៩"];
       const toKhmerNum = (num) => String(num).split("").map(d => khmerNumbers[Number(d)] || d).join("");
-      
+
       const day = toKhmerNum(date.getDate());
       const month = khmerMonths[date.getMonth()];
       const year = toKhmerNum(date.getFullYear());
@@ -455,9 +498,9 @@ export default function HmrReport() {
             </thead>
             <tbody>
               ${rows.map(row => `<tr>${row.map((cell, idx) => {
-                const align = idx === 0 || idx === 1 ? "left" : "center";
-                return `<td style="text-align:${align}">${cell}</td>`;
-              }).join("")}</tr>`).join("")}
+      const align = idx === 0 || idx === 1 ? "left" : "center";
+      return `<td style="text-align:${align}">${cell}</td>`;
+    }).join("")}</tr>`).join("")}
               ${rows.length === 0 ? `<tr><td colspan="${headers.length}" style="text-align:center">គ្មានទិន្នន័យស្រង់ចេញទេ (No data available)</td></tr>` : ""}
             </tbody>
           </table>
@@ -496,254 +539,278 @@ export default function HmrReport() {
   const currentCount = activeTab === 0 ? filteredAttendance.length : activeTab === 1 ? filteredSalaries.length : filteredEmployees.length;
 
   return (
-    <Box sx={{ p: 2 }}>
-      {/* Title */}
-      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={2} sx={{ mb: 3 }}>
-        <Stack spacing={0.5} sx={{ textAlign: "left" }}>
-          <Typography variant="h5" sx={{ fontWeight: 800, color: theme.palette.text.primary, letterSpacing: "-0.02em" }}>
-            {t("hmr_report") || "HMR Reports"}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>
-            Inspect, filter, print, and export employee lists, attendance grids, and salary sheets
-          </Typography>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Box sx={{ p: 2 }}>
+        {/* Title */}
+        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={2} sx={{ mb: 3 }}>
+          <Stack spacing={0.5} sx={{ textAlign: "left" }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: theme.palette.text.primary, letterSpacing: "-0.02em" }}>
+              {t("hmr_report") || "HMR Reports"}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>
+              Inspect, filter, print, and export employee lists, attendance grids, and salary sheets
+            </Typography>
+          </Stack>
+          <Stack direction="row" spacing={1.5}>
+            <Button
+              variant="outlined"
+              startIcon={<Print />}
+              onClick={handlePrint}
+              sx={{ borderRadius: 1, textTransform: "none", fontWeight: 600, height: 36 }}
+            >
+              {t("print") || "Print"}
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<Download />}
+              onClick={handleExport}
+              disabled={currentCount === 0}
+              sx={{ borderRadius: 1, textTransform: "none", fontWeight: 600, height: 36 }}
+            >
+              {t("export") || "Export Excel"}
+            </Button>
+          </Stack>
         </Stack>
-        <Stack direction="row" spacing={1.5}>
-          <Button 
-            variant="outlined" 
-            startIcon={<Print />} 
-            onClick={handlePrint}
-            sx={{ borderRadius: 1, textTransform: "none", fontWeight: 600, height: 36 }}
+
+        {/* Tabs Layout */}
+        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2.5 }}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            aria-label="HMR Report Tabs"
+            sx={{
+              "& .MuiTab-root": { fontWeight: 600, textTransform: "none", fontSize: "0.85rem" }
+            }}
           >
-            {t("print") || "Print"}
-          </Button>
-          <Button 
-            variant="contained" 
-            startIcon={<Download />} 
-            onClick={handleExport} 
-            disabled={currentCount === 0}
-            sx={{ borderRadius: 1, textTransform: "none", fontWeight: 600, height: 36 }}
-          >
-            {t("export") || "Export Excel"}
-          </Button>
-        </Stack>
-      </Stack>
+            <Tab icon={<CalendarToday />} iconPosition="start" label={t("attendance_logs")} />
+            <Tab icon={<Payments />} iconPosition="start" label={t("payroll_details")} />
+            <Tab icon={<ContactPage />} iconPosition="start" label={t("employee_directory")} />
+          </Tabs>
+        </Box>
 
-      {/* Tabs Layout */}
-      <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2.5 }}>
-        <Tabs 
-          value={activeTab} 
-          onChange={handleTabChange} 
-          aria-label="HMR Report Tabs"
-          sx={{
-            "& .MuiTab-root": { fontWeight: 600, textTransform: "none", fontSize: "0.85rem" }
-          }}
-        >
-          <Tab icon={<CalendarToday />} iconPosition="start" label="Attendance Logs" />
-          <Tab icon={<Payments />} iconPosition="start" label="Payroll Details" />
-          <Tab icon={<ContactPage />} iconPosition="start" label="Employee Directory" />
-        </Tabs>
-      </Box>
-
-      {/* Filters Box */}
-      <Card sx={{ ...cardSx(theme), mb: 3 }}>
-        <CardContent sx={{ p: "16px !important" }}>
-          <Grid container spacing={1.5} alignItems="center">
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <TextField
-                select
-                fullWidth
-                size="small"
-                label={t("department") || "Department"}
-                value={selectedDept}
-                onChange={(e) => setSelectedDept(e.target.value)}
-                sx={{ textAlign: "left" }}
-              >
-                <MenuItem value="all">All Departments</MenuItem>
-                {departments.map((dept) => (
-                  <MenuItem key={dept._id} value={dept._id}>
-                    {language === "kh" ? dept.nameKh || dept.nameEn : dept.nameEn}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            {activeTab === 0 && (
-              <>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <TextField
-                    type="date"
-                    fullWidth
-                    size="small"
-                    label="Start Date"
-                    InputLabelProps={{ shrink: true }}
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <TextField
-                    type="date"
-                    fullWidth
-                    size="small"
-                    label="End Date"
-                    InputLabelProps={{ shrink: true }}
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </Grid>
-              </>
-            )}
-          </Grid>
-        </CardContent>
-      </Card>
-
-      {/* Table Data */}
-      <Card sx={cardSx(theme)}>
-        <CardContent sx={{ p: "0px !important" }}>
-          <TableContainer>
-            <Table size="small">
+        {/* Filters Box */}
+        <Card sx={{ mb: 3 }}>
+          <CardContent sx={{ p: "16px !important" }}>
+            <Grid container spacing={1.5} alignItems="center">
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <TextField
+                  select
+                  fullWidth
+                  size="small"
+                  label={t("department") || "Department"}
+                  value={selectedDept}
+                  onChange={(e) => setSelectedDept(e.target.value)}
+                  sx={{ textAlign: "left" }}
+                >
+                  <MenuItem value="all">All Departments</MenuItem>
+                  {departments.map((dept) => (
+                    <MenuItem key={dept._id} value={dept._id}>
+                      {language === "kh" ? dept.nameKh || dept.nameEn : dept.nameEn}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
               {activeTab === 0 && (
                 <>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={thSx(theme)}>No</TableCell>
-                      <TableCell sx={thSx(theme)}>Employee Name</TableCell>
-                      <TableCell sx={thSx(theme)}>Department</TableCell>
-                      <TableCell sx={thSx(theme)}>Date</TableCell>
-                      <TableCell sx={thSx(theme)}>Clock In</TableCell>
-                      <TableCell sx={thSx(theme)}>Clock Out</TableCell>
-                      <TableCell align="center" sx={thSx(theme)}>Status</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  {currentLoading ? (
-                    <TableSkeleton cols={7} rows={5} />
-                  ) : filteredAttendance.length === 0 ? (
-                    <TableBody>
-                      <TableRow>
-                        <TableCell colSpan={7} align="center" sx={{ py: 4 }}><EmptyData /></TableCell>
-                      </TableRow>
-                    </TableBody>
-                  ) : (
-                    <TableBody>
-                      {filteredAttendance.map((log, index) => (
-                        <TableRow key={log._id} hover>
-                          <TableCell sx={tdSx(theme)}>{index + 1}</TableCell>
-                          <TableCell sx={{ ...tdSx(theme), fontWeight: 600 }}>{language === "kh" ? log.employee?.nameKh || log.employee?.nameEn : log.employee?.nameEn}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{language === "kh" ? log.employee?.department?.nameKh || log.employee?.department?.nameEn : log.employee?.department?.nameEn || "-"}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{log.date ? new Date(log.date).toLocaleDateString() : "-"}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{log.clockIn || "-"}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{log.clockOut || "-"}</TableCell>
-                          <TableCell align="center" sx={tdSx(theme)}>
-                            <Chip
-                              label={log.status || "present"}
-                              size="small"
-                              color={log.status === "late" ? "warning" : log.status === "absent" ? "error" : "success"}
-                              variant="outlined"
-                              sx={{ fontWeight: 700, textTransform: "capitalize", fontSize: "0.68rem", height: 20 }}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  )}
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <DatePicker
+                      label="Start Date"
+                      format="dd/MM/yyyy"
+                      value={startDate}
+                      onChange={(newVal) => setStartDate(newVal)}
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <DatePicker
+                      label="End Date"
+                      format="dd/MM/yyyy"
+                      value={endDate}
+                      onChange={(newVal) => setEndDate(newVal)}
+                      slotProps={{
+                        textField: {
+                          size: "small",
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </Grid>
                 </>
               )}
+            </Grid>
+          </CardContent>
+        </Card>
 
-              {activeTab === 1 && (
-                <>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={thSx(theme)}>No</TableCell>
-                      <TableCell sx={thSx(theme)}>Employee Name</TableCell>
-                      <TableCell sx={thSx(theme)}>Department</TableCell>
-                      <TableCell align="right" sx={thSx(theme)}>Base Salary</TableCell>
-                      <TableCell align="right" sx={thSx(theme)}>Allowance</TableCell>
-                      <TableCell align="right" sx={thSx(theme)}>Deduction</TableCell>
-                      <TableCell align="right" sx={thSx(theme)}>Net Salary</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  {currentLoading ? (
-                    <TableSkeleton cols={7} rows={5} />
-                  ) : filteredSalaries.length === 0 ? (
-                    <TableBody>
-                      <TableRow>
-                        <TableCell colSpan={7} align="center" sx={{ py: 4 }}><EmptyData /></TableCell>
-                      </TableRow>
-                    </TableBody>
-                  ) : (
-                    <TableBody>
-                      {filteredSalaries.map((sal, index) => {
-                        const base = Number(sal.salary || 0);
-                        const allowance = Number(sal.allowance || 0);
-                        const deduction = Number(sal.deduction || 0);
-                        const net = base + allowance - deduction;
-                        return (
-                          <TableRow key={sal._id} hover>
-                            <TableCell sx={tdSx(theme)}>{index + 1}</TableCell>
-                            <TableCell sx={{ ...tdSx(theme), fontWeight: 600 }}>{language === "kh" ? sal.employee?.nameKh || sal.employee?.nameEn : sal.employee?.nameEn}</TableCell>
-                            <TableCell sx={tdSx(theme)}>{language === "kh" ? sal.employee?.department?.nameKh || sal.employee?.department?.nameEn : sal.employee?.department?.nameEn || "-"}</TableCell>
-                            <TableCell align="right" sx={tdSx(theme)}>{formatCurrency(base)}</TableCell>
-                            <TableCell align="right" sx={tdSx(theme)}>{formatCurrency(allowance)}</TableCell>
-                            <TableCell align="right" sx={tdSx(theme)}>{formatCurrency(deduction)}</TableCell>
-                            <TableCell align="right" sx={{ ...tdSx(theme), fontWeight: 700, color: "success.main" }}>{formatCurrency(net)}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  )}
-                </>
-              )}
+        {/* Table Data */}
 
-              {activeTab === 2 && (
-                <>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={thSx(theme)}>No</TableCell>
-                      <TableCell sx={thSx(theme)}>Employee Name</TableCell>
-                      <TableCell sx={thSx(theme)}>Department</TableCell>
-                      <TableCell sx={thSx(theme)}>Position</TableCell>
-                      <TableCell sx={thSx(theme)}>Phone</TableCell>
-                      <TableCell sx={thSx(theme)}>Email</TableCell>
-                      <TableCell sx={thSx(theme)}>Gender</TableCell>
-                      <TableCell align="center" sx={thSx(theme)}>Status</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  {currentLoading ? (
-                    <TableSkeleton cols={8} rows={5} />
-                  ) : filteredEmployees.length === 0 ? (
-                    <TableBody>
-                      <TableRow>
-                        <TableCell colSpan={8} align="center" sx={{ py: 4 }}><EmptyData /></TableCell>
+        <TableContainer>
+          <Table size="small">
+            {activeTab === 0 && (
+              <>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={thSx(theme)}>No</TableCell>
+                    <TableCell sx={thSx(theme)}>Employee Name</TableCell>
+                    <TableCell sx={thSx(theme)}>Department</TableCell>
+                    <TableCell sx={thSx(theme)}>Date</TableCell>
+                    <TableCell sx={thSx(theme)}>Clock In</TableCell>
+                    <TableCell sx={thSx(theme)}>Clock Out</TableCell>
+                    <TableCell align="center" sx={thSx(theme)}>Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                {currentLoading ? (
+                  <TableSkeleton cols={7} rows={5} />
+                ) : filteredAttendance.length === 0 ? (
+
+                  <EmptyData />
+
+                ) : (
+                  <TableBody>
+                    {paginatedAttendance.map((log, index) => (
+                      <TableRow key={log._id} hover>
+                        <TableCell sx={tdSx(theme)}>{(page - 1) * limit + index + 1}</TableCell>
+                        <TableCell sx={{ ...tdSx(theme), fontWeight: 600 }}>{language === "kh" ? log.employee?.nameKh || log.employee?.nameEn : log.employee?.nameEn}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{language === "kh" ? log.employee?.department?.nameKh || log.employee?.department?.nameEn : log.employee?.department?.nameEn || "-"}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{log.date ? new Date(log.date).toLocaleDateString() : "-"}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{formatDateTime(log.clockIn)}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{formatDateTime(log.clockOut)}</TableCell>
+                        <TableCell align="center" sx={tdSx(theme)}>
+                          <Chip
+                            label={log.status || "present"}
+                            size="small"
+                            color={log.status === "late" ? "warning" : log.status === "absent" ? "error" : "success"}
+                            variant="outlined"
+                            sx={{ fontWeight: 700, textTransform: "capitalize", fontSize: "0.68rem", height: 20 }}
+                          />
+                        </TableCell>
                       </TableRow>
-                    </TableBody>
-                  ) : (
-                    <TableBody>
-                      {filteredEmployees.map((emp, index) => (
-                        <TableRow key={emp._id} hover>
-                          <TableCell sx={tdSx(theme)}>{index + 1}</TableCell>
-                          <TableCell sx={{ ...tdSx(theme), fontWeight: 600 }}>{language === "kh" ? emp.nameKh || emp.nameEn : emp.nameEn}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{language === "kh" ? emp.department?.nameKh || emp.department?.nameEn : emp.department?.nameEn || "-"}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{emp.position || "-"}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{emp.phone || "-"}</TableCell>
-                          <TableCell sx={tdSx(theme)}>{emp.email || "-"}</TableCell>
-                          <TableCell sx={{ ...tdSx(theme), textTransform: "capitalize" }}>{emp.gender || "-"}</TableCell>
-                          <TableCell align="center" sx={tdSx(theme)}>
-                            <Chip
-                              label={emp.active ? "Active" : "Inactive"}
-                              size="small"
-                              color={emp.active ? "success" : "default"}
-                              sx={{ fontWeight: 700, fontSize: "0.68rem", height: 20 }}
-                            />
-                          </TableCell>
+                    ))}
+                  </TableBody>
+                )}
+              </>
+            )}
+
+            {activeTab === 1 && (
+              <>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={thSx(theme)}>No</TableCell>
+                    <TableCell sx={thSx(theme)}>Employee Name</TableCell>
+                    <TableCell sx={thSx(theme)}>Department</TableCell>
+                    <TableCell align="right" sx={thSx(theme)}>Base Salary</TableCell>
+                    <TableCell align="right" sx={thSx(theme)}>Allowance</TableCell>
+                    <TableCell align="right" sx={thSx(theme)}>Deduction</TableCell>
+                    <TableCell align="right" sx={thSx(theme)}>Net Salary</TableCell>
+                  </TableRow>
+                </TableHead>
+                {currentLoading ? (
+                  <TableSkeleton cols={7} rows={5} />
+                ) : filteredSalaries.length === 0 ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={7} align="center" sx={{ py: 4 }}><EmptyData /></TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : (
+                  <TableBody>
+                    {paginatedSalaries.map((sal, index) => {
+                      const base = Number(sal.salary || 0);
+                      const allowance = Number(sal.allowance || 0);
+                      const deduction = Number(sal.deduction || 0);
+                      const net = base + allowance - deduction;
+                      return (
+                        <TableRow key={sal._id} hover>
+                          <TableCell sx={tdSx(theme)}>{(page - 1) * limit + index + 1}</TableCell>
+                          <TableCell sx={{ ...tdSx(theme), fontWeight: 600 }}>{language === "kh" ? sal.employee?.nameKh || sal.employee?.nameEn : sal.employee?.nameEn}</TableCell>
+                          <TableCell sx={tdSx(theme)}>{language === "kh" ? sal.employee?.department?.nameKh || sal.employee?.department?.nameEn : sal.employee?.department?.nameEn || "-"}</TableCell>
+                          <TableCell align="right" sx={tdSx(theme)}>{formatCurrency(base)}</TableCell>
+                          <TableCell align="right" sx={tdSx(theme)}>{formatCurrency(allowance)}</TableCell>
+                          <TableCell align="right" sx={tdSx(theme)}>{formatCurrency(deduction)}</TableCell>
+                          <TableCell align="right" sx={{ ...tdSx(theme), fontWeight: 700, color: "success.main" }}>{formatCurrency(net)}</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  )}
-                </>
-              )}
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
-    </Box>
+                      );
+                    })}
+                  </TableBody>
+                )}
+              </>
+            )}
+
+            {activeTab === 2 && (
+              <>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={thSx(theme)}>No</TableCell>
+                    <TableCell sx={thSx(theme)}>Employee Name</TableCell>
+                    <TableCell sx={thSx(theme)}>Department</TableCell>
+                    <TableCell sx={thSx(theme)}>Position</TableCell>
+                    <TableCell sx={thSx(theme)}>Phone</TableCell>
+                    <TableCell sx={thSx(theme)}>Email</TableCell>
+                    <TableCell sx={thSx(theme)}>Gender</TableCell>
+                    <TableCell align="center" sx={thSx(theme)}>Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                {currentLoading ? (
+                  <TableSkeleton cols={8} rows={5} />
+                ) : filteredEmployees.length === 0 ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={8} align="center" sx={{ py: 4 }}><EmptyData /></TableCell>
+                    </TableRow>
+                  </TableBody>
+                ) : (
+                  <TableBody>
+                    {paginatedEmployees.map((emp, index) => (
+                      <TableRow key={emp._id} hover>
+                        <TableCell sx={tdSx(theme)}>{(page - 1) * limit + index + 1}</TableCell>
+                        <TableCell sx={{ ...tdSx(theme), fontWeight: 600 }}>{language === "kh" ? emp.nameKh || emp.nameEn : emp.nameEn}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{language === "kh" ? emp.department?.nameKh || emp.department?.nameEn : emp.department?.nameEn || "-"}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{emp.position || "-"}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{emp.phone || "-"}</TableCell>
+                        <TableCell sx={tdSx(theme)}>{emp.email || "-"}</TableCell>
+                        <TableCell sx={{ ...tdSx(theme), textTransform: "capitalize" }}>{emp.gender || "-"}</TableCell>
+                        <TableCell align="center" sx={tdSx(theme)}>
+                          <Chip
+                            label={emp.active ? "Active" : "Inactive"}
+                            size="small"
+                            color={emp.active ? "success" : "default"}
+                            sx={{ fontWeight: 700, fontSize: "0.68rem", height: 20 }}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                )}
+              </>
+            )}
+          </Table>
+        </TableContainer>
+
+        {currentCount > 0 && (
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="center"
+            sx={{ padding: 2 }}
+          >
+            <FooterPagination
+              totalPages={currentTotalPages}
+              totalDocs={currentTotalDocs}
+              limit={limit}
+              page={page}
+              setPage={setPage}
+              handleLimit={(e) => {
+                setLimit(parseInt(e.target.value, 10));
+                setPage(1);
+              }}
+            />
+          </Stack>
+        )}
+      </Box>
+    </LocalizationProvider>
   );
 }

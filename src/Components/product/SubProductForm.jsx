@@ -804,6 +804,7 @@ export default function SubProductForm({
                     <Typography variant="body2">{t("expiry_date") || "Expiry Date"}</Typography>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
+                        format="DD/MM/YYYY"
                         value={values.expiryDate ? dayjs(values.expiryDate) : null}
                         onChange={(date) => {
                           setFieldValue("expiryDate", date?.isValid() ? date.format("YYYY-MM-DD") : "");

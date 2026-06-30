@@ -167,7 +167,7 @@ const StoreSetting = () => {
         >
           <Grid container spacing={2} alignItems="center" textAlign="start">
 
-            <Grid xs={12}>
+            <Grid xs={12} sm={3}>
               <Typography variant="body2" fontWeight={500} mb={0.5}>
                 {t("search")}
               </Typography>
@@ -195,7 +195,7 @@ const StoreSetting = () => {
                 {t("start_date")}
               </Typography>
               <DatePicker
-
+                format="DD/MM/YYYY"
                 value={startDate}
                 onChange={(newValue) => {
                   setStartDate(newValue);
@@ -223,7 +223,7 @@ const StoreSetting = () => {
                 {t("end_date")}
               </Typography>
               <DatePicker
-
+                format="DD/MM/YYYY"
                 value={endDate}
                 onChange={(newValue) => {
                   setEndDate(newValue);

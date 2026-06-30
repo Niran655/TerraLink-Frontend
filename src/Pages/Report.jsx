@@ -1241,6 +1241,7 @@ const ReportPage = ({ shopId = null }) => {
                       {t("start_date")}
                     </Typography>
                     <DatePicker
+                      format="dd/MM/yyyy"
                       value={dateRange.start}
                       onChange={(newVal) => setDateRange({ ...dateRange, start: newVal })}
                       slotProps={{
@@ -1257,6 +1258,7 @@ const ReportPage = ({ shopId = null }) => {
                       {t("end_date")}
                     </Typography>
                     <DatePicker
+                      format="dd/MM/yyyy"
                       value={dateRange.end}
                       onChange={(newVal) => setDateRange({ ...dateRange, end: newVal })}
                       slotProps={{

@@ -179,6 +179,7 @@ export default function AdminAttendance() {
             </Grid>
             <Grid size={{ xs: 12, md: 2 }} ml="auto">
               <DatePicker
+                format="dd/MM/yyyy"
                 value={selectedDate}
                 onChange={(newValue) => {
                   setSelectedDate(newValue);

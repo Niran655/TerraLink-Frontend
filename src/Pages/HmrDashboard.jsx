@@ -3,7 +3,7 @@ import {
   Box,
   Card,
   CardContent,
-  Grid2 as Grid,
+  Grid,
   Stack,
   Typography,
   Table,
@@ -47,7 +47,7 @@ const cardSx = (theme) => ({
   boxShadow: theme.shadows[1],
   border: `1px solid ${theme.palette.divider}`,
   transition: "box-shadow 0.2s, transform 0.2s",
-  "&:hover": { 
+  "&:hover": {
     boxShadow: theme.shadows[4],
     transform: "translateY(-2px)"
   },
@@ -148,7 +148,7 @@ export default function HmrDashboard() {
       if (emp.gender?.toLowerCase() === "male") maleCount++;
       else if (emp.gender?.toLowerCase() === "female") femaleCount++;
     });
-    
+
     // Average salary and total salary calculations
     const salaries = salaryData?.getEmployeeSalariesWithPagination?.data || [];
     const totalSalary = salaries.reduce((sum, item) => sum + Number(item.salary || 0), 0);
@@ -192,7 +192,7 @@ export default function HmrDashboard() {
       theme.palette.warning.main,
       theme.palette.success.main,
     ],
-    legend: { 
+    legend: {
       position: "bottom",
       labels: { colors: theme.palette.text.primary }
     },
@@ -219,12 +219,12 @@ export default function HmrDashboard() {
   };
 
   const areaOptions = {
-    chart: { 
-      type: "area", 
+    chart: {
+      type: "area",
       toolbar: { show: false },
       sparkline: { enabled: false },
     },
-    xaxis: { 
+    xaxis: {
       categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
       labels: { style: { colors: theme.palette.text.secondary, fontSize: "10px" } },
       axisBorder: { show: false },

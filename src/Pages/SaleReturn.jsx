@@ -215,6 +215,7 @@ export default function SaleReturn() {
             </Typography>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
               <DatePicker
+                format="dd/MM/yyyy"
                 value={startDate}
                 onChange={(newValue) => {
                   setStartDate(newValue);
@@ -230,6 +231,7 @@ export default function SaleReturn() {
               />
               
               <DatePicker
+                format="dd/MM/yyyy"
                 value={endDate}
                 onChange={(newValue) => {
                   setEndDate(newValue);

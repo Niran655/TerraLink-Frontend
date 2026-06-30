@@ -110,6 +110,7 @@ export default function ReusableForm({
       case "date":
         return (
           <DatePicker
+            format="DD/MM/YYYY"
             value={values[field.name] ? dayjs(values[field.name]) : null} // convert to Dayjs
             onChange={(v) => setFieldValue(field.name, v ? v.toISOString() : "")} // save as ISO string
             slotProps={{

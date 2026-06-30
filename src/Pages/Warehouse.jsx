@@ -912,7 +912,7 @@ const Warehouse = () => {
                     textAlign={"start"}
                     sx={{ flex: 1 }}
                   >
-                    <Grid size={{ xs: 3 }}>
+                    <Grid size={{ xs: 12, sm: 3 }}>
                       <Typography variant="body2" fontWeight={500} mb={0.5}>
                         {t("search")}
                       </Typography>
@@ -1098,7 +1098,7 @@ const Warehouse = () => {
                     textAlign={"start"}
                     sx={{ flex: 1 }}
                   >
-                    <Grid size={{ xs: 3 }}>
+                    <Grid size={{ xs: 12, sm: 3 }}>
                       <Typography variant="body2" fontWeight={500} mb={0.5}>
                         {t("search")}
                       </Typography>
@@ -1273,7 +1273,7 @@ const Warehouse = () => {
                     textAlign={"start"}
                     sx={{ flex: 1 }}
                   >
-                    <Grid size={{ xs: 3 }}>
+                    <Grid size={{ xs: 12, sm: 3 }}>
                       <Typography variant="body2" fontWeight={500} mb={0.5}>
                         {t("search")}
                       </Typography>
@@ -1431,7 +1431,7 @@ const Warehouse = () => {
                   textAlign={"start"}
                   sx={{ flex: 1 }}
                 >
-                  <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+                  <Grid size={{ xs: 12, sm: 3 }}>
                     <Typography variant="body2" fontWeight={500} mb={0.5}>
                       {t("search")}
                     </Typography>
@@ -1576,7 +1576,7 @@ const Warehouse = () => {
                   }}
                 >
                   <Grid container spacing={2} alignItems="center" textAlign="start" sx={{ flex: 1 }}>
-                    <Grid size={{ xs: 3 }}>
+                    <Grid size={{ xs: 12, sm: 3 }}>
                       <Typography variant="body2" fontWeight={500} mb={0.5}>
                         {t("search")}
                       </Typography>

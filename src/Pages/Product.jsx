@@ -130,7 +130,7 @@ const Product = () => {
         mt={5}
       >
         <Grid container spacing={2} alignItems="center" textAlign={"start"} sx={{ flex: 1, width: "100%" }}>
-          <Grid size={{ xs: 12, md: 3 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="body2" fontWeight={500} mb={0.5}>
               {t("search")}
             </Typography>

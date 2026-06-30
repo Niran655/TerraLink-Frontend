@@ -167,6 +167,7 @@ export default function WarehouseRequestForm({
                 <Typography>{t("date_want_get_product")}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
+                    format="dd/MM/yyyy"
                     value={values.dateWantGetProduct}
                     onChange={(newValue) =>
                       setValues({ ...values, dateWantGetProduct: newValue })

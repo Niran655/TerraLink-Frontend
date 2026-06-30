@@ -712,6 +712,9 @@
   "mobile_settings": "Mobile Setting",
   "shop_management": "Shop Management",
   "mobile_app": "Mobile App",
-  "security_center":"Security Center"
-
+  "security_center":"Security Center",
+  "attendance_logs":"Attendance Logs",
+  "payroll_details":"Payroll Details",
+  "employee_directory":"Employee Directory"
+ 
 }

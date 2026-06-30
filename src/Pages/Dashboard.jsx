@@ -935,6 +935,7 @@ export default function Dashboard() {
                     <Grid size={{ xs: 12, md: 2 }}>
                       <DatePicker
                         label={t("start_date")}
+                        format="DD/MM/YYYY"
                         value={customStart}
                         onChange={setCustomStart}
                         slotProps={{ textField: { size: "small", fullWidth: true, sx: { "& .MuiOutlinedInput-root": { borderRadius: 2, "&.Mui-focused fieldset": { borderColor: theme.palette.primary.main } } } } }}
@@ -943,6 +944,7 @@ export default function Dashboard() {
                     <Grid size={{ xs: 12, md: 2 }}>
                       <DatePicker
                         label={t("end_date")}
+                        format="DD/MM/YYYY"
                         value={customEnd}
                         onChange={setCustomEnd}
                         slotProps={{ textField: { size: "small", fullWidth: true, sx: { "& .MuiOutlinedInput-root": { borderRadius: 2, "&.Mui-focused fieldset": { borderColor: theme.palette.primary.main } } } } }}
