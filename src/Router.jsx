@@ -14,6 +14,7 @@ import EmployeeSalary from './Pages/EmployeeSalary';
 import { useAuth } from './Context/AuthContext';
 import AttendanceQr from './Pages/AttendanceQr';
 import ReportInShop from './Pages/ReportInShop';
+import StaffInShop from './Pages/StaffInShop';
 import StoreSetting from './Pages/StoreSetting';
 import { canManageSettings, canManageTenant, canManageUsers } from './utils/tenantAccess';
 import CmsCrmMenu from './Pages/CmsCrmMenu';
@@ -166,6 +167,7 @@ export default function Router() {
         { path: '/store/pos/:id/dashboard-in-shop', element: <Guard module="pos"><DashboardInShop/></Guard> },
         { path: '/store/pos/:id/warehouse-in-shop', element: <Guard module="pos"><WarehouseInShop/></Guard> },
         { path: '/store/pos/:id/mobile-app-controller', element: <Guard module="pos"><MobileApp/></Guard> },
+        { path: '/store/pos/:id/staff', element: <Guard module="pos"><StaffInShop/></Guard> },
         { path: 'profile', element:<Profile/>},
         { path: "user/:userId/profile", element: <Profile /> },
         { path: '/setting/tenant', element: <Guard allow={user?.role === "superAdmin"}><Tenant/></Guard> },

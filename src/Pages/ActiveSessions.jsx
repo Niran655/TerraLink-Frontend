@@ -119,11 +119,11 @@ export default function ActiveSessions() {
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableSkeleton cols={4} rows={3} />
-              ) : data?.getActiveSessions?.length > 0 ? (
-                data.getActiveSessions.map((session) => (
+            {loading ? (
+              <TableSkeleton cols={4} rows={3} />
+            ) : data?.getActiveSessions?.length > 0 ? (
+              <TableBody>
+                {data.getActiveSessions.map((session) => (
                   <TableRow key={session.id} hover>
                     <TableCell>
                       <Stack direction="row" alignItems="center" spacing={2}>
@@ -160,15 +160,17 @@ export default function ActiveSessions() {
                       )}
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
+                ))}
+              </TableBody>
+            ) : (
+              <TableBody>
                 <TableRow>
                   <TableCell colSpan={4} align="center" sx={{ py: 3, color: "text.secondary" }}>
                     No active sessions found.
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       </Paper>

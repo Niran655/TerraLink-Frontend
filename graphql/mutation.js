@@ -1531,4 +1531,24 @@ mutation ClearAllChatConversations {
     }
   }
 }
+`;
+
+export const SET_PERMISSION = gql`
+  mutation SetPermission($input: AIAccessPermissionInput!) {
+    setPermission(input: $input) {
+      tenantId
+      role
+      modules {
+        sales
+        inventory
+        customers
+        employees
+        payroll
+        finance
+        marketing
+        facebook
+        reports
+      }
+    }
+  }
 `;

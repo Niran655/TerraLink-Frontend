@@ -72,11 +72,11 @@ export default function SecurityAlerts() {
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableSkeleton cols={5} rows={3} />
-              ) : data?.getSecurityAlerts?.length > 0 ? (
-                data.getSecurityAlerts.map((alert) => (
+            {loading ? (
+              <TableSkeleton cols={5} rows={3} />
+            ) : data?.getSecurityAlerts?.length > 0 ? (
+              <TableBody>
+                {data.getSecurityAlerts.map((alert) => (
                   <TableRow key={alert.id} hover sx={{ opacity: alert.read ? 0.6 : 1, bgcolor: !alert.read ? "action.hover" : "inherit" }}>
                     <TableCell><Typography variant="body2">{new Date(alert.createdAt).toLocaleString()}</Typography></TableCell>
                     <TableCell>{getSeverityChip(alert.severity)}</TableCell>
@@ -90,15 +90,17 @@ export default function SecurityAlerts() {
                       )}
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
+                ))}
+              </TableBody>
+            ) : (
+              <TableBody>
                 <TableRow>
                   <TableCell colSpan={5} align="center" sx={{ py: 3, color: "text.secondary" }}>
                     No security alerts found.
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       </Paper>

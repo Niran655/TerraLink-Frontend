@@ -109,11 +109,11 @@ export default function APIKeys() {
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableSkeleton cols={5} rows={3} />
-              ) : data?.getApiKeys?.length > 0 ? (
-                data.getApiKeys.map((k) => (
+            {loading ? (
+              <TableSkeleton cols={5} rows={3} />
+            ) : data?.getApiKeys?.length > 0 ? (
+              <TableBody>
+                {data.getApiKeys.map((k) => (
                   <TableRow key={k.id} hover>
                     <TableCell><Typography variant="body2" fontWeight="500">{k.name}</Typography></TableCell>
                     <TableCell>
@@ -139,15 +139,17 @@ export default function APIKeys() {
                       </IconButton>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
+                ))}
+              </TableBody>
+            ) : (
+              <TableBody>
                 <TableRow>
                   <TableCell colSpan={5} align="center" sx={{ py: 3, color: "text.secondary" }}>
                     No API keys created yet.
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       </Paper>

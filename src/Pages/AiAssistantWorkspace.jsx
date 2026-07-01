@@ -22,13 +22,16 @@ import {
   User,
   Zap,
 } from "lucide-react";
+import { Box } from "@mui/material";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip as ChartTooltip, CartesianGrid } from "recharts";
+import AiInsightsDashboard from "../Components/AiInsightsDashboard";
 import { useAuth } from "../Context/AuthContext";
 import {
   AI_BUSINESS_CHAT,
   GET_CHAT_CONVERSATION_BY_ID,
   GET_CHAT_CONVERSATIONS,
 } from "../../graphql/queries";
-import { CREATE_CHAT_CONVERSATION } from "../../graphql/mutation";
+import { CREATE_CHAT_CONVERSATION, DELETE_CHAT_CONVERSATION } from "../../graphql/mutation";
 import "../Styles/AiAssistantWorkspace.scss";
 
 const uiCopy = {
@@ -262,6 +265,8 @@ export default function AiAssistantWorkspace() {
   ]);
   const [aiLoading, setAiLoading] = useState(false);
   const [activeConversationId, setActiveConversationId] = useState(null);
+  const [viewMode, setViewMode] = useState("chat");
+  const [visibleChartIndex, setVisibleChartIndex] = useState(null);
   const threadRef = useRef(null);
 
   const { data: conversationsData, refetch: refetchConversations } = useQuery(GET_CHAT_CONVERSATIONS, {
@@ -269,6 +274,65 @@ export default function AiAssistantWorkspace() {
     skip: !isAuthenticated,
   });
   const [createConversation] = useMutation(CREATE_CHAT_CONVERSATION);
+  const [deleteConversation] = useMutation(DELETE_CHAT_CONVERSATION);
+
+  const handleDeleteConversation = async (e, id) => {
+    e.stopPropagation();
+    if (window.confirm(uiLanguage === "kh" ? "តើអ្នកប្រាកដជាចង់លុបការសន្ទនានេះមែនទេ?" : "Are you sure you want to delete this conversation?")) {
+      try {
+        await deleteConversation({
+          variables: { _id: id }
+        });
+        refetchConversations();
+        if (activeConversationId === id) {
+          setActiveConversationId(null);
+          setChatMessages([{ role: "assistant", content: initialMessage(activeService, t) }]);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
+  const exportToPDF = (title, text) => {
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${title}</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+            h1 { color: #10b981; margin-bottom: 24px; border-bottom: 2px solid #eee; padding-bottom: 12px; }
+            pre { background: #f5f5f5; padding: 16px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; }
+          </style>
+        </head>
+        <body>
+          <h1>${title}</h1>
+          <div style="font-size: 14px; white-space: pre-wrap;">${text}</div>
+          <script>window.print();</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  const exportToWord = (title, text) => {
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>" + title + "</title><style>body { font-family: Arial; }</style></head><body>";
+    const footer = "</body></html>";
+    const body = "<h1>" + title + "</h1><p>" + text.replace(/\n/g, "<br>") + "</p>";
+    const sourceHtml = header + body + footer;
+    
+    const fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    const blob = new Blob(['\\ufeff' + sourceHtml], {
+      type: 'application/msword'
+    });
+    const url = URL.createObjectURL(blob);
+    fileDownload.href = url;
+    fileDownload.download = `${title.toLowerCase().replace(/\\s+/g, "_")}.doc`;
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
+  };
 
   useEffect(() => {
     if (!isAuthenticated) navigate("/login");
@@ -440,14 +504,66 @@ export default function AiAssistantWorkspace() {
           <div className="history-list scrollbar-thin">
             {conversations.length ? (
               conversations.map((conversation) => (
-                <button
+                <div
                   key={conversation._id}
-                  className={conversation._id === activeConversationId ? "active" : ""}
-                  onClick={() => loadConversation(conversation._id)}
+                  className={`history-item-wrapper ${conversation._id === activeConversationId ? "active" : ""}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderRadius: "10px",
+                    background: conversation._id === activeConversationId ? "var(--ai-hover)" : "transparent",
+                    border: conversation._id === activeConversationId ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid transparent",
+                    color: "inherit",
+                    transition: "all 0.2s"
+                  }}
                 >
-                  <MessageSquare size={14} />
-                  <span>{conversation.title}</span>
-                </button>
+                  <button
+                    className="history-item-btn"
+                    onClick={() => loadConversation(conversation._id)}
+                    style={{
+                      flex: 1,
+                      textAlign: "left",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      background: "transparent",
+                      border: "none",
+                      color: "inherit",
+                      cursor: "pointer",
+                      padding: "10px",
+                      fontSize: "13px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    <MessageSquare size={14} style={{ flexShrink: 0 }} />
+                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {conversation.title}
+                    </span>
+                  </button>
+                  <button
+                    className="delete-history-btn"
+                    onClick={(e) => handleDeleteConversation(e, conversation._id)}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: "rgba(255,255,255,0.4)",
+                      cursor: "pointer",
+                      padding: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "color 0.2s"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"}
+                    onMouseLeave={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+                    title="Delete Chat"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
               ))
             ) : (
               <p>{t.noHistory}</p>
@@ -469,12 +585,49 @@ export default function AiAssistantWorkspace() {
               <span />
               {t.online}
             </div>
+            <button
+              className={`segmented-button ${viewMode === "chat" ? "active" : ""}`}
+              onClick={() => setViewMode("chat")}
+              style={{
+                marginLeft: 16,
+                padding: "6px 12px",
+                border: "1px solid rgba(255,255,255,0.15)",
+                background: viewMode === "chat" ? "rgba(255,255,255,0.1)" : "transparent",
+                color: "#fff",
+                cursor: "pointer",
+                borderRadius: 4,
+                fontWeight: "600",
+                fontSize: "13px"
+              }}
+            >
+              AI Chat
+            </button>
+            <button
+              className={`segmented-button ${viewMode === "dashboard" ? "active" : ""}`}
+              onClick={() => setViewMode("dashboard")}
+              style={{
+                marginLeft: 8,
+                padding: "6px 12px",
+                border: "1px solid rgba(255,255,255,0.15)",
+                background: viewMode === "dashboard" ? "rgba(255,255,255,0.1)" : "transparent",
+                color: "#fff",
+                cursor: "pointer",
+                borderRadius: 4,
+                fontWeight: "600",
+                fontSize: "13px"
+              }}
+            >
+              AI Insights
+            </button>
           </div>
 
           <div className="topbar-controls">
             <label className="shop-select">
               <span>{t.activeBusiness}</span>
-              <select value={selectedShopId} onChange={handleShopChange}>
+              <select value={selectedShopId || "all"} onChange={handleShopChange}>
+                <option value="all">
+                  {uiLanguage === "kh" ? "អាជីវកម្មទាំងមូល (ហាងទាំងអស់)" : "Whole Business (All Shops)"}
+                </option>
                 {user?.shopIds?.map((shop) => {
                   const id = shop._id || shop;
                   const name = uiLanguage === "kh" ? shop.nameKh || shop.nameEn : shop.nameEn || shop.nameKh;
@@ -509,115 +662,348 @@ export default function AiAssistantWorkspace() {
           </div>
         </header>
 
-        <section className="ai-conversation-shell">
-          <div className="conversation-header">
-            <div>
-              <span className="eyebrow">{t.services[activeService]}</span>
-              <h1>{t.welcomeTitle}</h1>
-              <p>{t.welcomeBody}</p>
-            </div>
-            <button className="clear-btn" onClick={() => setChatMessages([])}>
-              <Trash2 size={15} />
-              {t.clear}
-            </button>
-          </div>
-
-          <div ref={threadRef} className="chat-thread scrollbar-thin">
-            {chatMessages.length === 0 && (
-              <div className="empty-state">
-                <Sparkles size={40} />
-                <h2>{t.welcomeTitle}</h2>
+        {viewMode === "dashboard" ? (
+          <Box sx={{ p: 3, overflowY: "auto", height: "calc(100vh - 70px)", width: "100%", boxSizing: "border-box" }}>
+            <AiInsightsDashboard tenantId={user?.tenantId?._id || user?.tenantId} language={uiLanguage} />
+          </Box>
+        ) : (
+          <section className="ai-conversation-shell">
+            <div className="conversation-header">
+              <div>
+                <span className="eyebrow">{t.services[activeService]}</span>
+                <h1>{t.welcomeTitle}</h1>
                 <p>{t.welcomeBody}</p>
               </div>
-            )}
-
-            {chatMessages.map((msg, index) => (
-              <div key={`${msg.role}-${index}`} className={`chat-message ${msg.role}`}>
-                <div className="message-avatar">{msg.role === "user" ? <User size={17} /> : <Bot size={17} />}</div>
-                <div className="message-card">
-                  <div className="message-meta">
-                    <strong>{msg.role === "user" ? t.you : t.services[activeService]}</strong>
-                    {msg.businessAIStatus && <span>{msg.businessAIStatus}</span>}
-                  </div>
-                  {msg.role === "assistant" ? (
-                    <FormattedAnswer content={msg.content} />
-                  ) : (
-                    <p className="plain-user-message">{msg.content}</p>
-                  )}
-                  {msg.businessAIResult && msg.businessAIResult !== "null" && (
-                    <details className="business-data-preview">
-                      <summary>
-                        <CheckCircle size={14} />
-                        {t.sourceData}
-                      </summary>
-                      <pre>{msg.businessAIResult}</pre>
-                    </details>
-                  )}
-                </div>
-              </div>
-            ))}
-
-            {aiLoading && (
-              <div className="chat-message assistant">
-                <div className="message-avatar spinning">
-                  <RefreshCw size={17} />
-                </div>
-                <div className="message-card loading-card">{t.loading}</div>
-              </div>
-            )}
-          </div>
-
-          <div className="prompt-row">
-            {t.examples.map((example) => (
-              <button key={example.label} onClick={() => sendMessage(example.prompt)}>
-                <example.icon size={16} />
-                <span>{example.label}</span>
+              <button className="clear-btn" onClick={() => setChatMessages([])}>
+                <Trash2 size={15} />
+                {t.clear}
               </button>
-            ))}
-          </div>
-
-          {activeService === "gemini" && (
-            <div className="gemini-permission">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={grantGeminiAccess}
-                  onChange={(event) => setGrantGeminiAccess(event.target.checked)}
-                />
-                <span className="switch-track" />
-                <span>{t.dataAccess}</span>
-              </label>
-              <small>
-                <Shield size={13} />
-                {t.dataAccessNote}
-              </small>
             </div>
-          )}
 
-          <form
-            className="chat-composer"
-            onSubmit={(event) => {
-              event.preventDefault();
-              sendMessage();
-            }}
-          >
-            <textarea
-              value={inputMessage}
-              onChange={(event) => setInputMessage(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  sendMessage();
-                }
+            <div ref={threadRef} className="chat-thread scrollbar-thin">
+              {chatMessages.length === 0 && (
+                <div className="empty-state" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", padding: "40px 20px" }}>
+                  <Sparkles size={40} style={{ color: "var(--ai-primary)" }} />
+                  <h2 style={{ fontSize: "24px", fontWeight: "800", color: "#fff", margin: "16px 0 8px" }}>
+                    {uiLanguage === "kh" ? "សូមស្វាគមន៍មកកាន់ TerraLink AI" : "Welcome to TerraLink AI"}
+                  </h2>
+                  <p style={{ color: "var(--ai-muted)", fontSize: "14px", marginBottom: "24px", textAlign: "center" }}>
+                    {uiLanguage === "kh" ? "ជ្រើសរើសជម្រើសវិភាគខាងក្រោម ឬសួរអ្វីក៏បានពី Gemini" : "Choose an analysis option below or ask Gemini anything"}
+                  </p>
+                  
+                  <div className="options-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", width: "100%", maxWidth: "500px" }}>
+                    <button
+                      onClick={() => sendMessage(uiLanguage === "kh" ? "វិភាគនិន្នាការលក់ និងណែនាំអ្វីដែលត្រូវធ្វើថ្ងៃនេះ។" : "Analyze my sales trend and recommend what to do today.")}
+                      style={{
+                        padding: "16px",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        background: "rgba(255,255,255,0.03)",
+                        color: "#fff",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        transition: "background 0.2s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+                    >
+                      <TrendingUp size={16} style={{ color: "var(--ai-primary)", marginBottom: "8px" }} />
+                      <div style={{ fontWeight: "700", fontSize: "14px" }}>
+                        {uiLanguage === "kh" ? "វិភាគការលក់" : "Analyze Sales"}
+                      </div>
+                      <div style={{ fontSize: "11px", color: "var(--ai-muted)", marginTop: "4px" }}>
+                        {uiLanguage === "kh" ? "ពិនិត្យនិន្នាការលក់ និងការណែនាំ" : "View sales trends & actionable operations."}
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => sendMessage(uiLanguage === "kh" ? "ទំនិញណាខ្លះមានស្តុកទាប ឬមានហានិភ័យពេលផ្សព្វផ្សាយ?" : "Which products are low stock or risky to promote?")}
+                      style={{
+                        padding: "16px",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        background: "rgba(255,255,255,0.03)",
+                        color: "#fff",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        transition: "background 0.2s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+                    >
+                      <Package size={16} style={{ color: "var(--ai-primary)", marginBottom: "8px" }} />
+                      <div style={{ fontWeight: "700", fontSize: "14px" }}>
+                        {uiLanguage === "kh" ? "ពិនិត្យស្តុក" : "Check Stock Risk"}
+                      </div>
+                      <div style={{ fontSize: "11px", color: "var(--ai-muted)", marginTop: "4px" }}>
+                        {uiLanguage === "kh" ? "ស្វែងរកផលិតផលស្តុកទាប" : "Identify low safety stocks & reorder items."}
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => sendMessage(uiLanguage === "kh" ? "តើពិន្ទុសុខភាពអាជីវកម្មរបស់ខ្ញុំជាអ្វី ហើយខ្ញុំអាចកែលម្អវាដោយរបៀបណា?" : "What is my business health score and how can I improve it?")}
+                      style={{
+                        padding: "16px",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        background: "rgba(255,255,255,0.03)",
+                        color: "#fff",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        transition: "background 0.2s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+                    >
+                      <BarChart3 size={16} style={{ color: "var(--ai-primary)", marginBottom: "8px" }} />
+                      <div style={{ fontWeight: "700", fontSize: "14px" }}>
+                        {uiLanguage === "kh" ? "ពិន្ទុសុខភាព" : "Explain Health Score"}
+                      </div>
+                      <div style={{ fontSize: "11px", color: "var(--ai-muted)", marginTop: "4px" }}>
+                        {uiLanguage === "kh" ? "ពន្យល់ពីពិន្ទុសុខភាព និងការណែនាំ" : "Review aggregated business health score."}
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => sendMessage(uiLanguage === "kh" ? "វិភាគការលុបចោលរបស់អតិថិជន និងអត្រាទិញម្តងទៀត។" : "Analyze customer churn and repeat purchase rate.")}
+                      style={{
+                        padding: "16px",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        background: "rgba(255,255,255,0.03)",
+                        color: "#fff",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        transition: "background 0.2s"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+                    >
+                      <User size={16} style={{ color: "var(--ai-primary)", marginBottom: "8px" }} />
+                      <div style={{ fontWeight: "700", fontSize: "14px" }}>
+                        {uiLanguage === "kh" ? "ការរក្សាអតិថិជន" : "Review Retention"}
+                      </div>
+                      <div style={{ fontSize: "11px", color: "var(--ai-muted)", marginTop: "4px" }}>
+                        {uiLanguage === "kh" ? "វិភាគការទិញម្តងទៀត និងអតិថិជនហានិភ័យ" : "Analyze retention & churn rates."}
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {chatMessages.map((msg, index) => {
+                const mockChartData = [
+                  { day: "Mon", sales: 240 },
+                  { day: "Tue", sales: 300 },
+                  { day: "Wed", sales: 200 },
+                  { day: "Thu", sales: 280 },
+                  { day: "Fri", sales: 380 },
+                  { day: "Sat", sales: 450 },
+                  { day: "Sun", sales: 400 }
+                ];
+
+                return (
+                  <div key={`${msg.role}-${index}`} className={`chat-message ${msg.role}`}>
+                    <div className="message-avatar">{msg.role === "user" ? <User size={17} /> : <Bot size={17} />}</div>
+                    <div className="message-card" style={{ textAlign: "left" }}>
+                      <div className="message-meta">
+                        <strong>{msg.role === "user" ? t.you : t.services[activeService]}</strong>
+                        {msg.businessAIStatus && <span>{msg.businessAIStatus}</span>}
+                      </div>
+                      {msg.role === "assistant" ? (
+                        <FormattedAnswer content={msg.content} />
+                      ) : (
+                        <p className="plain-user-message">{msg.content}</p>
+                      )}
+                      {msg.businessAIResult && msg.businessAIResult !== "null" && (
+                        <details className="business-data-preview">
+                          <summary>
+                            <CheckCircle size={14} />
+                            {t.sourceData}
+                          </summary>
+                          <pre>{msg.businessAIResult}</pre>
+                        </details>
+                      )}
+
+                      {/* AI Response enhancements */}
+                      {msg.role === "assistant" && (
+                        <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                          {/* Suggestion Chips */}
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                            <button
+                              onClick={() => sendMessage(uiLanguage === "kh" ? "សូមពន្យល់ពីរបាយការណ៍នេះលម្អិតបន្ថែម។" : "Explain this analytics report in more detail.")}
+                              style={{
+                                padding: "6px 12px",
+                                borderRadius: "999px",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                background: "rgba(255,255,255,0.03)",
+                                color: "var(--ai-muted)",
+                                fontSize: "12px",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                              }}
+                            >
+                              {uiLanguage === "kh" ? "💡 ពន្យល់លម្អិតបន្ថែម" : "💡 Explain in detail"}
+                            </button>
+                            <button
+                              onClick={() => sendMessage(uiLanguage === "kh" ? "តើមានសកម្មភាពអាទិភាពអ្វីខ្លះដែលខ្ញុំត្រូវធ្វើ?" : "What are the priority actions I need to take?")}
+                              style={{
+                                padding: "6px 12px",
+                                borderRadius: "999px",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                background: "rgba(255,255,255,0.03)",
+                                color: "var(--ai-muted)",
+                                fontSize: "12px",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                              }}
+                            >
+                              {uiLanguage === "kh" ? "🎯 សកម្មភាពអាទិភាព" : "🎯 Priority actions"}
+                            </button>
+                          </div>
+
+                          {/* Export & Chart Controls */}
+                          <div style={{ display: "flex", gap: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "8px", marginTop: "4px" }}>
+                            <button
+                              onClick={() => setVisibleChartIndex(visibleChartIndex === index ? null : index)}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid rgba(255,255,255,0.08)",
+                                background: "transparent",
+                                color: "var(--ai-primary)",
+                                fontSize: "11px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              <BarChart3 size={12} />
+                              {visibleChartIndex === index ? (uiLanguage === "kh" ? "លាក់គំនូសតាង" : "Hide Chart") : (uiLanguage === "kh" ? "បង្ហាញគំនូសតាង" : "Show Chart")}
+                            </button>
+                            <button
+                              onClick={() => exportToPDF(uiLanguage === "kh" ? "របាយការណ៍វិភាគ TerraLink AI" : "TerraLink AI Analysis Report", msg.content)}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid rgba(255,255,255,0.08)",
+                                background: "transparent",
+                                color: "var(--ai-muted)",
+                                fontSize: "11px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              PDF
+                            </button>
+                            <button
+                              onClick={() => exportToWord(uiLanguage === "kh" ? "របាយការណ៍វិភាគ TerraLink AI" : "TerraLink AI Analysis Report", msg.content)}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "4px 8px",
+                                borderRadius: "4px",
+                                border: "1px solid rgba(255,255,255,0.08)",
+                                background: "transparent",
+                                color: "var(--ai-muted)",
+                                fontSize: "11px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              Word
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Inline recharts container */}
+                      {msg.role === "assistant" && visibleChartIndex === index && (
+                        <div style={{ marginTop: "16px", background: "rgba(255,255,255,0.02)", padding: "16px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)", height: "240px" }}>
+                          <h4 style={{ margin: "0 0 12px", color: "var(--ai-primary)" }}>
+                            {uiLanguage === "kh" ? "របាយការណ៍លក់ប្រចាំសប្តាហ៍" : "Weekly Sales Analytics"}
+                          </h4>
+                          <ResponsiveContainer width="100%" height="80%">
+                            <BarChart data={mockChartData}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                              <XAxis dataKey="day" stroke="rgba(255,255,255,0.4)" />
+                              <YAxis stroke="rgba(255,255,255,0.4)" />
+                              <ChartTooltip contentStyle={{ background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px" }} />
+                              <Bar dataKey="sales" fill="#10b981" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {aiLoading && (
+                <div className="chat-message assistant">
+                  <div className="message-avatar spinning">
+                    <RefreshCw size={17} />
+                  </div>
+                  <div className="message-card loading-card" style={{ textAlign: "left" }}>{t.loading}</div>
+                </div>
+              )}
+            </div>
+
+            <div className="prompt-row">
+              {t.examples.map((example) => (
+                <button key={example.label} onClick={() => sendMessage(example.prompt)}>
+                  <example.icon size={16} />
+                  <span>{example.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {activeService === "gemini" && (
+              <div className="gemini-permission">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={grantGeminiAccess}
+                    onChange={(event) => setGrantGeminiAccess(event.target.checked)}
+                  />
+                  <span className="switch-track" />
+                  <span>{t.dataAccess}</span>
+                </label>
+                <small>
+                  <Shield size={13} />
+                  {t.dataAccessNote}
+                </small>
+              </div>
+            )}
+
+            <form
+              className="chat-composer"
+              onSubmit={(event) => {
+                event.preventDefault();
+                sendMessage();
               }}
-              placeholder={t.ask}
-              rows={2}
-            />
-            <button type="submit" disabled={aiLoading || !inputMessage.trim()} aria-label={t.send}>
-              {aiLoading ? <RefreshCw size={18} /> : <Send size={18} />}
-            </button>
-          </form>
-        </section>
+            >
+              <textarea
+                value={inputMessage}
+                onChange={(event) => setInputMessage(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    sendMessage();
+                  }
+                }}
+                placeholder={t.ask}
+                rows={2}
+              />
+              <button type="submit" disabled={aiLoading || !inputMessage.trim()} aria-label={t.send}>
+                {aiLoading ? <RefreshCw size={18} /> : <Send size={18} />}
+              </button>
+            </form>
+          </section>
+        )}
       </main>
     </div>
   );

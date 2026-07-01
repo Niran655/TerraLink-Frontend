@@ -132,6 +132,7 @@ const WarehouseInShop = () => {
     limit: stockLimit,
     pagination: true,
     keyword: stockKeyword,
+    status: stockStatus,
   });
 
   const {
@@ -192,12 +193,7 @@ const WarehouseInShop = () => {
     keyword: movementKeyword,
   });
 
-  const filteredStock = producteWarehouseInShop.filter((item) => {
-    if (stockStatus === "All") return true;
-    const stock = Number(item?.stock || 0);
-    const minStock = Number(item?.subProduct?.minStock || 0);
-    return stockStatus === "low_stock" ? stock < minStock : stock >= minStock;
-  });
+  const filteredStock = producteWarehouseInShop;
 
   const handleLimit = (setter, pageSetter) => (e) => {
     setter(parseInt(e.target.value, 10));

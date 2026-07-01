@@ -10,13 +10,14 @@ const useGetProductWarehouseInShopWithPagination = ({
     limit = 10,
     pagination = true,
     keyword,
+    status,
 })=>{
     const [producteWarehouseInShop,setProductWarehouseInShop] = useState([]);
     const [paginator, setPaginator] = useState(true);
     const { data, loading, error, refetch } = useQuery(
         GET_PRODUCT_WAREHOUSE_IN_SHOP_WITH_PAGINATION,
         {
-          variables: {shopId, page, limit, pagination, keyword },
+          variables: {shopId, page, limit, pagination, keyword, status },
           fetchPolicy: "cache-and-network",
         },
       );   

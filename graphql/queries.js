@@ -830,8 +830,8 @@ query GetProductWareHouseWithPagination($page: Int, $limit: Int, $pagination: Bo
 `
 
 export const GET_PRODUCT_WAREHOUSE_IN_SHOP_WITH_PAGINATION = gql`
-query GetProductWareHouseInShopoWithPagination($shopId: ID, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String) {
-  getProductWareHouseInShopoWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword) {
+query GetProductWareHouseInShopoWithPagination($shopId: ID, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String, $status: String) {
+  getProductWareHouseInShopoWithPagination(shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword, status: $status) {
     data {
       minStock
       createdAt
@@ -2689,3 +2689,59 @@ export const GET_SHOP_PROFILE = gql`
     }
   }
 `;
+
+export const GET_KPIS = gql`
+  query GetKPIs($tenantId: ID!) {
+    kpis(tenantId: $tenantId) {
+      metric
+      value
+      trend
+      confidence
+      topFactors
+      recommendations
+      estimatedImpact {
+        revenueIncrease
+      }
+    }
+  }
+`;
+
+export const GET_HEALTH_SCORE = gql`
+  query GetHealthScore($tenantId: ID!) {
+    healthScore(tenantId: $tenantId) {
+      overallScore
+      sales
+      customers
+      inventory
+      employees
+      riskLevel
+    }
+  }
+`;
+
+export const GET_RECOMMENDATIONS = gql`
+  query GetRecommendations($tenantId: ID!) {
+    recommendations(tenantId: $tenantId) {
+      category
+      actions
+      estimatedImpact {
+        revenueIncrease
+      }
+    }
+  }
+`;
+
+export const GET_AUDIT_LOGS = gql`
+  query GetAuditLogs($filter: AuditLogFilter) {
+    auditLogs(filter: $filter) {
+      userId
+      tenantId
+      role
+      question
+      modulesAccessed
+      modelUsed
+      response
+      createdAt
+    }
+  }
+`;

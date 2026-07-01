@@ -50,11 +50,11 @@ export default function AIActivityLogs() {
                 <TableCell align="right">Status</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableSkeleton cols={6} rows={3} />
-              ) : data?.getAIAuditLogs?.length > 0 ? (
-                data.getAIAuditLogs.map((log) => (
+            {loading ? (
+              <TableSkeleton cols={6} rows={3} />
+            ) : data?.getAIAuditLogs?.length > 0 ? (
+              <TableBody>
+                {data.getAIAuditLogs.map((log) => (
                   <TableRow key={log.id} hover>
                     <TableCell><Typography variant="body2">{new Date(log.date).toLocaleString()}</Typography></TableCell>
                     <TableCell><Typography variant="body2" fontWeight="500">{log.user}</Typography></TableCell>
@@ -71,15 +71,17 @@ export default function AIActivityLogs() {
                       <Chip label={log.status} size="small" color="success" />
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
+                ))}
+              </TableBody>
+            ) : (
+              <TableBody>
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 3, color: "text.secondary" }}>
                     No AI activity logs found.
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       </Paper>

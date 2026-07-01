@@ -133,11 +133,11 @@ export default function LoginHistory() {
                 <TableCell align="right">Reason / Details</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableSkeleton cols={5} rows={5} />
-              ) : data?.getLoginHistory?.length > 0 ? (
-                data.getLoginHistory.map((log) => (
+            {loading ? (
+              <TableSkeleton cols={5} rows={5} />
+            ) : data?.getLoginHistory?.length > 0 ? (
+              <TableBody>
+                {data.getLoginHistory.map((log) => (
                   <TableRow key={log.id} hover>
                     <TableCell>
                       <Typography variant="body2">{new Date(log.date).toLocaleString()}</Typography>
@@ -166,15 +166,17 @@ export default function LoginHistory() {
                       </Typography>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
+                ))}
+              </TableBody>
+            ) : (
+              <TableBody>
                 <TableRow>
-                  <TableCell colSpan={4} align="center" sx={{ py: 3, color: "text.secondary" }}>
+                  <TableCell colSpan={5} align="center" sx={{ py: 3, color: "text.secondary" }}>
                     No login history records found.
                   </TableCell>
                 </TableRow>
-              )}
-            </TableBody>
+              </TableBody>
+            )}
           </Table>
         </TableContainer>
       </Paper>

@@ -292,11 +292,11 @@ export default function ExportBackup() {
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {loading ? (
-                  <TableSkeleton cols={5} rows={3} />
-                ) : data?.getBackups?.length > 0 ? (
-                  data.getBackups.map((backup) => (
+              {loading ? (
+                <TableSkeleton cols={5} rows={3} />
+              ) : data?.getBackups?.length > 0 ? (
+                <TableBody>
+                  {data.getBackups.map((backup) => (
                     <TableRow key={backup.id} hover>
                       <TableCell>{new Date(backup.createdAt).toLocaleString()}</TableCell>
                       <TableCell>
@@ -331,15 +331,17 @@ export default function ExportBackup() {
                         </IconButton>
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
+                  ))}
+                </TableBody>
+              ) : (
+                <TableBody>
                   <TableRow>
                     <TableCell colSpan={5} align="center" sx={{ py: 3, color: "text.secondary" }}>
                       No backups found.
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
+                </TableBody>
+              )}
             </Table>
           </TableContainer>
         </Paper>
