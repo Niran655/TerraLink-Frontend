@@ -1185,9 +1185,18 @@ export default function Dashboard() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {topSelling.length === 0
-                            ? <SkeletonRows count={5} cols={3} opacity={loading ? 0.4 : 0.2} />
-                            : topSelling.map((item, idx) => (
+                          {loading ? (
+                            <SkeletonRows count={5} cols={3} opacity={0.4} />
+                          ) : topSelling.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={3} align="center" sx={{ py: 3 }}>
+                                <Typography variant="body2" color="text.secondary">
+                                  {t("no_data_available")}
+                                </Typography>
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            topSelling.map((item, idx) => (
                               <TableRow key={idx} hover sx={{ "&:last-child td": { border: 0 }, "&:hover": { bgcolor: theme.palette.action.hover } }}>
                                 <TableCell sx={tdSx(theme)}>
                                   <Stack direction="row" alignItems="center" spacing={1.4}>
@@ -1208,7 +1217,7 @@ export default function Dashboard() {
                                 <TableCell align="right" sx={{ ...tdSx(theme), fontWeight: 700, color: theme.palette.primary.main }}>{formatCurrency(item.revenue)}</TableCell>
                               </TableRow>
                             ))
-                          }
+                          )}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -1232,9 +1241,18 @@ export default function Dashboard() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {lowStock.length === 0
-                            ? <SkeletonRows count={5} cols={4} opacity={loading ? 0.4 : 0.2} />
-                            : lowStock.map((item, idx) => (
+                          {loading ? (
+                            <SkeletonRows count={5} cols={4} opacity={0.4} />
+                          ) : lowStock.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
+                                <Typography variant="body2" color="text.secondary">
+                                  {t("no_data_available")}
+                                </Typography>
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            lowStock.map((item, idx) => (
                               <TableRow key={idx} hover sx={{ "&:last-child td": { border: 0 }, "&:hover": { bgcolor: theme.palette.action.hover } }}>
                                 <TableCell sx={tdSx(theme)}>
                                   <Stack direction="row" alignItems="center" spacing={1.4}>
@@ -1244,7 +1262,7 @@ export default function Dashboard() {
                                     <Typography sx={{ fontSize: "0.79rem", color: theme.palette.text.primary }}>{item.productName}</Typography>
                                   </Stack>
                                 </TableCell>
-                                <TableCell sx={{ ...tdSx(theme), fontSize: "0.7rem", color: theme.palette.text.secondary }}>{item.id || "-"}</TableCell>
+                                <TableCell sx={{ ...tdSx(theme), fontSize: "0.7rem", color: theme.palette.text.secondary }}>{item.subProductId || item.productId || "-"}</TableCell>
                                 <TableCell align="right">
                                   <Chip
                                     label={item.stock <= item.minStock ? `${item.stock} low` : item.stock}
@@ -1259,7 +1277,7 @@ export default function Dashboard() {
                                 <TableCell align="right" sx={tdSx(theme)}>{item.minStock}</TableCell>
                               </TableRow>
                             ))
-                          }
+                          )}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -1286,9 +1304,18 @@ export default function Dashboard() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {productExpiryAlerts.length === 0
-                            ? <SkeletonRows count={5} cols={5} opacity={loading ? 0.4 : 0.2} />
-                            : productExpiryAlerts.map((item, idx) => {
+                          {loading ? (
+                            <SkeletonRows count={5} cols={5} opacity={0.4} />
+                          ) : productExpiryAlerts.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                                <Typography variant="body2" color="text.secondary">
+                                  {t("no_data_available")}
+                                </Typography>
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            productExpiryAlerts.map((item, idx) => {
                               const isExpired = Number(item.daysUntilExpiry) < 0;
                               const isUrgent = Number(item.daysUntilExpiry) <= 3;
                               return (
@@ -1318,7 +1345,7 @@ export default function Dashboard() {
                                 </TableRow>
                               );
                             })
-                          }
+                          )}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -1421,43 +1448,50 @@ export default function Dashboard() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {txLoading
-                            ? <SkeletonRows count={6} cols={4} opacity={0.4} />
-                            : recentTx.length === 0
-                              ? <SkeletonRows count={6} cols={4} opacity={0.18} />
-                              : recentTx.map((item, idx) => {
-                                const sc = getStatusStyle(item.status, theme);
-                                return (
-                                  <TableRow key={idx} hover sx={{ "&:last-child td": { border: 0 }, "&:hover": { bgcolor: theme.palette.action.hover } }}>
-                                    <TableCell sx={tdSx(theme)}>
-                                      <Stack direction="row" alignItems="center" spacing={1.1}>
-                                        <Avatar sx={{
-                                          width: 26, height: 26,
-                                          bgcolor: `${categoryColors[idx % categoryColors.length]}18`,
-                                          color: categoryColors[idx % categoryColors.length],
-                                          fontSize: "0.62rem", fontWeight: 700,
-                                        }}>
-                                          {(item.customer || "?")[0]}
-                                        </Avatar>
-                                        <Box>
-                                          <Typography sx={{ fontSize: "0.76rem", fontWeight: 600, color: theme.palette.text.primary, lineHeight: 1.2 }}>{item.customer}</Typography>
-                                          <Typography sx={{ fontSize: "0.62rem", color: theme.palette.text.secondary }}>#{item.id || idx}</Typography>
-                                        </Box>
-                                      </Stack>
-                                    </TableCell>
-                                    <TableCell sx={{ ...tdSx(theme), fontSize: "0.7rem", color: theme.palette.text.secondary }}>{formatDateShort(item.date)}</TableCell>
-                                    <TableCell>
-                                      <Chip
-                                        label={item.status}
-                                        size="small"
-                                        sx={{ fontWeight: 700, fontSize: "0.62rem", borderRadius: 6, height: 19, bgcolor: sc.bg, color: sc.color }}
-                                      />
-                                    </TableCell>
-                                    <TableCell align="right" sx={{ ...tdSx(theme), fontWeight: 700, color: theme.palette.primary.main }}>{formatCurrency(item.total)}</TableCell>
-                                  </TableRow>
-                                );
-                              })
-                          }
+                          {txLoading ? (
+                            <SkeletonRows count={6} cols={4} opacity={0.4} />
+                          ) : recentTx.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
+                                <Typography variant="body2" color="text.secondary">
+                                  {t("no_data_available")}
+                                </Typography>
+                              </TableCell>
+                            </TableRow>
+                          ) : (
+                            recentTx.map((item, idx) => {
+                              const sc = getStatusStyle(item.status, theme);
+                              return (
+                                <TableRow key={idx} hover sx={{ "&:last-child td": { border: 0 }, "&:hover": { bgcolor: theme.palette.action.hover } }}>
+                                  <TableCell sx={tdSx(theme)}>
+                                    <Stack direction="row" alignItems="center" spacing={1.1}>
+                                      <Avatar sx={{
+                                        width: 26, height: 26,
+                                        bgcolor: `${categoryColors[idx % categoryColors.length]}18`,
+                                        color: categoryColors[idx % categoryColors.length],
+                                        fontSize: "0.62rem", fontWeight: 700,
+                                      }}>
+                                        {(item.customer || "?")[0]}
+                                      </Avatar>
+                                      <Box>
+                                        <Typography sx={{ fontSize: "0.76rem", fontWeight: 600, color: theme.palette.text.primary, lineHeight: 1.2 }}>{item.customer}</Typography>
+                                        <Typography sx={{ fontSize: "0.62rem", color: theme.palette.text.secondary }}>#{item.id || idx}</Typography>
+                                      </Box>
+                                    </Stack>
+                                  </TableCell>
+                                  <TableCell sx={{ ...tdSx(theme), fontSize: "0.7rem", color: theme.palette.text.secondary }}>{formatDateShort(item.date)}</TableCell>
+                                  <TableCell>
+                                    <Chip
+                                      label={item.status}
+                                      size="small"
+                                      sx={{ fontWeight: 700, fontSize: "0.62rem", borderRadius: 6, height: 19, bgcolor: sc.bg, color: sc.color }}
+                                    />
+                                  </TableCell>
+                                  <TableCell align="right" sx={{ ...tdSx(theme), fontWeight: 700, color: theme.palette.primary.main }}>{formatCurrency(item.total)}</TableCell>
+                                </TableRow>
+                              );
+                            })
+                          )}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -1473,9 +1507,16 @@ export default function Dashboard() {
                   <CardContent sx={{ p: "20px !important" }}>
                     <SectionTitle action={<ViewAllBtn />}>{t("top_customers") || "Top Customers"}</SectionTitle>
                     <Stack spacing={2} sx={{ minHeight: 220 }}>
-                      {topCustomers.length === 0
-                        ? <SkeletonCustomerRows count={5} />
-                        : topCustomers.map((item, idx) => (
+                      {loading ? (
+                        <SkeletonCustomerRows count={5} />
+                      ) : topCustomers.length === 0 ? (
+                        <Box sx={{ py: 4, display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                          <Typography variant="body2" color="text.secondary">
+                            {t("no_data_available")}
+                          </Typography>
+                        </Box>
+                      ) : (
+                        topCustomers.map((item, idx) => (
                           <Stack key={idx} direction="row" justifyContent="space-between" alignItems="center">
                             <Stack direction="row" alignItems="center" spacing={1.3}>
                               <Avatar sx={{
@@ -1494,7 +1535,7 @@ export default function Dashboard() {
                             <Typography sx={{ fontSize: "0.79rem", fontWeight: 700, color: theme.palette.primary.main }}>{formatCurrency(item.totalSpent)}</Typography>
                           </Stack>
                         ))
-                      }
+                      )}
                     </Stack>
                   </CardContent>
                 </Card>
@@ -1518,8 +1559,8 @@ export default function Dashboard() {
                         />
                       </Box>
                       <Stack spacing={1.3} flex={1}>
-                        {topCategories.length === 0
-                          ? Array.from({ length: 4 }).map((_, i) => (
+                        {bottomLoading ? (
+                          Array.from({ length: 4 }).map((_, i) => (
                             <Stack key={i} direction="row" justifyContent="space-between" alignItems="center" sx={{ opacity: 0.22 }}>
                               <Stack direction="row" alignItems="center" spacing={0.8}>
                                 <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: theme.palette.divider }} />
@@ -1528,7 +1569,14 @@ export default function Dashboard() {
                               <Box sx={{ height: 9, borderRadius: 2, bgcolor: theme.palette.divider, width: 32 }} />
                             </Stack>
                           ))
-                          : topCategories.slice(0, 5).map((cat, i) => (
+                        ) : topCategories.length === 0 ? (
+                          <Box sx={{ py: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Typography variant="body2" color="text.secondary">
+                              {t("no_data_available")}
+                            </Typography>
+                          </Box>
+                        ) : (
+                          topCategories.slice(0, 5).map((cat, i) => (
                             <Stack key={i} direction="row" justifyContent="space-between" alignItems="center">
                               <Stack direction="row" alignItems="center" spacing={0.8}>
                                 <Box sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: categoryColors[i % categoryColors.length] }} />
@@ -1537,7 +1585,7 @@ export default function Dashboard() {
                               <Typography sx={{ fontSize: "0.72rem", fontWeight: 700, color: theme.palette.text.primary }}>{cat.salesAmount?.toLocaleString()}</Typography>
                             </Stack>
                           ))
-                        }
+                        )}
                       </Stack>
                     </Stack>
 

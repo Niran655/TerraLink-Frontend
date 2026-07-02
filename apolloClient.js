@@ -1,7 +1,6 @@
 import { setContext } from "@apollo/client/link/context";
 import { ErrorLink } from "@apollo/client/link/error";
 import { CombinedGraphQLErrors } from "@apollo/client/errors";
-// import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client/core";
 
 const AUTH_LOGOUT_EVENT = "auth:logout";
@@ -52,7 +51,11 @@ const errorLink = new ErrorLink(({ error }) => {
   );
 
   if (isUnauthenticated) {
-    clearAuthSession();
+    if (localStorage.getItem("token")) {
+      window.dispatchEvent(new Event("auth:session_rejected"));
+    } else {
+      clearAuthSession();
+    }
   }
 });
 

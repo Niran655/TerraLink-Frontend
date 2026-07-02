@@ -29,6 +29,8 @@
 //   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 // };
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogActions, Button, Typography, Box } from "@mui/material";
+import { ShieldAlert } from "lucide-react";
 
 const AuthContext = createContext(null);
 const AUTH_LOGOUT_EVENT = "auth:logout";
@@ -105,7 +107,6 @@ export const useAuth = () => {
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(getStoredToken);
- 
   const [user, setUser] = useState(() => {
     if (!getStoredToken()) return null;
 
@@ -117,6 +118,33 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   });
+
+  const logout = useCallback(() => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }, []);
+
+  const [isSessionRejected, setIsSessionRejected] = useState(false);
+
+  const handleCloseRejectedModal = useCallback(() => {
+    setIsSessionRejected(false);
+    logout();
+  }, [logout]);
+
+  useEffect(() => {
+    const handleSessionRejected = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setIsSessionRejected(true);
+    };
+
+    window.addEventListener("auth:session_rejected", handleSessionRejected);
+    return () => {
+      window.removeEventListener("auth:session_rejected", handleSessionRejected);
+    };
+  }, []);
   const userRole = user?.role || "";
   const handleGetLanguage = () => {
     return window.localStorage.getItem("language") || "en"
@@ -182,12 +210,7 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const logout = useCallback(() => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  }, []);
+
 
   useEffect(() => {
     if (!token) return undefined;
@@ -237,6 +260,56 @@ export const AuthProvider = ({ children }) => {
       }}
     >
       {children}
+      <Dialog
+        open={isSessionRejected}
+        disableEscapeKeyDown
+        onClose={(event, reason) => {
+          if (reason !== "backdropClick") {
+            handleCloseRejectedModal();
+          }
+        }}
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            padding: "16px",
+            maxWidth: "400px",
+            width: "100%",
+            textAlign: "center"
+          }
+        }}
+      >
+        <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, pt: 3 }}>
+          <Box sx={{
+            width: 60,
+            height: 60,
+            borderRadius: "50%",
+            bgcolor: "error.light",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: 0.9,
+            mb: 1
+          }}>
+            <ShieldAlert size={36} color="#d32f2f" />
+          </Box>
+          <Typography variant="h6" fontWeight="700" color="text.primary">
+            Session Terminated
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Your session has been logged out from another device or terminated by the administrator.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleCloseRejectedModal}
+            sx={{ px: 4, borderRadius: "8px", textTransform: "none", fontWeight: 700 }}
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AuthContext.Provider>
   );
 };
