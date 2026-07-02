@@ -1,7 +1,7 @@
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import { useQuery } from "@apollo/client/react";
 import { Link as RouterLink } from "react-router-dom";
-import { Avatar, Box, Breadcrumbs, Button, Grid, InputAdornment, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Breadcrumbs, Button, Grid, Chip, InputAdornment, MenuItem, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -13,7 +13,7 @@ import EmptyData from "../include/EmptyData";
 import FooterPagination from "../include/FooterPagination";
 import CircularIndeterminate from "../include/Loading";
 import "../Styles/TableStyle.scss";
-import { GET_EMPLOYEES_WITH_PAGINATION } from "../../graphql/queries";
+import { GET_EMPLOYEES } from "../../graphql/queries";
 
 export default function Employee() {
   const { language } = useAuth();
@@ -30,12 +30,12 @@ export default function Employee() {
 
   const active = activeFilter === "active" ? true : activeFilter === "inactive" ? false : undefined;
 
-  const { data, loading, refetch } = useQuery(GET_EMPLOYEES_WITH_PAGINATION, {
-    variables: { page, limit, pagination: true, keyword, active },
+  const { data, loading, refetch } = useQuery(GET_EMPLOYEES, {
+    variables: { page, limit, keyword, active },
   });
 
-  const employees = data?.getEmployeesWithPagination?.data || [];
-  const paginator = data?.getEmployeesWithPagination?.paginator || {};
+  const employees = data?.getEmployees?.data || [];
+  const paginator = data?.getEmployees?.paginator || {};
 
   const handleLimit = (e) => {
     setLimit(parseInt(e.target.value, 10));
@@ -91,24 +91,27 @@ export default function Employee() {
           <TableHead>
             <TableRow>
               <TableCell>{t("no")}</TableCell>
+              <TableCell>Code</TableCell>
               <TableCell>{t("image")}</TableCell>
               <TableCell>{t("khmer_name")}</TableCell>
               <TableCell>{t("english_name")}</TableCell>
               <TableCell>{t("phone")}</TableCell>
               <TableCell>{t("position")}</TableCell>
               <TableCell>{t("department")}</TableCell>
+              <TableCell>Status</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
           {loading ? (
-            <CircularIndeterminate cols={8} />
+            <CircularIndeterminate cols={10} />
           ) : employees.length === 0 ? (
             <EmptyData />
           ) : (
             <TableBody>
               {employees.map((employee, index) => (
                 <TableRow key={employee._id} className="table-row">
-                  <TableCell>{(paginator.slNo || 1) + index}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell><strong>{employee.employeeCode || "N/A"}</strong></TableCell>
                   <TableCell>
                     <Avatar src={employee.image || ""} sx={{ width: 40, height: 40 }}>
                       {(employee.nameEn || employee.nameKh || "?").charAt(0)}
@@ -119,6 +122,21 @@ export default function Employee() {
                   <TableCell>{employee.phone}</TableCell>
                   <TableCell>{employee.position}</TableCell>
                   <TableCell>{employee.department?.nameEn || employee.department?.nameKh}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={employee.status || "Active"}
+                      size="small"
+                      color={
+                        employee.status === "Active"
+                          ? "success"
+                          : employee.status === "Resigned"
+                            ? "error"
+                            : employee.status === "Suspended"
+                              ? "warning"
+                              : "default"
+                      }
+                    />
+                  </TableCell>
                   <TableCell>
                     <EmployeeAction employeeId={employee._id} employeeData={employee} setRefetch={refetch} t={t} />
                   </TableCell>

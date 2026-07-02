@@ -199,29 +199,62 @@
   flex-direction: column;
   gap: 6px;
 
-  button {
+  .history-item-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 10px;
-    border: 1px solid transparent;
+    justify-content: space-between;
     border-radius: 10px;
     background: transparent;
+    border: 1px solid transparent;
     color: var(--ai-muted);
-    text-align: left;
-
-    span {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
+    transition: all 0.2s ease;
 
     &:hover,
     &.active {
       color: var(--ai-text);
       background: var(--ai-panel-soft);
       border-color: var(--ai-border);
+    }
+  }
+
+  .history-item-btn {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 13px;
+    text-align: left;
+
+    span {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .delete-history-btn {
+    background: transparent;
+    border: none;
+    color: var(--ai-muted);
+    opacity: 0.6;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: var(--ai-danger) !important;
+      opacity: 1;
     }
   }
 

@@ -36,6 +36,7 @@ export default function ViewProductTransfer({
 
   const {
     toShop,
+    fromShop,
     status,
     requestedBy,
     acceptedBy,
@@ -96,6 +97,9 @@ export default function ViewProductTransfer({
               {t("transfer_information")}
             </Typography>
 
+            {fromShop && (
+              <InfoRow label={t("from_shop") || "From Shop"} value={language === "kh" ? fromShop?.nameKh : fromShop?.nameEn} />
+            )}
             <InfoRow label={t("shop_kh")} value={toShop?.nameKh} />
             <InfoRow label={t("shop_en")} value={toShop?.nameEn} />
             <InfoRow
@@ -170,7 +174,15 @@ export default function ViewProductTransfer({
 
               <Stack direction="row" justifyContent="space-between" mt={2}>
                 <Box>
-                  <Typography fontWeight={600}>{t("invoice_to")}</Typography>
+                  {fromShop && (
+                    <>
+                      <Typography fontWeight={600}>{t("from_shop") || "From Shop"}</Typography>
+                      <Typography mb={1}>
+                        {language === "kh" ? fromShop?.nameKh : fromShop?.nameEn}
+                      </Typography>
+                    </>
+                  )}
+                  <Typography fontWeight={600}>{t("invoice_to") || t("to_shop")}</Typography>
                   <Typography>
                     {language === "kh" ? toShop?.nameKh : toShop?.nameEn}
                   </Typography>

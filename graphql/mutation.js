@@ -664,6 +664,18 @@ mutation CreateWarehouseTransfer($input: CreateWarehouseTransferInput!) {
 }
 `
 
+export const UPDATE_WAREHOUSE_TRANSFER = gql`
+mutation UpdateWarehouseTransfer($id: ID!, $input: UpdateWarehouseTransferInput!) {
+  updateWarehouseTransfer(_id: $id, input: $input) {
+    isSuccess
+    message {
+      messageEn
+      messageKh
+    }
+  }
+}
+`
+
 
 export const ACCEPT_WAREHOUSE_TRANSFER = gql`
 mutation AcceptWarehouseTransfer($items: [AcceptTransferItemInput!]!, $transferId: ID!) {
@@ -1548,6 +1560,138 @@ export const SET_PERMISSION = gql`
         marketing
         facebook
         reports
+      }
+    }
+  }
+`;
+
+export const GENERATE_PAYROLL = gql`
+  mutation GeneratePayroll($periodId: ID!) {
+    generatePayroll(periodId: $periodId) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const APPROVE_PAYROLL = gql`
+  mutation ApprovePayroll($payrollId: ID!) {
+    approvePayroll(payrollId: $payrollId) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const PAY_PAYROLL = gql`
+  mutation PayPayroll($payrollId: ID!, $paymentMethod: String!) {
+    payPayroll(payrollId: $payrollId, paymentMethod: $paymentMethod) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const ADD_ALLOWANCE = gql`
+  mutation AddAllowance($input: AllowanceInput!) {
+    addAllowance(input: $input) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const ADD_DEDUCTION = gql`
+  mutation AddDeduction($input: DeductionInput!) {
+    addDeduction(input: $input) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const UPLOAD_EMPLOYEE_DOCUMENT = gql`
+  mutation UploadEmployeeDocument($employeeId: ID!, $documentType: String!, $fileUrl: String!, $fileName: String!) {
+    uploadEmployeeDocument(employeeId: $employeeId, documentType: $documentType, fileUrl: $fileUrl, fileName: $fileName) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const ASSIGN_SHIFT = gql`
+  mutation AssignShift($input: ShiftAssignmentInput!) {
+    assignShift(input: $input) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const APPROVE_LEAVE = gql`
+  mutation ApproveLeave($id: ID!, $stage: String!, $status: String!, $remark: String) {
+    approveLeave(id: $id, stage: $stage, status: $status, remark: $remark) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const CREATE_SHIFT = gql`
+  mutation CreateShift($input: ShiftInput!) {
+    createShift(input: $input) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const SUBMIT_LEAVE_REQUEST = gql`
+  mutation SubmitLeaveRequest($input: LeaveRequestInput!) {
+    submitLeaveRequest(input: $input) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
+      }
+    }
+  }
+`;
+
+export const SUBMIT_ATTENDANCE_GPS = gql`
+  mutation SubmitAttendanceGPS($latitude: Float!, $longitude: Float!, $type: String!) {
+    submitAttendanceGPS(latitude: $latitude, longitude: $longitude, type: $type) {
+      isSuccess
+      message {
+        messageEn
+        messageKh
       }
     }
   }

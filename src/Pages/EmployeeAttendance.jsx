@@ -29,11 +29,12 @@ import {
   CLOCK_OUT_ATTENDANCE,
   END_ATTENDANCE_BREAK,
   START_ATTENDANCE_BREAK,
+  SUBMIT_ATTENDANCE_GPS,
 } from "../../graphql/mutation";
 import {
   GET_ATTENDANCE_OVERVIEW,
   GET_ATTENDANCES_WITH_PAGINATION,
-  GET_EMPLOYEES_WITH_PAGINATION,
+  GET_EMPLOYEES,
   GET_TODAY_ATTENDANCE,
 } from "../../graphql/queries";
 import { useAuth } from "../Context/AuthContext";
@@ -75,11 +76,11 @@ export default function EmployeeAttendance() {
     if (employeeId) localStorage.setItem("attendanceEmployeeId", employeeId);
   }, [employeeId]);
 
-  const { data: employeeData } = useQuery(GET_EMPLOYEES_WITH_PAGINATION, {
-    variables: { page: 1, limit: 100, pagination: false, keyword: "", active: true },
+  const { data: employeeData } = useQuery(GET_EMPLOYEES, {
+    variables: { page: 1, limit: 100, active: true },
   });
 
-  const employees = employeeData?.getEmployeesWithPagination?.data || [];
+  const employees = employeeData?.getEmployees?.data || [];
   const selectedEmployee = useMemo(
     () => employees.find((employee) => employee._id === employeeId) || null,
     [employeeId, employees]
@@ -139,6 +140,40 @@ export default function EmployeeAttendance() {
     onError: handleError,
   });
 
+  const [submitGPS, { loading: gpsLoading }] = useMutation(SUBMIT_ATTENDANCE_GPS, {
+    onCompleted: (res) => {
+      if (res.submitAttendanceGPS?.isSuccess) {
+        setAlert(true, "success", "GPS Attendance registered successfully");
+        refresh();
+      } else {
+        setAlert(true, "error", res.submitAttendanceGPS?.message?.messageEn || "Failed to submit GPS check-in");
+      }
+    },
+    onError: handleError,
+  });
+
+  const handleGPSCheckIn = (type) => {
+    if (!navigator.geolocation) {
+      setAlert(true, "error", { messageEn: "Geolocation is not supported by your browser" });
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        submitGPS({
+          variables: {
+            latitude,
+            longitude,
+            type
+          }
+        });
+      },
+      (error) => {
+        setAlert(true, "error", { messageEn: "Unable to retrieve location: " + error.message });
+      }
+    );
+  };
+
   const isOnBreak = Boolean(todayAttendance?.breakStart);
   const disabled = !employeeId || clockingIn || clockingOut || startingBreak || endingBreak;
 
@@ -183,26 +218,39 @@ export default function EmployeeAttendance() {
                   <Typography color="text.secondary">Current Time</Typography>
                 </Box>
               </Stack>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-                {!todayAttendance?.clockIn ? (
-                  <Button fullWidth variant="contained" startIcon={<LogIn size={18} />} disabled={disabled} onClick={() => clockIn({ variables: { employeeId } })}>
-                    {t(`check_in`)}
+              <Stack direction="column" spacing={1.5}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                  {!todayAttendance?.clockIn ? (
+                    <Button fullWidth variant="contained" startIcon={<LogIn size={18} />} disabled={disabled} onClick={() => clockIn({ variables: { employeeId } })}>
+                      {t(`check_in`)}
+                    </Button>
+                  ) : (
+                    <Button fullWidth variant="contained" color="warning" startIcon={<LogOut size={18} />} disabled={disabled || Boolean(todayAttendance?.clockOut)} onClick={() => clockOut({ variables: { employeeId } })}>
+                      Clock Out
+                    </Button>
+                  )}
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color={isOnBreak ? "success" : "info"}
+                    startIcon={<Coffee size={18} />}
+                    disabled={disabled || !todayAttendance?.clockIn || Boolean(todayAttendance?.clockOut)}
+                    onClick={() => (isOnBreak ? endBreak : startBreak)({ variables: { employeeId } })}
+                  >
+                    {isOnBreak ? "End Break" : "Break"}
                   </Button>
-                ) : (
-                  <Button fullWidth variant="contained" color="warning" startIcon={<LogOut size={18} />} disabled={disabled || Boolean(todayAttendance?.clockOut)} onClick={() => clockOut({ variables: { employeeId } })}>
-                    Clock Out
-                  </Button>
-                )}
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color={isOnBreak ? "success" : "info"}
-                  startIcon={<Coffee size={18} />}
-                  disabled={disabled || !todayAttendance?.clockIn || Boolean(todayAttendance?.clockOut)}
-                  onClick={() => (isOnBreak ? endBreak : startBreak)({ variables: { employeeId } })}
-                >
-                  {isOnBreak ? "End Break" : "Break"}
-                </Button>
+                </Stack>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                  {!todayAttendance?.clockIn ? (
+                    <Button fullWidth color="secondary" variant="outlined" startIcon={<LogIn size={18} />} disabled={disabled || gpsLoading} onClick={() => handleGPSCheckIn("in")}>
+                      GPS Check In
+                    </Button>
+                  ) : (
+                    <Button fullWidth color="error" variant="outlined" startIcon={<LogOut size={18} />} disabled={disabled || gpsLoading || Boolean(todayAttendance?.clockOut)} onClick={() => handleGPSCheckIn("out")}>
+                      GPS Clock Out
+                    </Button>
+                  )}
+                </Stack>
               </Stack>
             </Box>
           </Grid>

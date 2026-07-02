@@ -21,6 +21,20 @@ const initialValues = {
   address: "",
   remark: "",
   active: true,
+  
+  employeeCode: "",
+  employmentType: "Full-time",
+  status: "Active",
+  "emergencyContact.name": "",
+  "emergencyContact.phone": "",
+  "emergencyContact.relation": "",
+  "bankAccount.bankName": "",
+  "bankAccount.accountName": "",
+  "bankAccount.accountNumber": "",
+  "contractInfo.contractType": "",
+  "contractInfo.startDate": "",
+  "contractInfo.endDate": "",
+  "contractInfo.basicSalary": 0
 };
 
 export default function EmployeeForm({ open, onClose, t, employeeData, dialogTitle, setRefetch }) {
@@ -32,11 +46,25 @@ export default function EmployeeForm({ open, onClose, t, employeeData, dialogTit
   });
 
   useEffect(() => {
-    setFormValues(
-      employeeData
-        ? { ...initialValues, ...employeeData, departmentId: employeeData.department?._id || "" }
-        : initialValues
-    );
+    if (employeeData) {
+      setFormValues({
+        ...initialValues,
+        ...employeeData,
+        departmentId: employeeData.department?._id || "",
+        "emergencyContact.name": employeeData.emergencyContact?.name || "",
+        "emergencyContact.phone": employeeData.emergencyContact?.phone || "",
+        "emergencyContact.relation": employeeData.emergencyContact?.relation || "",
+        "bankAccount.bankName": employeeData.bankAccount?.bankName || "",
+        "bankAccount.accountName": employeeData.bankAccount?.accountName || "",
+        "bankAccount.accountNumber": employeeData.bankAccount?.accountNumber || "",
+        "contractInfo.contractType": employeeData.contractInfo?.contractType || "",
+        "contractInfo.startDate": employeeData.contractInfo?.startDate ? new Date(employeeData.contractInfo.startDate).toISOString().split('T')[0] : "",
+        "contractInfo.endDate": employeeData.contractInfo?.endDate ? new Date(employeeData.contractInfo.endDate).toISOString().split('T')[0] : "",
+        "contractInfo.basicSalary": employeeData.contractInfo?.basicSalary || 0
+      });
+    } else {
+      setFormValues(initialValues);
+    }
   }, [employeeData]);
 
   const departmentOptions = (data?.getDepartmentsWithPagination?.data || []).map((department) => ({
@@ -87,13 +115,33 @@ export default function EmployeeForm({ open, onClose, t, employeeData, dialogTit
       gender: values.gender,
       phone: values.phone,
       email: values.email,
-      password: values.password,
+      password: values.password || undefined,
       position: values.position,
       departmentId: values.departmentId || null,
       hireDate: values.hireDate,
       address: values.address,
       remark: values.remark,
       active: values.active,
+
+      employeeCode: values.employeeCode || undefined,
+      employmentType: values.employmentType,
+      status: values.status,
+      emergencyContact: {
+        name: values["emergencyContact.name"],
+        phone: values["emergencyContact.phone"],
+        relation: values["emergencyContact.relation"]
+      },
+      bankAccount: {
+        bankName: values["bankAccount.bankName"],
+        accountName: values["bankAccount.accountName"],
+        accountNumber: values["bankAccount.accountNumber"]
+      },
+      contractInfo: {
+        contractType: values["contractInfo.contractType"],
+        startDate: values["contractInfo.startDate"] || null,
+        endDate: values["contractInfo.endDate"] || null,
+        basicSalary: Number(values["contractInfo.basicSalary"] || 0)
+      }
     };
     if (dialogTitle === "Create") {
       createEmployee({ variables: { input } });
@@ -121,8 +169,10 @@ export default function EmployeeForm({ open, onClose, t, employeeData, dialogTit
       t={t}
       tabs={[
         {
+          title: "Basic Info",
           fields: [
             { name: "image", label: t("image"), type: "image", grid: { xs: 12 } },
+            { name: "employeeCode", label: "Employee Code / ID", grid: { xs: 12, md: 6 } },
             { name: "nameKh", label: t("khmer_name"), grid: { xs: 12, md: 6 } },
             { name: "nameEn", label: t("english_name"), grid: { xs: 12, md: 6 } },
             {
@@ -150,10 +200,53 @@ export default function EmployeeForm({ open, onClose, t, employeeData, dialogTit
             { name: "hireDate", label: t("hire_date"), type: "date", grid: { xs: 12, md: 6 } },
             { name: "address", label: t("address"), rows: 2, grid: { xs: 12, md:6 } },
             { name: "remark", label: t("remark"), rows: 2, grid: { xs: 12, md:6 } },
+            {
+              name: "status",
+              label: "Employee Status",
+              type: "select",
+              options: [
+                { value: "Active", label: "Active" },
+                { value: "Inactive", label: "Inactive" },
+                { value: "Suspended", label: "Suspended" },
+                { value: "Resigned", label: "Resigned" },
+              ],
+              grid: { xs: 12, md: 6 },
+            },
             { name: "active", label: t("active"), type: "checkbox", grid: { xs: 12 } },
-            
           ],
         },
+        {
+          title: "Emergency & Bank",
+          fields: [
+            { name: "emergencyContact.name", label: "Emergency Contact Name", grid: { xs: 12, md: 4 } },
+            { name: "emergencyContact.phone", label: "Emergency Contact Phone", grid: { xs: 12, md: 4 } },
+            { name: "emergencyContact.relation", label: "Emergency Contact Relation", grid: { xs: 12, md: 4 } },
+            { name: "bankAccount.bankName", label: "Bank Name", grid: { xs: 12, md: 4 } },
+            { name: "bankAccount.accountName", label: "Bank Account Name", grid: { xs: 12, md: 4 } },
+            { name: "bankAccount.accountNumber", label: "Bank Account Number", grid: { xs: 12, md: 4 } },
+          ],
+        },
+        {
+          title: "Contract & Salary",
+          fields: [
+            {
+              name: "employmentType",
+              label: "Employment Type",
+              type: "select",
+              options: [
+                { value: "Full-time", label: "Full-time" },
+                { value: "Part-time", label: "Part-time" },
+                { value: "Contract", label: "Contract" },
+                { value: "Internship", label: "Internship" },
+              ],
+              grid: { xs: 12, md: 6 },
+            },
+            { name: "contractInfo.contractType", label: "Contract Type / Title", grid: { xs: 12, md: 6 } },
+            { name: "contractInfo.startDate", label: "Contract Start Date", type: "date", grid: { xs: 12, md: 6 } },
+            { name: "contractInfo.endDate", label: "Contract End Date", type: "date", grid: { xs: 12, md: 6 } },
+            { name: "contractInfo.basicSalary", label: "Basic Contract Salary ($)", type: "number", grid: { xs: 12, md: 6 } },
+          ],
+        }
       ]}
     />
   );

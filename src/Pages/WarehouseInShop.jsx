@@ -28,6 +28,7 @@ import {
 import {
   Activity,
   ArrowDownToLine,
+  ArrowLeftRight,
   Boxes,
   ChevronLeft,
   ChevronRight,
@@ -46,6 +47,8 @@ import PurchaseOrderAction from "../Components/warehouse/purchaseOrder/PurchaseO
 import PurchaseOrderForm from "../Components/warehouse/purchaseOrder/PurchaseOrderForm";
 import GetProductInShopAction from "../Components/warehouseInShop/getProduct/GetProductInShopAction";
 import WarehouseRequestForm from "../Components/warehouseInShop/WarehouseRequestForm";
+import ProductTransferAction from "../Components/warehouse/product-transfer/ProductTransferAction";
+import ProductTransferForm from "../Components/warehouse/product-transfer/ProductTransferForm";
 import { useAuth } from "../Context/AuthContext";
 import { useThemeContext } from "../Context/ThemeContext";
 import { translateLauguage } from "../function/translate";
@@ -121,6 +124,12 @@ const WarehouseInShop = () => {
   const [movementLimit, setMovementLimit] = useState(5);
   const [movementKeyword, setMovementKeyword] = useState("");
 
+  const [shopTransferPage, setShopTransferPage] = useState(1);
+  const [shopTransferLimit, setShopTransferLimit] = useState(5);
+  const [shopTransferKeyword, setShopTransferKeyword] = useState("");
+  const [shopTransferStatus, setShopTransferStatus] = useState("All");
+  const [openShopTransfer, setOpenShopTransfer] = useState(false);
+
   const {
     producteWarehouseInShop,
     loading: stockLoading,
@@ -191,6 +200,21 @@ const WarehouseInShop = () => {
     limit: movementLimit,
     pagination: true,
     keyword: movementKeyword,
+  });
+
+  const {
+    productsWarehouseTransfer: shopOutgoingTransfers,
+    loading: shopTransferLoading,
+    error: shopTransferError,
+    refetch: refetchShopTransfers,
+    paginator: shopTransferPaginator,
+  } = useGetWarehouseTransferWithPagination({
+    fromShopId: shopId,
+    page: shopTransferPage,
+    limit: shopTransferLimit,
+    pagination: true,
+    keyword: shopTransferKeyword,
+    status: shopTransferStatus === "All" ? undefined : shopTransferStatus,
   });
 
   const filteredStock = producteWarehouseInShop;
@@ -283,6 +307,7 @@ const WarehouseInShop = () => {
     { value: "2", label: t("purchase_order"), icon: ClipboardList },
     { value: "3", label: t("get_product"), icon: ArrowDownToLine },
     { value: "4", label: t("request_to_warehouse"), icon: Send },
+    { value: "6", label: t("transfer_product"), icon: ArrowLeftRight },
     { value: "5", label: t("stock_movement"), icon: Activity },
   ];
 
@@ -847,6 +872,139 @@ const WarehouseInShop = () => {
               open={openWarehouseRequest}
               onClose={() => setOpenWarehouseRequest(false)}
               setRefetch={refetchRequests}
+            />
+          )}
+        </TabPanel>
+
+        <TabPanel value="6" sx={{ p: 0 }}>
+          {renderToolbar({
+            keyword: shopTransferKeyword,
+            setKeyword: setShopTransferKeyword,
+            setPage: setShopTransferPage,
+            status: shopTransferStatus,
+            setStatus: setShopTransferStatus,
+            statusItems: [
+              { value: "All", label: t("all") },
+              { value: "pending", label: t("pending") },
+              { value: "partial_accepted", label: t("partial_accepted") },
+              { value: "accepted", label: t("accepted") },
+              { value: "rejected", label: t("rejected") },
+              { value: "cancelled", label: t("cancelled") },
+            ],
+            action: (
+              <Button
+                variant="contained"
+                startIcon={<LibraryAddOutlinedIcon />}
+                onClick={() => setOpenShopTransfer(true)}
+              >
+                {t("create_transfer")}
+              </Button>
+            ),
+          })}
+
+          <TableContainer className="table-container">
+            <Table className="table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t("no")}</TableCell>
+                  <TableCell>{t("to_shop")}</TableCell>
+                  <TableCell>{t("items")}</TableCell>
+                  <TableCell>{t("total_qty")}</TableCell>
+                  <TableCell>{t("total_price")}</TableCell>
+                  <TableCell>{t("send_by")}</TableCell>
+                  <TableCell>{t("accepted_by")}</TableCell>
+                  <TableCell>{t("status")}</TableCell>
+                  <TableCell>{t("date")}</TableCell>
+                  <TableCell align="right">{t("action")}</TableCell>
+                </TableRow>
+              </TableHead>
+              {shopTransferLoading ? (
+                <CircularIndeterminate cols={10} />
+              ) : shopTransferError ? (
+                <TableBody>
+                  <TableRow>
+                    <TableCell colSpan={10}>
+                      <Typography color="error">{shopTransferError.message}</Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              ) : shopOutgoingTransfers.length === 0 ? (
+                <EmptyData />
+              ) : (
+                <TableBody>
+                  {shopOutgoingTransfers.map((row, index) => {
+                    const totalQty = row.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+                    const totalPrice = row.items.reduce(
+                      (sum, item) =>
+                        sum +
+                        Number(item.quantity || 0) *
+                          Number(item.costPrice || item.subProduct?.costPrice || 0),
+                      0,
+                    );
+
+                    return (
+                      <TableRow key={row._id} className="table-row">
+                        <TableCell>{shopTransferPaginator?.slNo + index}</TableCell>
+                        <TableCell>{language === "kh" ? row?.toShop?.nameKh : row?.toShop?.nameEn}</TableCell>
+                        <TableCell>{row.items.length}</TableCell>
+                        <TableCell>{totalQty}</TableCell>
+                        <TableCell>${totalPrice.toFixed(2)}</TableCell>
+                        <TableCell>{language === "kh" ? row?.requestedBy?.nameKh : row?.requestedBy?.nameEn}</TableCell>
+                        <TableCell>
+                          {row?.acceptedBy
+                            ? language === "kh"
+                              ? row?.acceptedBy?.nameKh
+                              : row?.acceptedBy?.nameEn
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={t(row?.status)}
+                            color={statusColor(row?.status)}
+                            size="small"
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </TableCell>
+                        <TableCell>{new Date(row?.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell align="right">
+                          <ProductTransferAction
+                            t={t}
+                            language={language}
+                            editData={row}
+                            setRefetch={refetchShopTransfers}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              )}
+            </Table>
+
+            <Stack alignItems="flex-end" p={2}>
+              <FooterPagination
+                page={shopTransferPage}
+                limit={shopTransferLimit}
+                setPage={setShopTransferPage}
+                handleLimit={handleLimit(setShopTransferLimit, setShopTransferPage)}
+                totalDocs={shopTransferPaginator?.totalDocs}
+                totalPages={shopTransferPaginator?.totalPages}
+              />
+            </Stack>
+          </TableContainer>
+
+          {openShopTransfer && (
+            <ProductTransferForm
+              t={t}
+              open={openShopTransfer}
+              onClose={() => setOpenShopTransfer(false)}
+              language={language}
+              setRefetch={() => {
+                refetchShopTransfers();
+                refetchShopStock();
+                refetchMovements();
+              }}
+              fromShopId={shopId}
             />
           )}
         </TabPanel>

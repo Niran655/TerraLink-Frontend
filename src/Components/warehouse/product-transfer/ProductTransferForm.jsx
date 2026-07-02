@@ -23,9 +23,10 @@ import * as Yup from "yup";
 import { useMemo } from "react";
 
 import useGetAllShopAutoComplete from "../../include/includeAutoComplete";
-import { CREATE_WAREHOUSE_TRANSFER } from "../../../../graphql/mutation";
+import { CREATE_WAREHOUSE_TRANSFER, UPDATE_WAREHOUSE_TRANSFER } from "../../../../graphql/mutation";
 import { useAuth } from "../../../Context/AuthContext";
 import useGetProductWarehouseWithPagination from "../../hook/useGetProductWarehouseWithPagination";
+import useGetProductWarehouseInShopWithPagination from "../../hook/useGetProductWarehouseInShopWithPagination";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": { padding: theme.spacing(2) },
@@ -46,6 +47,8 @@ export default function ProductTransferForm({
   setRefetch,
   defaultToShopIds = [],
   lockToShop = false,
+  fromShopId,
+  editData,
 }) {
   const { options: shopOptions, loading: shopLoading, refetch } =useGetAllShopAutoComplete();
 
@@ -58,7 +61,19 @@ export default function ProductTransferForm({
       pagination: false,
     });
 
-    console.log("productWarehouseWithPagination",productWarehouseWithPagination)
+  const { producteWarehouseInShop: productShopWithPagination, loading: productShopLoading } =
+    useGetProductWarehouseInShopWithPagination({
+      shopId: fromShopId,
+      pagination: false,
+    });
+
+  const productsList = fromShopId ? productShopWithPagination : productWarehouseWithPagination;
+  const isProductLoading = fromShopId ? productShopLoading : productLoading;
+
+  const filteredShopOptions = useMemo(() => {
+    if (!fromShopId) return shopOptions;
+    return shopOptions.filter((o) => o.value !== fromShopId);
+  }, [shopOptions, fromShopId]);
 
   const [createWarehouseTransfer, { loading }] = useMutation(
     CREATE_WAREHOUSE_TRANSFER,
@@ -79,11 +94,40 @@ export default function ProductTransferForm({
     }
   );
 
+  const [updateWarehouseTransfer, { loading: updateLoading }] = useMutation(
+    UPDATE_WAREHOUSE_TRANSFER,
+    {
+      onCompleted: ({ updateWarehouseTransfer }) => {
+        if (updateWarehouseTransfer?.isSuccess) {
+          onClose();
+          setRefetch();
+          refetch();
+          setAlert(true, "success", updateWarehouseTransfer?.message);
+        } else {
+          setAlert(true, "error", updateWarehouseTransfer?.message);
+        }
+      },
+      onError: () => {
+        setAlert(true, "error", "Something went wrong");
+      },
+    }
+  );
+
+  const isSubmitLoading = loading || updateLoading;
+
   const formik = useFormik({
     initialValues: {
-      toShopIds: defaultToShopIds,
-      note: "",
-      items: [emptyItem],
+      toShopIds: editData
+        ? [editData.toShop?._id || editData.toShop]
+        : defaultToShopIds,
+      note: editData?.note || editData?.remark || "",
+      items: editData?.items
+        ? editData.items.map((item) => ({
+            subProductId: item.subProduct?._id || item.subProduct,
+            quantity: item.quantity,
+            costPrice: item.costPrice || item.subProduct?.costPrice || 0,
+          }))
+        : [emptyItem],
     },
     validationSchema: Yup.object({
       toShopIds: Yup.array().min(1, t("require")),
@@ -102,19 +146,37 @@ export default function ProductTransferForm({
       ),
     }),
     onSubmit: (values) => {
-      createWarehouseTransfer({
-        variables: {
-          input: {
-            toShopIds: values.toShopIds,
-            note: values.note,
-            items: values.items.map((i) => ({
-              subProductId: i.subProductId,
-              quantity: Number(i.quantity),
-              costPrice: Number(i.costPrice),
-            })),
+      if (editData) {
+        updateWarehouseTransfer({
+          variables: {
+            id: editData._id,
+            input: {
+              toShopId: values.toShopIds[0],
+              note: values.note,
+              items: values.items.map((i) => ({
+                subProductId: i.subProductId,
+                quantity: Number(i.quantity),
+                costPrice: Number(i.costPrice),
+              })),
+            },
           },
-        },
-      });
+        });
+      } else {
+        createWarehouseTransfer({
+          variables: {
+            input: {
+              toShopIds: values.toShopIds,
+              note: values.note,
+              fromShopId: fromShopId || undefined,
+              items: values.items.map((i) => ({
+                subProductId: i.subProductId,
+                quantity: Number(i.quantity),
+                costPrice: Number(i.costPrice),
+              })),
+            },
+          },
+        });
+      }
     },
   });
 
@@ -159,7 +221,7 @@ export default function ProductTransferForm({
   return (
     <BootstrapDialog open={open} fullWidth maxWidth="md">
       <DialogTitle>
-        {t("create_transfer")}
+        {editData ? t("edit_transfer") || "Edit Transfer" : t("create_transfer")}
         <IconButton
           onClick={onClose}
           sx={{ position: "absolute", right: 8, top: 8 }}
@@ -178,20 +240,29 @@ export default function ProductTransferForm({
               <Grid size={{ xs: 12, md: 6 }}>
                 <Typography>{t("to_shop")}</Typography>
                 <Autocomplete
-                  multiple
+                  multiple={!editData}
                   disabled={lockToShop}
-                  options={shopOptions}
+                  options={filteredShopOptions}
                   loading={shopLoading}
-                  value={shopOptions.filter((o) =>
-                    values.toShopIds.includes(o.value)
-                  )}
-                  getOptionLabel={(o) => o.label}
-                  onChange={(e, selected) =>
-                    setValues({
-                      ...values,
-                      toShopIds: selected.map((s) => s.value),
-                    })
+                  value={
+                    editData
+                      ? filteredShopOptions.find((o) => o.value === values.toShopIds[0]) || null
+                      : filteredShopOptions.filter((o) => values.toShopIds.includes(o.value))
                   }
+                  getOptionLabel={(o) => o?.label || ""}
+                  onChange={(e, selected) => {
+                    if (editData) {
+                      setValues({
+                        ...values,
+                        toShopIds: selected ? [selected.value] : [],
+                      });
+                    } else {
+                      setValues({
+                        ...values,
+                        toShopIds: selected.map((s) => s.value),
+                      });
+                    }
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -245,10 +316,10 @@ export default function ProductTransferForm({
                     <Typography>{t("product")}</Typography>
                     <Autocomplete
                        
-                      options={productWarehouseWithPagination}
-                      loading={productLoading}
+                      options={productsList}
+                      loading={isProductLoading}
                       value={
-                        productWarehouseWithPagination.find(
+                        productsList.find(
                           (p) =>
                             p.subProduct?._id === item.subProductId
                         ) || null
@@ -368,9 +439,9 @@ export default function ProductTransferForm({
               type="submit"
               fullWidth
               variant="contained"
-              disabled={loading}
+              disabled={isSubmitLoading}
             >
-              {loading ? t("processing...") : t("create")}
+              {isSubmitLoading ? t("processing...") : editData ? t("update") : t("create")}
             </Button>
           </DialogActions>
         </Form>

@@ -19,6 +19,7 @@ const useGetProductWarehouseInShopWithPagination = ({
         {
           variables: {shopId, page, limit, pagination, keyword, status },
           fetchPolicy: "cache-and-network",
+          skip: !shopId,
         },
       );   
       

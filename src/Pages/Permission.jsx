@@ -68,8 +68,6 @@ const roles = [
 const modules = [
   { value: "dashboard", label: "Dashboard" },
   { value: "pos", label: "POS" },
-  { value: "cms", label: "CMS" },
-  { value: "crm", label: "CRM" },
   { value: "hr", label: "HR" },
   { value: "inventory", label: "Inventory" },
   { value: "sale", label: "Sale" },
@@ -144,12 +142,10 @@ const moduleGroups = [
     ]
   },
   {
-    name: "CMS & CRM Relations",
-    desc: "Customer data portals, social integrations, and content feeds",
+    name: "Customer Profile Directory",
+    desc: "Customer data portals",
     icon: UsersRound,
     modules: [
-      { value: "cms", label: "Content Management (CMS)", desc: "Publish system blogs, store announcements, and social content feeds", icon: Megaphone },
-      { value: "crm", label: "Customer Relations (CRM)", desc: "Track customer lead points, loyalty programs, and relationship tracking", icon: UsersRound },
       { value: "customers", label: "Customer Profile Directory", desc: "Add, edit, or search customer loyalty profile details", icon: UsersRound }
     ]
   },

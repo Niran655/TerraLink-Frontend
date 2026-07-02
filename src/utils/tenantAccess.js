@@ -61,12 +61,7 @@ export const filterTenantMenuSections = (sections, user, userPermissions = []) =
     if (route === "/report" || route.startsWith("/report")) {
       return allowedModules.has("reports");
     }
-    if (route.startsWith("/cms") || route === "/social-cms") {
-      return allowedModules.has("cms");
-    }
-    if (route.startsWith("/crm")) {
-      return allowedModules.has("crm");
-    }
+
     if (
       route.startsWith("/setting/employee") ||
       route.startsWith("/setting/department") ||
@@ -115,8 +110,6 @@ export const filterTenantMenuSections = (sections, user, userPermissions = []) =
       )
         return null;
       if (key === "hmr" && !allowedModules.has("hr")) return null;
-      if (key === "cms" && !allowedModules.has("cms")) return null;
-      if (key === "crm" && !allowedModules.has("crm")) return null;
       if (key === "settings" && !allowedModules.has("settings")) return null;
 
       const filteredChildren = (section.children || []).filter(isItemAllowed);

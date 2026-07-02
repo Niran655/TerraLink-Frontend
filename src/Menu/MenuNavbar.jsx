@@ -57,7 +57,6 @@ import { useThemeContext } from "../Context/ThemeContext";
 import { useAuth } from "../Context/AuthContext";
 import { translateLauguage } from "../function/translate";
 import { filterTenantMenuSections } from "../utils/tenantAccess";
-import { businessMenuSections } from "./businessMenuData";
 import "./menuNavbar.scss";
 
 function getContrastText(hexColor) {
@@ -274,26 +273,18 @@ export default function MenuNavbar({ userPermissions = [] }) {
           routeTo: "/setting/hmr-report",
           pageIcon: <ChartNoAxesColumn className="icon" />,
         },
+        {
+          pageTitle: t("shift_management") || "Shift Management",
+          routeTo: "/setting/shift-management",
+          pageIcon: <CalendarCheck className="icon" />,
+        },
+        {
+          pageTitle: t("leave_management") || "Leave Management",
+          routeTo: "/setting/leave-management",
+          pageIcon: <FileText className="icon" />,
+        },
       ],
     },
-    ...businessMenuSections.map((section) => {
-      const SectionIcon = section.icon;
-
-      return {
-        sectionKey: section.key,
-        pageTitle: t(section.label),
-        pageIcon: <SectionIcon className="icon" />,
-        children: section.modules.map((module) => {
-          const ModuleIcon = module.icon;
-
-          return {
-            pageTitle: t(module.label),
-            routeTo: module.path,
-            pageIcon: <ModuleIcon className="icon" />,
-          };
-        }),
-      };
-    }),
 
     {
       sectionKey: "settings",
@@ -321,11 +312,7 @@ export default function MenuNavbar({ userPermissions = [] }) {
           routeTo: "/setting/login-history",
           pageIcon: <History className="icon" />,
         },
-        {
-          pageTitle: t("connected_accounts") || "Connected Accounts",
-          routeTo: "/setting/social-accounts",
-          pageIcon: <Link2 className="icon" />,
-        },
+
         {
           pageTitle: t("roles_permissions") || "Roles & Permissions",
           routeTo: "/setting/permission",

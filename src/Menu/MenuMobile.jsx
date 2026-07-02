@@ -9,7 +9,6 @@ import { useThemeContext } from "../Context/ThemeContext";
 import { useAuth } from "../Context/AuthContext";
 import { translateLauguage } from "../function/translate";
 import { filterTenantMenuSections } from "../utils/tenantAccess";
-import { businessMenuSections } from "./businessMenuData";
 import "./menuNavbar.scss";
 
 function getContrastText(hexColor) {
@@ -135,12 +134,12 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
       children: [
         ...(user?.role === "superAdmin"
           ? [
-              {
-                pageTitle: t("tenants") || "Tenants",
-                routeTo: "/setting/tenant",
-                pageIcon: <BusinessOutlined className="icon" />,
-              },
-            ]
+            {
+              pageTitle: t("tenants") || "Tenants",
+              routeTo: "/setting/tenant",
+              pageIcon: <BusinessOutlined className="icon" />,
+            },
+          ]
           : []),
         {
           pageTitle: t("user"),
@@ -209,26 +208,18 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
           routeTo: "/setting/hmr-report",
           pageIcon: <ChartNoAxesColumn className="icon" />,
         },
+        {
+          pageTitle: t("shift_management") || "Shift Management",
+          routeTo: "/setting/shift-management",
+          pageIcon: <CalendarCheck className="icon" />,
+        },
+        {
+          pageTitle: t("leave_management") || "Leave Management",
+          routeTo: "/setting/leave-management",
+          pageIcon: <FileText className="icon" />,
+        },
       ],
     },
-    ...businessMenuSections.map((section) => {
-      const SectionIcon = section.icon;
-
-      return {
-        sectionKey: section.key,
-        pageTitle: t(section.label),
-        pageIcon: <SectionIcon className="icon" />,
-        children: section.modules.map((module) => {
-          const ModuleIcon = module.icon;
-
-          return {
-            pageTitle: t(module.label),
-            routeTo: module.path,
-            pageIcon: <ModuleIcon className="icon" />,
-          };
-        }),
-      };
-    }),
 
     {
       sectionKey: "settings",
@@ -250,11 +241,7 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
           routeTo: "/setting/login-history",
           pageIcon: <SecurityOutlined className="icon" />,
         },
-        {
-          pageTitle: t("connected_accounts") || "Connected Accounts",
-          routeTo: "/setting/social-accounts",
-          pageIcon: <SecurityOutlined className="icon" />,
-        },
+
         {
           pageTitle: t("roles_permissions") || "Roles & Permissions",
           routeTo: "/setting/permission",
@@ -298,7 +285,7 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
       ],
     },
   ];
-  
+
   const visibleMenuData = filterTenantMenuSections(menuData, user, userPermissions);
 
   const initialActiveSection = visibleMenuData.find((section) =>
@@ -609,7 +596,7 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
                   ALL NAVIGATION CHANNELS
                 </Typography>
                 <List sx={{ p: 0 }}>
-                  {visibleMenuData.flatMap(section => 
+                  {visibleMenuData.flatMap(section =>
                     section.children.map((child, childIdx) => (
                       <ListItem key={`${section.sectionKey}-${childIdx}`} disablePadding>
                         <ListItemButton
@@ -653,7 +640,7 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
             <>
               {/* Back button for drilldown */}
               <ListItem disablePadding sx={{ mb: 2 }}>
-                <ListItemButton 
+                <ListItemButton
                   onClick={() => setActiveDrilldown(null)}
                   sx={{
                     borderRadius: "6px",
@@ -736,8 +723,8 @@ export default function MenuMobile({ onNavigate, showLabels = true, userPermissi
                       backgroundColor: "rgba(255,255,255,0.06)",
                     }
                   }}>
-                    <ListItemButton 
-                      sx={btnSx} 
+                    <ListItemButton
+                      sx={btnSx}
                       onClick={() => setActiveDrilldown(section.sectionKey)}
                     >
                       <ListItemIcon

@@ -9,10 +9,13 @@ const useGetWarehouseTransferWithPagination = ({
   pagination = true,
   keyword = "",
   status,
-  shopId
+  shopId,
+  fromShopId
 } = {}) => {
   const normalizedShopId =
     shopId && shopId !== "null" && shopId !== "undefined" ? shopId : undefined;
+  const normalizedFromShopId =
+    fromShopId && fromShopId !== "null" && fromShopId !== "undefined" ? fromShopId : undefined;
   const normalizedStatus =
     status && status !== "All" && status !== "null" && status !== "undefined"
       ? status
@@ -27,6 +30,7 @@ const useGetWarehouseTransferWithPagination = ({
         pagination,
         keyword: keyword || "",
         shopId: normalizedShopId,
+        fromShopId: normalizedFromShopId,
         status: normalizedStatus,
       },
       fetchPolicy: "cache-and-network",

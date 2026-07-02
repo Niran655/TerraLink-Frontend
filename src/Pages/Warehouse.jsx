@@ -1228,6 +1228,7 @@ const Warehouse = () => {
                                   language={language}
                                   editData={row}
                                   t={t}
+                                  setRefetch={productsWarehouseTransferRefetch}
                                 />
                               </TableCell>
                             </TableRow>

@@ -886,10 +886,15 @@ query GetProductWareHouseInShopoWithPagination($shopId: ID, $page: Int, $limit: 
 `
 
 export const GET_PRODUCTS_WAREHOUSE_TRANSFER_WITH_PAGINATION = gql`
-query GetWarehouseTransfersWithPagination($status: TransferStatus, $shopId: ID, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String) {
-  getWarehouseTransfersWithPagination(status: $status, shopId: $shopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword) {
+query GetWarehouseTransfersWithPagination($status: TransferStatus, $shopId: ID, $fromShopId: ID, $page: Int, $limit: Int, $pagination: Boolean, $keyword: String) {
+  getWarehouseTransfersWithPagination(status: $status, shopId: $shopId, fromShopId: $fromShopId, page: $page, limit: $limit, pagination: $pagination, keyword: $keyword) {
     data {
        _id
+    fromShop {
+      _id
+      nameKh
+      nameEn
+    }
     toShop {
       nameKh
       nameEn
@@ -956,6 +961,11 @@ export const GET_WAREHOUSE_TRANSFER_BY_ID = gql`
 query GetWarehouseTransferById($id: ID!) {
   getWarehouseTransferById(_id: $id) {
      _id
+    fromShop {
+      _id
+      nameKh
+      nameEn
+    }
     toShop {
       nameKh
       nameEn
@@ -2741,6 +2751,276 @@ export const GET_AUDIT_LOGS = gql`
       modulesAccessed
       modelUsed
       response
+      createdAt
+    }
+  }
+`;
+
+export const GET_EMPLOYEES = gql`
+  query GetEmployees($keyword: String, $active: Boolean, $page: Int, $limit: Int) {
+    getEmployees(keyword: $keyword, active: $active, page: $page, limit: $limit) {
+      data {
+        _id
+        employeeCode
+        nameKh
+        nameEn
+        image
+        gender
+        phone
+        email
+        position
+        department {
+          _id
+          nameKh
+          nameEn
+        }
+        hireDate
+        address
+        remark
+        active
+        shops {
+          _id
+          nameEn
+          nameKh
+        }
+        emergencyContact {
+          name
+          phone
+          relation
+        }
+        bankAccount {
+          bankName
+          accountName
+          accountNumber
+        }
+        contractInfo {
+          contractType
+          startDate
+          endDate
+          basicSalary
+        }
+        employmentType
+        manager {
+          _id
+          nameEn
+          nameKh
+        }
+        status
+      }
+      paginator {
+        currentPage
+        totalPages
+        totalDocs
+        hasNextPage
+        hasPrevPage
+      }
+    }
+  }
+`;
+
+export const GET_ATTENDANCE_DASHBOARD = gql`
+  query GetAttendanceDashboard($shopId: ID, $date: Date!) {
+    getAttendanceDashboard(shopId: $shopId, date: $date) {
+      presentToday
+      lateToday
+      onLeave
+      absentToday
+      overtimeHoursToday
+      recentLogs {
+        _id
+        employee {
+          _id
+          nameKh
+          nameEn
+          position
+          department {
+            nameEn
+          }
+        }
+        date
+        status
+        clockIn
+        clockOut
+        breakMinutes
+        productionMinutes
+        overtimeMinutes
+        totalMinutes
+        remark
+        shift {
+          name
+          startTime
+          endTime
+        }
+        checkInType
+        checkOutType
+        gpsCoordsIn {
+          latitude
+          longitude
+        }
+        gpsCoordsOut {
+          latitude
+          longitude
+        }
+        lateMinutes
+        earlyLeaveMinutes
+        isWorkFromHome
+        isApproved
+      }
+    }
+  }
+`;
+
+export const GET_PAYROLL_DASHBOARD = gql`
+  query GetPayrollDashboard($periodId: ID!) {
+    getPayrollDashboard(periodId: $periodId) {
+      totalPayrollCost
+      totalEmployees
+      pendingPayrollCount
+      overtimeCost
+      bonusCost
+      deductionCost
+      payrollTrend {
+        periodName
+        cost
+      }
+      salaryDistribution {
+        range
+        count
+      }
+      departmentCost {
+        departmentName
+        cost
+      }
+      overtimeTrend {
+        periodName
+        hours
+      }
+    }
+  }
+`;
+
+export const GET_PAYROLL_PERIODS = gql`
+  query GetPayrollPeriods {
+    getPayrollPeriods {
+      _id
+      name
+      startDate
+      endDate
+      periodType
+      status
+    }
+  }
+`;
+
+export const GET_PAYSLIPS = gql`
+  query GetPayslips($employeeId: ID) {
+    getPayslips(employeeId: $employeeId) {
+      _id
+      payroll {
+        _id
+        employee {
+          nameKh
+          nameEn
+          employeeCode
+          position
+        }
+        payrollPeriod {
+          name
+        }
+        basicSalary
+        overtimeHours
+        overtimePay
+        commission
+        bonus
+        allowances
+        deductions
+        tax
+        netSalary
+        status
+        paymentMethod
+        paymentDate
+      }
+      payslipNumber
+      exportedAt
+    }
+  }
+`;
+
+export const GET_SHIFTS = gql`
+  query GetShifts {
+    getShifts {
+      _id
+      name
+      startTime
+      endTime
+      color
+      active
+    }
+  }
+`;
+
+export const GET_SHIFT_ASSIGNMENTS = gql`
+  query GetShiftAssignments($employeeId: ID) {
+    getShiftAssignments(employeeId: $employeeId) {
+      _id
+      employee {
+        _id
+        nameKh
+        nameEn
+      }
+      shift {
+        _id
+        name
+        startTime
+        endTime
+        color
+      }
+      startDate
+      endDate
+    }
+  }
+`;
+
+export const GET_LEAVE_REQUESTS = gql`
+  query GetLeaveRequests($employeeId: ID, $status: String) {
+    getLeaveRequests(employeeId: $employeeId, status: $status) {
+      _id
+      employee {
+        _id
+        nameKh
+        nameEn
+        position
+        department {
+          nameEn
+        }
+      }
+      leaveType
+      startDate
+      endDate
+      totalDays
+      reason
+      status
+      adminRemark
+      managerRemark
+    }
+  }
+`;
+
+export const GET_PAYROLL_AUDIT_LOGS = gql`
+  query GetPayrollAuditLogs($targetEmployee: ID) {
+    getPayrollAuditLogs(targetEmployee: $targetEmployee) {
+      _id
+      action
+      details
+      performedBy {
+        _id
+        nameEn
+      }
+      targetEmployee {
+        _id
+        nameKh
+        nameEn
+      }
       createdAt
     }
   }
